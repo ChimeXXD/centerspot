@@ -36,8 +36,8 @@
         "installed and launched on the device"
       ],
       "verify": "xcrun devicectl device info apps",
-      "passes": false,
-      "evidence": "6 Nov 2026: signed with the free Personal Team and installed (xcrun devicectl device install app -> bundleID dev.chime.agmen); profile expires 2026-11-13T20:30:57Z. Launch not yet done (needs Chime's go-ahead), so passes stays false."
+      "passes": true,
+      "evidence": "6 Nov 2026: signed with the free Personal Team; xcrun devicectl device install app -> dev.chime.agmen; devicectl device process launch -> 'Launched application'; Chime confirmed the document browser (Create Document, Recents) on the iPhone 14 Pro. Profile expires 2026-11-13T20:30:57Z."
     },
     {
       "id": "D0-4",

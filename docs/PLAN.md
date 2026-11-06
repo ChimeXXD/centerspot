@@ -48,7 +48,7 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [x] Rename to Agmen before the first commit (D-42). Done 6 Nov: target, scheme, bundle ID `dev.chime.agmen`, `agmen://`, UTType, docs, proof.json: display name, target and scheme, bundle ID, `halfspace://`, UTType, CLAUDE.md commands, proof.json, docs. Drop the camera usage string until QR ships (D-36)
 - [x] `git init`, private repo `ChimeXXD/agmen` (O-2), first commit of these docs. 6 Nov: `bdacf0a`, visibility PRIVATE
 - [x] `project.yml` builds an empty universal app; `AgmenTests` runs one test. 6 Nov: 3 Swift Testing tests pass on iPhone 18 Pro (iOS 27.0); iPad Pro 13-inch (M5) iOS 26.5 builds; mutation run went red
-- [ ] Signing with the free Personal Team; app launches on Chime's iPhone
+- [x] Signing with the free Personal Team; app launches on Chime's iPhone. 6 Nov: installed and launched with devicectl; Chime saw the document browser (Create Document, Recents)
 - [ ] CI (`.github/workflows/ci.yml`) runs on push to `main` only while private
 - [x] Proof gate (`.claude/proof.json`) runs build, build-ios26 and test (D-32)
 

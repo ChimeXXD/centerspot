@@ -17,10 +17,10 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 - Verifier: PASS on everything checkable before the first commit; one docs mismatch fixed (Day 0 link check moved to after Day 7).
 
 **Not verified**
-- The app hasn't been launched on the phone (needs Chime's go-ahead). Rotation lock and the 256 KB refusal not seen on a device.
+- Launched on the phone with Chime's go-ahead; Chime saw the document browser. Rotation lock and the 256 KB refusal not seen on a device.
 
 **Next**
-- First commit, private repo `ChimeXXD/agmen`, push. Then Day 1: design direction + core lane (D-23).
+- Done: commits `bdacf0a`, `8d40fd6` on private `ChimeXXD/agmen`; proof gate's duplicate `build` check removed (D-43). Then Day 1: design direction + core lane (D-23).
 
 ## All open questions resolved (Fri 6 Nov 2026, later)
 

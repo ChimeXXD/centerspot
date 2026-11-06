@@ -65,7 +65,7 @@ xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPad Pro 13-i
 xcrun simctl list devices available     # if a simulator name is gone, pick the newest and update .claude/proof.json (with Chime's OK)
 ```
 
-The proof gate (`.claude/proof.json`) runs build, build-ios26 and test before every commit. Prefer the MobileBuildMCP tools (`build_run_sim`, `test_sim`, `screenshot`) when connected.
+The proof gate (`.claude/proof.json`) runs test (which builds first) and build-ios26 before every commit (D-43). Prefer the MobileBuildMCP tools (`build_run_sim`, `test_sim`, `screenshot`) when connected.
 
 ## Rules that protect correctness
 
