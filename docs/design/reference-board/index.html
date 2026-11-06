@@ -36,7 +36,7 @@
   .card { position: relative; background: var(--surface); border-radius: 14px; padding: 6px 6px 8px; border: 3px solid transparent; }
   .card.like { border-color: var(--like); } .card.part { border-color: var(--part); } .card.avoid { border-color: var(--avoid); }
   .card .shot { position: relative; cursor: zoom-in; }
-  .card img { width: 100%; aspect-ratio: 9 / 19.5; object-fit: cover; object-position: top; border-radius: 9px; display: block; background: var(--surface-2); }
+  .card img { width: 100%; aspect-ratio: 3 / 4; object-fit: contain; border-radius: 9px; display: block; background: var(--surface-2); }
   .card.avoid img { opacity: .45; }
   .card .meta { display: flex; justify-content: space-between; font-size: 12px; margin: 6px 2px; color: var(--muted); }
   .card .meta b { color: var(--text); }
@@ -127,10 +127,18 @@
 <div class="toast" id="toast"></div>
 
 <script src="images/manifest.js"></script>
+<script src="images/tactics/manifest.js"></script>
 <script>
 const KEY = "agmen-board-v2";
-const refs = (typeof REFS === "undefined" ? [] : REFS).map((r, i) => ({ ...r, n: i + 1, src: "images/" + r.file }));
-const surfaces = [...new Set(refs.map(r => r.surface))];
+// Real tactics-board references first, one section per app (D-49); the earlier general apps sit collapsed at the end.
+const EARLIER = "Earlier references (general apps)";
+const GROUPS = ["Tactics apps (App Store)", "Tactics apps (web)", "Tactics boards (reference library)", "Design concepts", EARLIER];
+const newRefs = (typeof REFS2 === "undefined" ? [] : REFS2).map((r, i) => ({ ...r, surface: r.app, n: "T" + (i + 1), src: "images/" + r.file }));
+const oldRefs = (typeof REFS === "undefined" ? [] : REFS).map((r, i) => ({ ...r, group: EARLIER, n: i + 1, src: "images/" + r.file }));
+const refs = [...newRefs, ...oldRefs];
+const surfaces = [...new Set(GROUPS.flatMap(g => refs.filter(r => r.group === g).map(r => r.surface)))];
+const groupOf = s => refs.find(r => r.surface === s)?.group;
+let showEarlier = !newRefs.length;
 let state = {};
 try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
 try { // carry over picks from the first board as likes
@@ -150,16 +158,21 @@ const verdictOf = id => { const e = id === "_sections" ? null : state[id]; if (!
 let section = "All", show = "All", current = -1, drawKind = null;
 
 function visible() {
-  return refs.filter(r => (section === "All" || r.surface === section) && (show === "All" ||
+  return refs.filter(r => (section === "All" ? (r.group !== EARLIER || !newRefs.length) : r.surface === section) && (show === "All" ||
     (show === "Liked" && ["like", "part"].includes(verdictOf(r.id))) || (show === "Avoided" && verdictOf(r.id) === "avoid") || (show === "Not judged" && !verdictOf(r.id))));
 }
 
 function renderSide() {
   const all = refs.map(r => verdictOf(r.id));
   document.getElementById("totals").innerHTML = `<b>${refs.length}</b> screens · <b>${all.filter(v => v === "like").length}</b> liked · <b>${all.filter(v => v === "part").length}</b> liked in part · <b>${all.filter(v => v === "avoid").length}</b> avoided`;
-  document.getElementById("nav").innerHTML = ["All", ...surfaces].map(s => {
-    const xs = s === "All" ? refs : refs.filter(r => r.surface === s), judged = xs.filter(r => verdictOf(r.id)).length;
+  const item = s => {
+    const xs = s === "All" ? refs.filter(r => r.group !== EARLIER || !newRefs.length) : refs.filter(r => r.surface === s), judged = xs.filter(r => verdictOf(r.id)).length;
     return `<button data-section="${s}" aria-current="${s === section}"><span>${s}</span><small>${judged}/${xs.length}</small></button>`;
+  };
+  document.getElementById("nav").innerHTML = item("All") + GROUPS.map(g => {
+    const ss = surfaces.filter(s => groupOf(s) === g); if (!ss.length) return "";
+    const open = g !== EARLIER || showEarlier;
+    return `<div class="label">${g.toUpperCase()}${g === EARLIER ? ` <button data-toggle-earlier style="min-height:28px;padding:2px 8px;font-size:11px">${open ? "Hide" : "Show"}</button>` : ""}</div>` + (open ? ss.map(item).join("") : "");
   }).join("");
   document.getElementById("show").innerHTML = ["All", "Liked", "Avoided", "Not judged"].map(s => `<button data-show="${s}" aria-pressed="${s === show}">${s}</button>`).join("");
 }
@@ -194,7 +207,7 @@ function renderViewer() {
   const list = visible(), r = list[current]; if (!r) return closeViewer();
   const e = state[r.id] || { verdict: "", regions: [], thoughts: "" }, v = verdictOf(r.id);
   document.getElementById("big").src = r.src;
-  document.getElementById("info").innerHTML = `<b>#${r.n} ${r.app}</b><br><span style="color:var(--muted)">${r.surface} · ${current + 1} of ${list.length}${v ? ` · ${v === "part" ? "liked in part" : v === "like" ? "liked" : "avoided"}` : ""}</span>`;
+  document.getElementById("info").innerHTML = `<b>#${r.n} ${r.app}</b><br><span style="color:var(--muted)">${r.group === EARLIER ? r.surface : r.group} · ${current + 1} of ${list.length}${v ? ` · ${v === "part" ? "liked in part" : v === "like" ? "liked" : "avoided"}` : ""}</span>`;
   document.getElementById("v-like").className = e.verdict === "like" ? "on-like" : "";
   document.getElementById("v-avoid").className = e.verdict === "avoid" ? "on-avoid" : "";
   document.getElementById("v-draw-like").className = drawKind === "like" ? "on-draw" : "";
@@ -236,7 +249,9 @@ layer.addEventListener("click", e => {
 document.getElementById("thoughts").addEventListener("input", e => { const r = visible()[current]; if (r) { entry(r.id).thoughts = e.target.value.slice(0, 1000); save(); renderSide(); } });
 document.getElementById("regions").addEventListener("input", e => { const i = e.target.dataset.regionNote, r = visible()[current]; if (i !== undefined && r) { entry(r.id).regions[+i].note = e.target.value.slice(0, 280); save(); } });
 
-document.getElementById("nav").addEventListener("click", e => { const b = e.target.closest("[data-section]"); if (b) { section = b.dataset.section; render(); scrollTo(0, 0); } });
+document.getElementById("nav").addEventListener("click", e => {
+  if (e.target.closest("[data-toggle-earlier]")) { showEarlier = !showEarlier; return render(); }
+  const b = e.target.closest("[data-section]"); if (b) { section = b.dataset.section; render(); scrollTo(0, 0); } });
 document.getElementById("show").addEventListener("click", e => { const b = e.target.closest("[data-show]"); if (b) { show = b.dataset.show; render(); } });
 document.getElementById("main").addEventListener("input", e => {
   const s = e.target.dataset.sectionOpinion; if (s === undefined) return;
@@ -272,7 +287,7 @@ document.addEventListener("keydown", e => {
 
 // Export what Chime judged, for Claude to read.
 function picks() {
-  return refs.filter(r => verdictOf(r.id) || state[r.id]?.thoughts).map(r => ({ n: r.n, id: r.id, app: r.app, surface: r.surface,
+  return refs.filter(r => verdictOf(r.id) || state[r.id]?.thoughts).map(r => ({ n: r.n, id: r.id, app: r.app, group: r.group, section: r.surface, source: r.source || "",
     verdict: verdictOf(r.id) || "thoughts only", thoughts: state[r.id]?.thoughts || "", regions: state[r.id]?.regions || [] }));
 }
 function toast(t) { const el = document.getElementById("toast"); el.textContent = t; el.style.display = "block"; setTimeout(() => el.style.display = "none", 2600); }
@@ -284,7 +299,7 @@ document.getElementById("download").onclick = () => {
 };
 document.getElementById("copy").onclick = async () => {
   const p = picks(), text = `My Agmen picks (${p.length}):\n` + surfaces.map(s => {
-    const xs = p.filter(x => x.surface === s), op = (state._sections[s] || "").trim(); if (!xs.length && !op) return "";
+    const xs = p.filter(x => x.section === s), op = (state._sections[s] || "").trim(); if (!xs.length && !op) return "";
     return `${s}:\n` + (op ? `  Overall: ${op}\n` : "") + xs.map(x => `  #${x.n} ${x.app}: ${x.verdict}${x.regions.length ? ` (${x.regions.map((g, i) => `${g.kind} ${i + 1}: x ${Math.round(g.x * 100)}–${Math.round((g.x + g.w) * 100)}%, y ${Math.round(g.y * 100)}–${Math.round((g.y + g.h) * 100)}%${g.note ? ` "${g.note}"` : ""}`).join("; ")})` : ""}${x.thoughts ? `\n      thoughts: ${x.thoughts}` : ""}`).join("\n");
   }).filter(Boolean).join("\n");
   try { await navigator.clipboard.writeText(text); toast("Copied. Paste it in the chat."); } catch { toast("Copy failed. Use 'Save my picks file' instead."); }
