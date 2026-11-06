@@ -39,7 +39,7 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 | Playback with scrubber; Reduce Motion step-through | 16:9 and 1:1 export | Five-a-side rota and balanced teams (D-19) |
 | MP4 9:16 export with size shown; PNG of a step | Lineup card image; spotlight a player in an export (D-40) | FC code card; template gallery |
 | `DocumentGroup` save, open, AirDrop | Two-state tactics UI (D-20; the format has it from v1) | Kit Lab (D-18); Squad Snap (D-30) |
-| VoiceOver labels for tokens and controls | | Shortcuts, widgets |
+| VoiceOver labels for tokens and controls | Custom icons and illustrations (D-51): **on hold until Chime says go** | Shortcuts, widgets |
 | On the phone; CI green | Ghost trails behind moving tokens | |
 
 ## Day by day

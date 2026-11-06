@@ -24,6 +24,25 @@
         "examples/"
       ],
       "timeout": 1200
+    },
+    {
+      "name": "no-library-name",
+      "run": "if git grep -I -n -i -E 'm[o]bbin' -- . ; then echo 'The design reference library is named above. Say \"the reference library\" instead (Meridian lesson, D-12).'; exit 1; fi",
+      "when": [
+        "docs/",
+        "mockup/",
+        "Agmen/",
+        "AgmenTests/",
+        "README.md",
+        "CLAUDE.md",
+        "PROCESS.md",
+        "PROGRESS.md",
+        "project.yml",
+        ".github/",
+        "examples/",
+        "presets/"
+      ],
+      "timeout": 60
     }
   ],
   "concurrency": 1,
