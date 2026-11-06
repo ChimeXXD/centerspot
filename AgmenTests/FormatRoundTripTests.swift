@@ -32,7 +32,7 @@ struct FormatRoundTripTests {
         #expect(hero.title == "Overlap down the left")
         #expect(hero.pitch == Pitch(kind: .full, style: .stripes))
         #expect(hero.sides.map(\.id) == [.home, .away])
-        #expect(hero.sides.map(\.colour) == [.blue, .orange])
+        #expect(hero.sides.map(\.colour) == [.lime, .coral])  // D-53
         #expect(hero.sides.map(\.rendering) == [.filled, .ring])
         #expect(hero.tokens.count == 17)
         let steps = try #require(hero.phases.first?.steps)

@@ -10,12 +10,12 @@
     {
       "id": "home",
       "name": "Us",
-      "colour": "blue"
+      "colour": "lime"
     },
     {
       "id": "away",
       "name": "Them",
-      "colour": "orange"
+      "colour": "coral"
     }
   ],
   "tokens": [

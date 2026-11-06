@@ -11,8 +11,8 @@ A `.tactic` file is UTF-8 JSON. UTType `dev.chime.agmen.tactic`, extension `.tac
   "title": "Overlap down the left",
   "pitch": { "kind": "full", "style": "stripes" },
   "sides": [
-    { "id": "home", "name": "Us", "colour": "blue" },
-    { "id": "away", "name": "Them", "colour": "orange" }
+    { "id": "home", "name": "Us", "colour": "lime" },
+    { "id": "away", "name": "Them", "colour": "coral" }
   ],
   "tokens": [
     { "id": "h3", "kind": "player", "side": "home", "number": 3, "name": "Ade", "roleID": "full-back" },
@@ -48,7 +48,7 @@ Two outcomes (D-27): **refuse** means the whole file is rejected with a plain er
 | `schemaVersion` | Must be `1`. | Refuse: "Made with a newer version of Agmen." when higher; the generic error otherwise |
 | Coordinates | `x`, `y` in 0…1 (D-05): `x` left → right, `y` own goal line (0) → opponent's goal line (1). | Out of range: repair (clamp). NaN or infinity: refuse |
 | `pitch.kind` | `full`, `sevenASide`, `fiveASide`. | Refuse |
-| `sides` | Exactly two, ids `home` and `away`. `colour` is a palette key (`UI-BRIEF.md` §2). | Wrong count or ids: refuse. Unknown colour: repair (default) |
+| `sides` | Exactly two, ids `home` and `away`. `colour` is a palette key (`UI-BRIEF.md` §2). | Wrong count or ids: refuse. Unknown or missing colour: repair (default: `lime` home, `coral` away, D-53) |
 | `tokens` | 0…30 (an empty board is valid). Unique ids. `kind`: `player` (needs `side`), `ball`, `cone`, `marker`. | Over 30, duplicate id, unknown kind, player without side: refuse |
 | `tokens[].number` | An integer, 0…99. | Out of range: repair (clamp). Not an integer (7.5, 1e20): refuse (D-45) |
 | `tokens[].name` | ≤ 24 characters. | Repair (truncate) |

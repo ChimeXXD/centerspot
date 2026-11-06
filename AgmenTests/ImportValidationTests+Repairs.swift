@@ -30,14 +30,14 @@ extension ImportValidationTests {
     @Test func unknownOrMissingColourTakesTheSideDefault() throws {
         var data = try T.patched(T.small(), replacing: "\"colour\":\"blue\"", with: "\"colour\":\"teal\"")
         var open = try TacticFormat.decode(data)
-        #expect(open.sides.map(\.colour) == [.blue, .orange])
+        #expect(open.sides.map(\.colour) == [.lime, .orange])  // unknown home colour takes the default (D-53); away keeps its own
 
         let text = try T.json(T.small())
             .replacingOccurrences(of: "\"colour\":\"orange\",", with: "")
             .replacingOccurrences(of: "\"colour\":\"blue\",", with: "\"colour\":7,")
         data = Data(text.utf8)
         open = try TacticFormat.decode(data)
-        #expect(open.sides.map(\.colour) == [.blue, .orange])
+        #expect(open.sides.map(\.colour) == [.lime, .coral])  // both missing or invalid: lime and coral (D-53)
     }
 
     /// Judgement call: the table is silent on side order; reading sorts them home, then away.

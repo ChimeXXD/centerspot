@@ -9,7 +9,7 @@ struct Side: Codable, Sendable, Hashable, Identifiable {
 
     /// Kit palette keys (docs/design/UI-BRIEF.md §2). Fills and number inks live in `Design/`.
     enum Colour: String, Codable, Sendable, CaseIterable {
-        case blue, red, orange, yellow, green, purple, black, white, sky, maroon
+        case lime, coral, blue, red, orange, yellow, green, purple, black, white, sky, maroon
     }
 
     enum Rendering: Sendable {
@@ -34,11 +34,11 @@ struct Side: Codable, Sendable, Hashable, Identifiable {
         }
     }
 
-    /// The colour a side gets when its file names an unknown one (docs/FORMAT.md: repair, default).
+    /// The colour a side gets when its file names an unknown one (docs/FORMAT.md: repair, default; D-53).
     static func defaultColour(for id: ID) -> Colour {
         switch id {
-        case .home: .blue
-        case .away: .orange
+        case .home: .lime
+        case .away: .coral
         }
     }
 

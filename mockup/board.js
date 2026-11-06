@@ -58,7 +58,7 @@ const Board = {
       return `<circle opacity="${dim}" cx="${x}" cy="${y}" r="${r * .42}" fill="${css("--ball")}" stroke="${css("--bg")}" stroke-width="${r * .14}"/>`;
     }
     const num = `<text x="${x}" y="${y + r * .36}" text-anchor="middle" font-family="${css("--font-ui")}" font-weight="800" font-size="${r * 1.05}"`;
-    let s = opts.selected === id ? `<circle cx="${x}" cy="${y}" r="${r * 1.45}" fill="none" stroke="${css("--accent")}" stroke-width="${r * .14}"/>` : "";
+    let s = opts.selected === id ? `<circle cx="${x}" cy="${y}" r="${r * 1.45}" fill="none" stroke="${css("--text")}" stroke-width="${r * .14}"/>` : "";  // white chalk: shows on every kit (UI-BRIEF §1)
     if (t.side === "home") s += `<circle cx="${x}" cy="${y}" r="${r}" fill="${css("--home")}"/>${num} fill="${css("--home-ink")}">${t.number}</text>`;
     else s += `<circle cx="${x}" cy="${y}" r="${r * .9}" fill="${css("--away-inner")}" stroke="${css("--away")}" stroke-width="${r * .24}"/>${num} fill="${css("--away-ink")}">${t.number}</text>`;
     return `<g opacity="${dim}">${s}</g>`;

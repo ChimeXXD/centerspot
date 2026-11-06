@@ -53,12 +53,12 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [x] Proof gate (`.claude/proof.json`) runs test and build-ios26 (D-32, D-43)
 
 ### Day 1: Design direction (D-12)
-- [ ] Collect 30–50 references by surface (board, step strip, playback controls, export sheet, document browser launch) in `docs/design/REFERENCES.md`; images stay local
-- [ ] Write the pattern summary: what the picks share, what to avoid
-- [ ] Build `docs/design/direction-board/index.html`: three directions, each showing the board on iPhone, a playing move and the export sheet
-- [ ] **Chime picks a direction** (log it as a decision)
-- [ ] Fill UI brief §1–3 (direction, tokens, type, motion); add `Design/Tokens.swift`
-- [ ] Draft app icon
+- [x] Collect 30–50 references by surface (board, step strip, playback controls, export sheet, document browser launch) in `docs/design/REFERENCES.md`; images stay local. 6–7 Nov: 333 general + 2,433 tactics-app screenshots on the pick board; Chime used none and chose the mockup (D-50)
+- [x] Write the pattern summary: what the picks share, what to avoid
+- [x] Build `docs/design/direction-board/index.html`: three directions, each showing the board on iPhone, a playing move and the export sheet
+- [x] **Chime picks a direction** (log it as a decision): Floodlight colours with Chalk type (D-44); mockup is the baseline (D-50)
+- [x] Fill UI brief §1–3 (direction, tokens, type, motion); add `Design/Tokens.swift`. 7 Nov: tokens generated from the mockup, Nunito + Kalam bundled, `TokenContrastTests` 7/7
+- [ ] Draft app icon (on hold with icons and illustrations, D-51)
 - [x] Core lane (D-23): model, format validation and timeline done on Day 1 (84 tests)
 
 ### Day 2: Model, format and timeline (tests first; starts on Day 1 as the core lane, D-23)
@@ -66,11 +66,12 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [x] Round trip: `examples/*.tactic` decode → encode → decode is equal (6 Nov, core lane: 84 tests pass)
 - [x] Import validation: size cap, `schemaVersion`, clamping, count limits, unknown keys ignored (6 Nov, core lane: 84 tests pass)
 - [x] `Timeline.state(at:in:)`: holds, easing, straight moves, path following, end of tactic (6 Nov, core lane: 84 tests pass)
-- [ ] Presets: load `formations.json` and `roles.json`; applying a formation keeps names and numbers
-- [ ] `Placement`: zone words for VoiceOver ("edge of the box", "left half-space")
+- [x] Presets: load `formations.json` and `roles.json`; applying a formation keeps names and numbers (7 Nov: `PresetTests` 6/6; roles follow the slot)
+- [x] `Placement`: zone words for VoiceOver ("edge of the box", "left half-space") (7 Nov: `PlacementTests` 5/5; the on-screen labels are checked on Day 3)
 
 ### Day 3: Board editor
-- [ ] `BoardRenderer`: pitch per type, tokens per side (D-15), ball, selection ring
+- [ ] `BoardRenderer`: pitch per type, tokens per side (D-15), ball, selection ring (white chalk, UI-BRIEF §1)
+- [ ] Render check: 7- and 5-a-side markings match `Placement`'s zone boundaries; Nunito weights (heavy title vs body) visibly differ in a simulator screenshot
 - [ ] Canvas board with drag (snap off by default), tap to select, inspector sheet (name, number, role, side)
 - [ ] Formation picker; pitch picker
 - [ ] Steps strip: add (duplicates current), delete, reorder, duration

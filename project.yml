@@ -69,6 +69,8 @@ targets:
         CFBundleURLTypes:
           - CFBundleURLName: dev.chime.agmen.link
             CFBundleURLSchemes: [agmen]
+        # Floodlight Chalk type (D-44): SIL Open Font License, licences in Agmen/Design/Fonts/
+        UIAppFonts: [Nunito-Variable.ttf, Kalam-Regular.ttf]
         NSPhotoLibraryAddUsageDescription: Save exported videos and images of your tactics to Photos.
     entitlements:
       path: Agmen/Agmen.entitlements

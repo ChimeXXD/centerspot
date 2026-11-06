@@ -2,6 +2,27 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Day 1 finished, Day 2 core (Sat 7 Nov 2026)
+
+**Changed**
+- Design into code: `Agmen/Design/Tokens.swift` generated from the mockup CSS (`mockup/tokens_to_swift.py`), `RGBA` and WCAG `Contrast`, Nunito (variable) and Kalam bundled under OFL; UI-BRIEF §1–3 written. Lime and coral joined the palette as the defaults (D-53). Selection ring is white chalk so it shows on lime discs.
+- `Formation`, `Role`, `Presets` (bundled JSON); `Formation.apply` keeps names and numbers, roles follow the slot, extra slots get new players, the away side and ball stay.
+- `Placement`: zone words and VoiceOver labels ("Number 9, striker, edge of the box, step 4 of 5"; away players "Their number …" or "Ade, their player …").
+- Reference rounds closed: Chime chose the mockup as the baseline (D-50); custom icons and illustrations on hold (D-51); library name scrubbed from history and guarded (D-52).
+- Code review (medium) on the tokens: 8 fixes (single source for side colours, both pitch stripes in contrast tests, fonts checked by exact name, opaque-only contrast, rounding, FORMAT example).
+
+**Checked**
+- `TokenContrastTests` 7/7, `PresetTests` 6/6, `PlacementTests` 5/5 on iPhone 18 Pro iOS 27.0; review agent ran 103/103.
+- Mutation runs, each restored: black outline removed → 3 red; formation number matching removed → 2 red; edge-of-box removed → 3 red; named away player → red before the fix.
+- Verifier: 15/16, the gap fixed (named away players say their side). Design check still PASS after the white selection ring.
+- A gate run collided with the review's test run ("signal kill before establishing connection"); re-run alone it passed.
+
+**Not verified**
+- Nunito weights rendering on device (Day 3 screenshot); zones vs drawn 7/5-a-side markings (Day 3 render check).
+
+**Next**
+- Wire `TacticDocument` to `TacticFormat` (safe reader); export speed spike on the iPhone; then Day 3 board.
+
 ## Day 1: design references, direction pick, and the core (Fri 6 Nov 2026)
 
 **Changed**

@@ -63,8 +63,8 @@
         "pattern summary written"
       ],
       "verify": "grep -c '^| [0-9]' docs/design/REFERENCES.md",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "6-7 Nov 2026: docs/design/REFERENCES.md (36 picks + pattern summary), REFERENCES-ROUND-2.md (297), plus 2,433 tactics-app screenshots on the local pick board; Chime reviewed and chose the mockup instead (D-50)."
     },
     {
       "id": "D1-2",
@@ -76,8 +76,8 @@
         "pick logged as a decision"
       ],
       "verify": "test -f docs/design/direction-board/index.html",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "6 Nov 2026: docs/design/direction-board/index.html exists (3 directions + combined); pick logged as D-44, mockup baseline D-50."
     },
     {
       "id": "D1-3",
@@ -88,8 +88,8 @@
         "kit palette passes WCAG AA for numbers"
       ],
       "verify": "xcodebuild ... test (TokenContrastTests)",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "7 Nov 2026: UI-BRIEF \u00a71-3 written; Agmen/Design/Tokens.swift generated from mockup CSS; TokenContrastTests 7/7 pass on iPhone 18 Pro iOS 27.0 (kit numbers >= 4.5:1, rings and outlines >= 3:1 on both pitch stripes, UI text >= 4.5:1, fonts registered); mutation (black outline removed) -> 3 issues red, regenerated."
     },
     {
       "id": "D2-1",
@@ -147,8 +147,8 @@
         "22 roles"
       ],
       "verify": "PresetTests",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "7 Nov 2026: PresetTests 6/6 on iPhone 18 Pro iOS 27.0 (12 formations = 8 full + 2 seven + 2 five, 22 roles, valid slots; applying keeps ids, names and numbers; blank board gets 11; five-a-side switches pitch). Mutation: number matching removed -> 2 issues red; restored."
     },
     {
       "id": "D2-5",
@@ -161,7 +161,7 @@
       ],
       "verify": "PlacementTests; BoardAccessibilityUITests (4-3-3 labels, step suffix, adjustable nudge) on Day 3",
       "passes": false,
-      "evidence": ""
+      "evidence": "7 Nov 2026: PlacementTests 5/5 (12 zone cases, hero label 'Number 9, striker, edge of the box, step 4 of 5', away and named players). Mutation: edge-of-box removed -> 3 red. Still needs BoardAccessibilityUITests on Day 3, so passes stays false."
     },
     {
       "id": "D2-6",

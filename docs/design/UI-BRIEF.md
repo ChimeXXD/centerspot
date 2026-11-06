@@ -1,34 +1,34 @@
 # UI brief
 
-How each Agmen screen looks and behaves. **Draft, 6 Nov 2026.** §4–6 (screens, copy, states, test IDs) are ready to build from. §1–3 (direction, tokens, motion) are filled in on Day 1, after Chime picks a direction from `direction-board/` (D-12). Copy marked *new* can change at screen review.
+How each Agmen screen looks and behaves. §1–3 written 7 Nov 2026 from the chosen direction (D-44) and the approved mockup (D-50); §4–6 hold screens, copy, states and test IDs, with `MOCKUP-GAPS.md` listing what the mockup still has to cover. Copy marked *new* can change at screen review.
 
-## 1. Direction (Day 1)
+## 1. Direction: Floodlight Chalk (D-44, D-50)
 
-To be written from Chime's pick. Constraints any direction must meet:
+A night match on TV, explained at a chalkboard. Floodlight's palette (near-black chrome, a dark striped pitch, white chalk lines, one electric lime) with Chalk's type (rounded Nunito everywhere, handwritten Kalam for step notes). The mockup in `mockup/` is the baseline; `Agmen/Design/Tokens.swift` is the source of truth from here (D-12).
 
-1. **The pitch is the picture.** Chrome stays out of the way: one toolbar, one strip. The board fills the screen on iPhone.
-2. **Reads in a 9:16 video at a glance**: high contrast between pitch, tokens and arrows, big numbers, no thin hairlines that vanish after compression.
-3. **No club looks** (D-13): neutral kit palette, generic pitch.
-4. **Sides differ by shape** (D-15). Arrow kinds differ by line style.
-5. Works in light and dark, but the exported video has one fixed look (decide on Day 1: likely dark pitch, like a broadcast graphic).
+Rules every screen follows:
+1. **The pitch is the picture.** One nav bar, one context row, one strip, one toolbar. Nothing floats over the pitch while editing; actions for a selected player or step live in the context row under the pitch.
+2. **Reads in a 9:16 video at a glance:** dark pitch, chalk lines at 55% white, numbers in heavy Nunito, no hairlines under 1.4 pt at phone size.
+3. **In the interface, lime marks what's live:** the current step, the playing state, the primary button. It is also the home kit and the pass arrow (D-53), so the selected player is marked with a white chalk ring instead, which shows on every kit.
+4. **Sides differ by shape** (D-15): home filled discs, away rings with a dark centre. Arrow kinds differ by line: run solid, pass dashed, dribble wavy, press double chevron.
+5. **Handwriting is for the coach's voice only:** step notes, the launch tagline, first-run hints. Everything else is Nunito.
+6. **One fixed look for exports:** the same dark board, title band in Nunito, notes in Kalam, a small "Agmen" corner mark (D-38).
+7. **No club looks** (D-13); custom icons and illustrations are on hold (D-51).
 
-Questions for the direction board: grass stripes vs flat chalkboard vs dark broadcast; token style (flat disc, shirt glyph, ringed disc); type for numbers (rounded vs condensed sport); how the steps strip looks (numbered dots, mini thumbnails, film strip).
+## 2. Tokens (`Agmen/Design/Tokens.swift`)
 
-## 2. Tokens (`Design/Tokens.swift`, Day 1)
+Generated once from the mockup's CSS by `mockup/tokens_to_swift.py`; edit the Swift file from now on.
 
-To fill from the chosen direction:
+- **Colour:** background `#0B0F14`, surfaces `#151B23` / `#1E2630` / `#27313D`, text `#F2F5F7`, muted `#93A0AD`, accent lime `#C6FF3D` with ink `#0B0F14`, danger `#FF6B6B`; pitch stripes `#0F241B` / `#112A1F`, chalk white at 55%; arrows run white, pass lime, dribble `#FFD84A`, press coral.
+- **Kit palette** (palette keys used by `.tactic` files): `lime` (home default), `coral` (away default), `blue`, `red`, `orange`, `yellow`, `green`, `purple`, `black`, `white`, `sky`, `maroon` (D-53). Each has a fill and a number ink that pass WCAG AA (4.5:1); `black` and `maroon` get a light outline so they reach 3:1 on the pitch. Away rings draw the fill as the ring with a white number on a dark centre. Proven by `TokenContrastTests`.
+- **Type:** Nunito (variable) and Kalam Regular, bundled under SIL OFL (`Agmen/Design/Fonts/`). Large title 34/heavy, title 22/heavy, headline 17/bold, body 15/semibold, caption 12/semibold, note Kalam 18; all scale with Dynamic Type. Token numbers use heavy Nunito sized to the board, not Dynamic Type.
+- **Spacing** 4 · 8 · 12 · 16 · 24 · 32. **Radius** sheet 20, item 12, buttons and chips as capsules. **Touch targets** at least 44 pt (players get an invisible 44 pt hit area).
 
-- **Kit palette** (palette keys used by `.tactic` files): `blue`, `red`, `orange`, `yellow`, `green`, `purple`, `black`, `white`, `sky`, `maroon`. Each has a fill and a contrasting number ink that passes WCAG AA, and a ring variant for away sides.
-- **Pitch themes:** at least one for the app and one for export (may be the same).
-- **Arrow inks** per kind, plus the line-style rule (D-15).
-- **Spacing** 4 · 8 · 12 · 16 · 24 · 32. **Radius** sheet 20, strip item 12, chip capsule.
-- **Type:** text styles for Dynamic Type; one face for token numbers (tabular).
-- **Motion:** system motion first; custom moves each get one job (press, step change, play/pause, export progress).
+## 3. Motion
 
-## 3. Motion (Day 1)
-
-- Playback motion is the timeline (SPEC §3), not SwiftUI animations.
-- UI motion: selecting a token (lift + ring, 0.15 s), adding a step (the strip slides and the new step pulses once), play/pause morph, export progress. Reduce Motion: crossfades only.
+- Playback motion is the Timeline (SPEC §3), never SwiftUI animations.
+- UI motion uses one curve, `timingCurve(0.2, 0, 0, 1)`: select a player 150 ms (white chalk ring, slight lift), step change 220 ms, sheets 320 ms, toast 200 ms. Adding a step pulses the new chip once.
+- Reduce Motion: crossfades only, playback steps through with 0.3 s crossfades (rule 8); exports never change.
 
 ## 4. Screens
 

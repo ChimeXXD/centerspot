@@ -42,8 +42,8 @@ struct TacticDocument: FileDocument {
           "title": "Untitled tactic",
           "pitch": { "kind": "full", "style": "stripes" },
           "sides": [
-            { "id": "home", "name": "Us", "colour": "blue" },
-            { "id": "away", "name": "Them", "colour": "orange" }
+            { "id": "home", "name": "Us", "colour": "lime" },
+            { "id": "away", "name": "Them", "colour": "coral" }
           ],
           "tokens": [],
           "phases": [
