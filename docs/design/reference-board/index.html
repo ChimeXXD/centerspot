@@ -31,6 +31,7 @@
   main { padding: 18px 24px 80px; }
   main h2 { font-size: 20px; margin: 4px 0 14px; }
   main h2 small { color: var(--muted); font-weight: 500; font-size: 14px; }
+  .opinion { width: 100%; min-height: 64px; resize: vertical; margin: 0 0 16px; border-radius: 10px; border: 1px solid var(--surface-3); background: var(--surface); color: var(--text); padding: 10px 12px; font: inherit; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
   .card { position: relative; background: var(--surface); border-radius: 14px; padding: 6px 6px 8px; border: 3px solid transparent; }
   .card.like { border-color: var(--like); } .card.part { border-color: var(--part); } .card.avoid { border-color: var(--avoid); }
@@ -117,10 +118,8 @@
     <button id="v-close">Close <kbd>Esc</kbd></button>
   </div>
   <div class="panel">
-    <h3 class="like">WHAT I LIKE</h3>
-    <textarea id="likes" placeholder="e.g. the floating palette, how the selected tool is filled, the big numbers"></textarea>
-    <h3 class="avoid">WHAT I DON'T LIKE</h3>
-    <textarea id="dislikes" placeholder="e.g. too many buttons, the light background, the font"></textarea>
+    <h3>YOUR THOUGHTS ON THIS SCREEN</h3>
+    <textarea id="thoughts" placeholder="What you like or don't like about it, e.g. 'love the floating palette, but the light background is wrong for us'"></textarea>
     <h3>BOXES ON THIS SCREEN</h3>
     <div id="regions"></div>
   </div>
@@ -139,10 +138,15 @@ try { // carry over picks from the first board as likes
   old.forEach(id => { if (!state[id]) state[id] = { verdict: "like", regions: [], note: "" }; });
 } catch {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
-const entry = id => state[id] || (state[id] = { verdict: "", regions: [], likes: "", dislikes: "" });
-Object.values(state).forEach(e => { if (e.note && !e.likes) e.likes = e.note; delete e.note; });  // first board version had one note
+const entry = id => state[id] || (state[id] = { verdict: "", regions: [], thoughts: "" });
+// Earlier versions kept a note, or likes and dislikes, apart; fold them into one text.
+Object.entries(state).forEach(([k, e]) => { if (k === "_sections") return;
+  const parts = [e.thoughts, e.note, e.likes && `Like: ${e.likes}`, e.dislikes && `Don't like: ${e.dislikes}`].filter(Boolean);
+  e.thoughts = [...new Set(parts)].join("\n"); delete e.note; delete e.likes; delete e.dislikes; });
+state._sections = state._sections || {};
+save();  // keep the folded shape
 // "part" = liked in part: it has regions you like but no whole-screen verdict.
-const verdictOf = id => { const e = state[id]; if (!e) return ""; return e.verdict || (e.regions?.some(g => g.kind === "like") ? "part" : e.regions?.length ? "avoid" : ""); };
+const verdictOf = id => { const e = id === "_sections" ? null : state[id]; if (!e) return ""; return e.verdict || (e.regions?.some(g => g.kind === "like") ? "part" : e.regions?.length ? "avoid" : ""); };
 let section = "All", show = "All", current = -1, drawKind = null;
 
 function visible() {
@@ -165,7 +169,10 @@ function renderGrid() {
   if (!refs.length) { main.innerHTML = '<p class="empty">No images found in images/. Ask Claude to download them.</p>'; return; }
   main.innerHTML = surfaces.filter(s => list.some(r => r.surface === s)).map(s => {
     const xs = list.filter(r => r.surface === s);
-    return `<h2>${s} <small>${xs.length} screens</small></h2><div class="grid">${xs.map(r => {
+    const all = refs.filter(r => r.surface === s).length, op = (state._sections[s] || "").replace(/</g, "&lt;");
+    return `<h2>${s} <small>${xs.length} screens</small></h2>
+      <textarea class="opinion" data-section-opinion="${s}" placeholder="Your overall opinion on these ${all} ${s} references: what works across them, what to avoid, what's missing">${op}</textarea>
+      <div class="grid">${xs.map(r => {
       const v = verdictOf(r.id), regs = state[r.id]?.regions?.length || 0;
       return `<div class="card ${v}" data-id="${r.id}"><div class="shot" data-open="${r.id}"><img loading="lazy" src="${r.src}" alt="${r.app}">
         ${v ? `<span class="badge ${v}">${v === "like" ? "♥ Like" : v === "part" ? `♥ Part · ${regs}` : "✕ Avoid"}</span>` : ""}</div>
@@ -185,14 +192,14 @@ function closeViewer() { setDraw(null); viewer.classList.remove("open"); current
 function step(d) { const list = visible(); if (!list.length) return; current = (current + d + list.length) % list.length; setDraw(null); renderViewer(); }
 function renderViewer() {
   const list = visible(), r = list[current]; if (!r) return closeViewer();
-  const e = state[r.id] || { verdict: "", regions: [], likes: "", dislikes: "" }, v = verdictOf(r.id);
+  const e = state[r.id] || { verdict: "", regions: [], thoughts: "" }, v = verdictOf(r.id);
   document.getElementById("big").src = r.src;
   document.getElementById("info").innerHTML = `<b>#${r.n} ${r.app}</b><br><span style="color:var(--muted)">${r.surface} · ${current + 1} of ${list.length}${v ? ` · ${v === "part" ? "liked in part" : v === "like" ? "liked" : "avoided"}` : ""}</span>`;
   document.getElementById("v-like").className = e.verdict === "like" ? "on-like" : "";
   document.getElementById("v-avoid").className = e.verdict === "avoid" ? "on-avoid" : "";
   document.getElementById("v-draw-like").className = drawKind === "like" ? "on-draw" : "";
   document.getElementById("v-draw-avoid").className = drawKind === "avoid" ? "on-draw" : "";
-  for (const k of ["likes", "dislikes"]) { const t = document.getElementById(k); if (document.activeElement !== t) t.value = e[k] || ""; }
+  const t = document.getElementById("thoughts"); if (document.activeElement !== t) t.value = e.thoughts || "";
   const box = document.getElementById("regions"), focused = document.activeElement?.dataset?.regionNote;
   if (focused === undefined) box.innerHTML = (e.regions || []).length ? e.regions.map((g, i) => `<div class="reg"><b class="${g.kind}">${g.kind === "like" ? "Like" : "Avoid"} ${i + 1}</b>
     <input data-region-note="${i}" value="${(g.note || "").replace(/"/g, "&quot;")}" placeholder="What about this part?"></div>`).join("")
@@ -226,11 +233,15 @@ layer.addEventListener("click", e => {
   const rm = e.target.closest("[data-remove]"); if (!rm) return;
   const r = visible()[current]; entry(r.id).regions.splice(+rm.dataset.remove, 1); save(); render();
 });
-for (const k of ["likes", "dislikes"]) document.getElementById(k).addEventListener("input", e => { const r = visible()[current]; if (r) { entry(r.id)[k] = e.target.value.slice(0, 1000); save(); renderSide(); } });
+document.getElementById("thoughts").addEventListener("input", e => { const r = visible()[current]; if (r) { entry(r.id).thoughts = e.target.value.slice(0, 1000); save(); renderSide(); } });
 document.getElementById("regions").addEventListener("input", e => { const i = e.target.dataset.regionNote, r = visible()[current]; if (i !== undefined && r) { entry(r.id).regions[+i].note = e.target.value.slice(0, 280); save(); } });
 
 document.getElementById("nav").addEventListener("click", e => { const b = e.target.closest("[data-section]"); if (b) { section = b.dataset.section; render(); scrollTo(0, 0); } });
 document.getElementById("show").addEventListener("click", e => { const b = e.target.closest("[data-show]"); if (b) { show = b.dataset.show; render(); } });
+document.getElementById("main").addEventListener("input", e => {
+  const s = e.target.dataset.sectionOpinion; if (s === undefined) return;
+  state._sections[s] = e.target.value.slice(0, 2000); save(); renderSide();
+});
 document.getElementById("main").addEventListener("click", e => {
   const q = e.target.closest("[data-quick]"); if (q) return setVerdict(q.closest(".card").dataset.id, q.dataset.quick);
   const o = e.target.closest("[data-open]"); if (o) openViewer(o.dataset.open);
@@ -261,19 +272,20 @@ document.addEventListener("keydown", e => {
 
 // Export what Chime judged, for Claude to read.
 function picks() {
-  return refs.filter(r => verdictOf(r.id) || state[r.id]?.likes || state[r.id]?.dislikes).map(r => ({ n: r.n, id: r.id, app: r.app, surface: r.surface,
-    verdict: verdictOf(r.id) || "notes only", likes: state[r.id]?.likes || "", dislikes: state[r.id]?.dislikes || "", regions: state[r.id]?.regions || [] }));
+  return refs.filter(r => verdictOf(r.id) || state[r.id]?.thoughts).map(r => ({ n: r.n, id: r.id, app: r.app, surface: r.surface,
+    verdict: verdictOf(r.id) || "thoughts only", thoughts: state[r.id]?.thoughts || "", regions: state[r.id]?.regions || [] }));
 }
 function toast(t) { const el = document.getElementById("toast"); el.textContent = t; el.style.display = "block"; setTimeout(() => el.style.display = "none", 2600); }
 document.getElementById("download").onclick = () => {
-  const blob = new Blob([JSON.stringify({ saved: new Date().toISOString(), picks: picks() }, null, 2)], { type: "application/json" });
+  const sections = Object.fromEntries(Object.entries(state._sections).filter(([, v]) => v.trim()));
+  const blob = new Blob([JSON.stringify({ saved: new Date().toISOString(), sectionOpinions: sections, picks: picks() }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "agmen-picks.json"; a.click();
   toast("Saved agmen-picks.json to Downloads. Tell Claude it's there.");
 };
 document.getElementById("copy").onclick = async () => {
   const p = picks(), text = `My Agmen picks (${p.length}):\n` + surfaces.map(s => {
-    const xs = p.filter(x => x.surface === s); if (!xs.length) return "";
-    return `${s}:\n` + xs.map(x => `  #${x.n} ${x.app}: ${x.verdict}${x.regions.length ? ` (${x.regions.map((g, i) => `${g.kind} ${i + 1}: x ${Math.round(g.x * 100)}–${Math.round((g.x + g.w) * 100)}%, y ${Math.round(g.y * 100)}–${Math.round((g.y + g.h) * 100)}%${g.note ? ` "${g.note}"` : ""}`).join("; ")})` : ""}${x.likes ? `\n      likes: ${x.likes}` : ""}${x.dislikes ? `\n      doesn't like: ${x.dislikes}` : ""}`).join("\n");
+    const xs = p.filter(x => x.surface === s), op = (state._sections[s] || "").trim(); if (!xs.length && !op) return "";
+    return `${s}:\n` + (op ? `  Overall: ${op}\n` : "") + xs.map(x => `  #${x.n} ${x.app}: ${x.verdict}${x.regions.length ? ` (${x.regions.map((g, i) => `${g.kind} ${i + 1}: x ${Math.round(g.x * 100)}–${Math.round((g.x + g.w) * 100)}%, y ${Math.round(g.y * 100)}–${Math.round((g.y + g.h) * 100)}%${g.note ? ` "${g.note}"` : ""}`).join("; ")})` : ""}${x.thoughts ? `\n      thoughts: ${x.thoughts}` : ""}`).join("\n");
   }).filter(Boolean).join("\n");
   try { await navigator.clipboard.writeText(text); toast("Copied. Paste it in the chat."); } catch { toast("Copy failed. Use 'Save my picks file' instead."); }
 };
