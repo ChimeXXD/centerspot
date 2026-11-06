@@ -1,0 +1,42 @@
+{
+  "checks": [
+    {
+      "name": "build",
+      "run": "xcodegen generate --quiet && xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' -quiet build",
+      "when": [
+        "project.yml",
+        "Config/",
+        "Agmen/",
+        "presets/"
+      ],
+      "timeout": 900
+    },
+    {
+      "name": "build-ios26",
+      "run": "xcodegen generate --quiet && xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' -quiet build",
+      "fast": "echo 'iOS 26.5 iPad build runs in full before each commit (D-32)'",
+      "when": [
+        "project.yml",
+        "Config/",
+        "Agmen/",
+        "presets/"
+      ],
+      "timeout": 900
+    },
+    {
+      "name": "test",
+      "run": "xcodegen generate --quiet && xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' -quiet test",
+      "when": [
+        "project.yml",
+        "Config/",
+        "Agmen/",
+        "AgmenTests/",
+        "presets/",
+        "examples/"
+      ],
+      "timeout": 1200
+    }
+  ],
+  "concurrency": 1,
+  "maxRounds": 5
+}

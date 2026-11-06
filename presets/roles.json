@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "note": "Generic football roles in our own words (D-13, D-14). Not copied from any game.",
+  "roles": [
+    {
+      "id": "goalkeeper",
+      "short": "GK",
+      "name": "Goalkeeper",
+      "line": "gk"
+    },
+    {
+      "id": "sweeper-keeper",
+      "short": "SK",
+      "name": "Sweeper keeper",
+      "line": "gk"
+    },
+    {
+      "id": "centre-back",
+      "short": "CB",
+      "name": "Centre-back",
+      "line": "def"
+    },
+    {
+      "id": "ball-playing-centre-back",
+      "short": "BCB",
+      "name": "Ball-playing centre-back",
+      "line": "def"
+    },
+    {
+      "id": "full-back",
+      "short": "FB",
+      "name": "Full-back",
+      "line": "def"
+    },
+    {
+      "id": "inverted-full-back",
+      "short": "IFB",
+      "name": "Inverted full-back",
+      "line": "def"
+    },
+    {
+      "id": "wing-back",
+      "short": "WB",
+      "name": "Wing-back",
+      "line": "def"
+    },
+    {
+      "id": "holding-midfielder",
+      "short": "HM",
+      "name": "Holding midfielder",
+      "line": "mid"
+    },
+    {
+      "id": "deep-playmaker",
+      "short": "DP",
+      "name": "Deep playmaker",
+      "line": "mid"
+    },
+    {
+      "id": "box-to-box",
+      "short": "BB",
+      "name": "Box-to-box midfielder",
+      "line": "mid"
+    },
+    {
+      "id": "central-midfielder",
+      "short": "CM",
+      "name": "Central midfielder",
+      "line": "mid"
+    },
+    {
+      "id": "advanced-playmaker",
+      "short": "AP",
+      "name": "Advanced playmaker",
+      "line": "mid"
+    },
+    {
+      "id": "wide-midfielder",
+      "short": "WM",
+      "name": "Wide midfielder",
+      "line": "mid"
+    },
+    {
+      "id": "attacking-midfielder",
+      "short": "AM",
+      "name": "Attacking midfielder",
+      "line": "att"
+    },
+    {
+      "id": "shadow-striker",
+      "short": "SS",
+      "name": "Shadow striker",
+      "line": "att"
+    },
+    {
+      "id": "winger",
+      "short": "W",
+      "name": "Winger",
+      "line": "att"
+    },
+    {
+      "id": "inside-forward",
+      "short": "IF",
+      "name": "Inside forward",
+      "line": "att"
+    },
+    {
+      "id": "striker",
+      "short": "ST",
+      "name": "Striker",
+      "line": "att"
+    },
+    {
+      "id": "target-forward",
+      "short": "TF",
+      "name": "Target forward",
+      "line": "att"
+    },
+    {
+      "id": "false-nine",
+      "short": "F9",
+      "name": "False nine",
+      "line": "att"
+    },
+    {
+      "id": "pressing-forward",
+      "short": "PF",
+      "name": "Pressing forward",
+      "line": "att"
+    },
+    {
+      "id": "free-role",
+      "short": "FR",
+      "name": "Free role",
+      "line": "att"
+    }
+  ]
+}

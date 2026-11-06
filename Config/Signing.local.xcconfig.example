@@ -1,0 +1,4 @@
+// Copy to Signing.local.xcconfig (git-ignored). Never commit a Team ID.
+// Xcode > Settings > Accounts > your Apple ID > Personal Team shows the ID.
+DEVELOPMENT_TEAM = XXXXXXXXXX
+BUNDLE_PREFIX = dev.chime

@@ -1,0 +1,397 @@
+{
+  "features": [
+    {
+      "id": "D0-1",
+      "day": 0,
+      "priority": "must",
+      "title": "Repo scaffold: git, private GitHub repo, first commit of the docs",
+      "criteria": [
+        "first commit exists",
+        "remote is private"
+      ],
+      "verify": "git log --oneline | head -1; gh repo view --json visibility",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D0-2",
+      "day": 0,
+      "priority": "must",
+      "title": "project.yml generates a universal DocumentGroup app and a test target",
+      "criteria": [
+        "xcodegen generate succeeds",
+        "app builds for iPhone and iPad simulators",
+        "one Swift Testing test passes"
+      ],
+      "verify": "xcodegen generate && xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' test",
+      "passes": true,
+      "evidence": "6 Nov 2026: xcodegen generate OK; xcodebuild -scheme Agmen iPhone 18 Pro OS=27.0 test -> 'Test run with 3 tests in 1 suite passed', ** TEST SUCCEEDED **; iPad Pro 13-inch (M5) OS=26.5 build -> ** BUILD SUCCEEDED **; mutation (schemaVersion 1->2) turned newDocumentIsVersionOneTactic red, restored."
+    },
+    {
+      "id": "D0-3",
+      "day": 0,
+      "priority": "must",
+      "title": "App launches on Chime's iPhone with the free Personal Team",
+      "criteria": [
+        "installed and launched on the device"
+      ],
+      "verify": "xcrun devicectl device info apps",
+      "passes": false,
+      "evidence": "6 Nov 2026: signed with the free Personal Team and installed (xcrun devicectl device install app -> bundleID dev.chime.agmen); profile expires 2026-11-13T20:30:57Z. Launch not yet done (needs Chime's go-ahead), so passes stays false."
+    },
+    {
+      "id": "D0-4",
+      "day": 0,
+      "priority": "after-day-7",
+      "title": "agmen:// opens the app (after Day 7, D-36)",
+      "criteria": [
+        "a link tapped in Messages or Notes opens the app",
+        "whether WhatsApp makes the link tappable is recorded (O-6)",
+        "a QR code with the link opens the app from the Camera app (Day 6)"
+      ],
+      "verify": "manual, on the phone",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D1-1",
+      "day": 1,
+      "priority": "must",
+      "title": "References collected and summarised",
+      "criteria": [
+        "30+ picks noted in docs/design/REFERENCES.md",
+        "pattern summary written"
+      ],
+      "verify": "grep -c '^| [0-9]' docs/design/REFERENCES.md",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D1-2",
+      "day": 1,
+      "priority": "must",
+      "title": "Direction board with three directions; Chime picks one",
+      "criteria": [
+        "docs/design/direction-board/index.html exists",
+        "pick logged as a decision"
+      ],
+      "verify": "test -f docs/design/direction-board/index.html",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D1-3",
+      "day": 1,
+      "priority": "must",
+      "title": "UI brief \u00a71\u20133 filled and Design/Tokens.swift added",
+      "criteria": [
+        "kit palette passes WCAG AA for numbers"
+      ],
+      "verify": "xcodebuild ... test (TokenContrastTests)",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D2-1",
+      "day": 2,
+      "priority": "must",
+      "title": "Model types and .tactic Codable match docs/FORMAT.md",
+      "criteria": [
+        "examples and fixtures round trip losslessly",
+        "an empty board (0 tokens) round trips",
+        "a 5-step hero fixture and an 11-v-11 6-step full fixture exist"
+      ],
+      "verify": "FormatRoundTripTests",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D2-2",
+      "day": 2,
+      "priority": "must",
+      "title": "Import validation",
+      "criteria": [
+        "one case per row of the FORMAT rules table",
+        "refuse rows give the generic or newer-version error, no crash",
+        "repair rows clamp, truncate or drop as written",
+        "runs anchored; run on the last step dropped"
+      ],
+      "verify": "ImportValidationTests",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D2-3",
+      "day": 2,
+      "priority": "must",
+      "title": "Timeline engine is pure and correct",
+      "criteria": [
+        "t=0 equals step 1",
+        "end equals last step",
+        "mid-move matches hand-computed easing within 0.001",
+        "runs followed by arc length",
+        "two calls with the same input are equal",
+        "mutation run: breaking the easing turns the tests red"
+      ],
+      "verify": "TimelineTests",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D2-4",
+      "day": 2,
+      "priority": "must",
+      "title": "Presets load; applying a formation keeps names and numbers",
+      "criteria": [
+        "12 formations",
+        "22 roles"
+      ],
+      "verify": "PresetTests",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D2-5",
+      "day": 2,
+      "priority": "must",
+      "title": "Placement: zone words for VoiceOver labels",
+      "criteria": [
+        "thirds, channels and named areas from SPEC 8",
+        "label reads 'Number 9, striker, edge of the box'"
+      ],
+      "verify": "PlacementTests; BoardAccessibilityUITests (4-3-3 labels, step suffix, adjustable nudge) on Day 3",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D2-6",
+      "day": 2,
+      "priority": "should",
+      "title": "Export spike: 450 pitch frames at 1080x1920 on the iPhone 14 Pro",
+      "criteria": [
+        "time and size logged in PROGRESS.md",
+        "H.264 bitrate set explicitly"
+      ],
+      "verify": "manual, timed on the phone; numbers in PROGRESS.md",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D3-1",
+      "day": 3,
+      "priority": "must",
+      "title": "Board editor: renderer, drag, select, inspector, formation and pitch pickers",
+      "criteria": [
+        "drag clamps to the pitch; inspector edits name, number, role, side",
+        "formation and pitch pickers apply",
+        "Chime approves the screen",
+        "baseline in fidelity/refs/"
+      ],
+      "verify": "BoardEditorTests; screenshot review",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D3-2",
+      "day": 3,
+      "priority": "must",
+      "title": "Steps strip: add, duplicate, delete, reorder, duration",
+      "criteria": [
+        "add, delete, reorder, duration; every edit undoes and redoes",
+        "5-step move built by hand in under 60 s on the phone",
+        "first move from New tactic to share sheet in under 2 minutes"
+      ],
+      "verify": "StepEditingTests; manual, timed on the phone",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D4-1",
+      "day": 4,
+      "priority": "must",
+      "title": "Playback with scrubber and Reduce Motion step-through",
+      "criteria": [
+        "smooth on the phone"
+      ],
+      "verify": "manual, on the phone",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D4-2",
+      "day": 4,
+      "priority": "should",
+      "title": "Draw mode: stroke becomes a run the token follows",
+      "criteria": [
+        "toggle and finger on the iPhone 14 Pro",
+        "Pencil on the borrowed iPad (D-26)",
+        "at most 200 points per run"
+      ],
+      "verify": "PathSimplifierTests + manual",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D4-3",
+      "day": 4,
+      "priority": "must",
+      "title": "Render test: screen frame matches export frame at the same t (D-24 tolerance)",
+      "criteria": [
+        "at least 99.5% of pixels within 2/255 per channel at equal size (D-24)",
+        "screen side captured from the real board view with ImageRenderer"
+      ],
+      "verify": "RendererParityTests",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D4-4",
+      "day": 4,
+      "priority": "should",
+      "title": "Borrow session on the brother's iPad (D-26)",
+      "criteria": [
+        "app installed with the free Personal Team",
+        "Pencil draws a run, finger moves tokens"
+      ],
+      "verify": "manual, on the iPad; xcrun devicectl device info apps",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D5-1",
+      "day": 5,
+      "priority": "must",
+      "title": "MP4 export of the hero fixture on the phone",
+      "criteria": [
+        "exports in under 10 s on the iPhone 14 Pro",
+        "plays in WhatsApp"
+      ],
+      "verify": "manual, timed; numbers logged in PROGRESS.md",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D5-3",
+      "day": 5,
+      "priority": "must",
+      "title": "Exported video checked automatically",
+      "criteria": [
+        "H.264, 1080x1920, 30 fps",
+        "30 x (0.5 + timeline duration + 1.0) frames, +-1",
+        "size <= 8 MB x length / 15 s",
+        "exporter has no Reduce Motion input; two exports decode to identical frames"
+      ],
+      "verify": "VideoExportTests (reads the file back with AVFoundation)",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D5-4",
+      "day": 5,
+      "priority": "must",
+      "title": "Export sheet: estimate, progress, cancel, size before sharing",
+      "criteria": [
+        "estimated size and length shown before export",
+        "progress 'Rendering n of N frames'",
+        "Cancel stops and deletes the temp file",
+        "actual size shown before the share sheet"
+      ],
+      "verify": "ExportFlowUITests; VideoExporterTests (cancel)",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D5-2",
+      "day": 5,
+      "priority": "must",
+      "title": "PNG export of the current step",
+      "criteria": [
+        "pixel width = 2 x the board's on-screen width in points"
+      ],
+      "verify": "ImageExportTests",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D6-1",
+      "day": 6,
+      "priority": "must",
+      "title": "Open and save .tactic via Files and AirDrop",
+      "criteria": [
+        "exported UTType routes files to the app"
+      ],
+      "verify": "manual, on the phone",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D6-2",
+      "day": 6,
+      "priority": "after-day-7",
+      "title": "Link and QR share and import (after Day 7, D-36)",
+      "criteria": [
+        "round trip of every example",
+        "payload is raw DEFLATE: decodes with Python zlib.decompress(data, -15) (D-25)",
+        "too-long link falls back to the file",
+        "hostile links refused: wrong prefix, bad base64, corrupt stream, bomb stops at 256 KB",
+        "a link opens as a new untitled document with exactly that tactic"
+      ],
+      "verify": "LinkCodecTests; LinkOpenUITests; Python one-liner from FORMAT on one fixture link",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D6-3",
+      "day": 6,
+      "priority": "must",
+      "title": "Hardening: importer fuzz tests, VoiceOver labels, CI green",
+      "criteria": [
+        "no crash on hostile files",
+        "every control has a VoiceOver label",
+        "sheets lay out at AX5 Dynamic Type"
+      ],
+      "verify": "FuzzImportTests; ControlLabelUITests; AX5 screenshots reviewed by Chime; gh run list --limit 1",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D6-4",
+      "day": 6,
+      "priority": "should",
+      "title": "Borrow session on the brother's iPad: beta install, file open, VoiceOver",
+      "criteria": [
+        "installed",
+        "a .tactic opens from Files",
+        "VoiceOver pass"
+      ],
+      "verify": "manual, on the iPad",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D7-1",
+      "day": 7,
+      "priority": "must",
+      "title": "Portfolio: README, in-app demo video, case study, repo public",
+      "criteria": [
+        "repo public",
+        "README has the clip and real numbers"
+      ],
+      "verify": "gh repo view --json visibility",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "D7-2",
+      "day": 7,
+      "priority": "should",
+      "title": "Borrow session on the brother's iPad: film the Pencil part of the demo",
+      "criteria": [
+        "Pencil clip recorded at real speed"
+      ],
+      "verify": "manual; the clip file exists",
+      "passes": false,
+      "evidence": ""
+    }
+  ]
+}

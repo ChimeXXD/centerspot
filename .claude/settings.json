@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodegen generate)",
+      "Bash(xcodegen generate *)",
+      "Bash(xcodebuild -scheme Agmen *)",
+      "Bash(xcrun simctl list *)",
+      "Bash(xcrun simctl bootstatus *)",
+      "Bash(xcrun simctl shutdown *)",
+      "Bash(xcrun simctl io * screenshot *)",
+      "Bash(xcrun devicectl device info *)",
+      "Bash(xcrun devicectl device install app *)",
+      "Bash(sips -g *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push -q origin main)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)"
+    ]
+  }
+}
