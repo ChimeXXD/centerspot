@@ -6,51 +6,48 @@ extension UTType {
     static let tactic = UTType(exportedAs: "dev.chime.agmen.tactic")
 }
 
-/// Day 0 placeholder: keeps the file's bytes as they are. Day 2 replaces `data` with the validated `Tactic` model.
+/// A `.tactic` file. Opening runs every rule in docs/FORMAT.md through `TacticFormat`, so a bad file shows a plain
+/// error and never crashes (CLAUDE.md rule 4); saving writes clean v1 JSON.
 struct TacticDocument: FileDocument {
     static let readableContentTypes: [UTType] = [.tactic]
 
-    /// Files over 256 KB are refused (CLAUDE.md rule 4, docs/FORMAT.md).
-    static let maxFileSize = TacticFormat.maxByteCount
+    var tactic: Tactic
 
-    var data: Data
+    init() {
+        tactic = Self.blank()
+    }
 
-    init(data: Data = TacticDocument.emptyTactic()) {
-        self.data = data
+    init(data: Data) throws(TacticFormatError) {
+        tactic = try TacticFormat.decode(data)
     }
 
     init(configuration: ReadConfiguration) throws {
-        guard let data = configuration.file.regularFileContents else {
-            throw CocoaError(.fileReadCorruptFile)
+        // Refuse an oversized file before reading it into memory, when the system tells us its size.
+        if let size = configuration.file.fileAttributes[FileAttributeKey.size.rawValue] as? Int, size > TacticFormat.maxByteCount {
+            throw TacticFormatError.unreadable
         }
-        guard data.count <= Self.maxFileSize else {
-            throw CocoaError(.fileReadTooLarge)
-        }
-        self.data = data
+        guard let data = configuration.file.regularFileContents else { throw TacticFormatError.unreadable }
+        try self.init(data: data)
+    }
+
+    func encoded() throws -> Data {
+        try TacticFormat.encode(tactic)
     }
 
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        FileWrapper(regularFileWithContents: data)
+        FileWrapper(regularFileWithContents: try encoded())
     }
 
-    /// A blank full-pitch tactic: two sides, no tokens, one phase with one step (valid under D-27).
-    static func emptyTactic(id: UUID = UUID()) -> Data {
-        Data("""
-        {
-          "schemaVersion": 1,
-          "id": "\(id.uuidString)",
-          "title": "Untitled tactic",
-          "pitch": { "kind": "full", "style": "stripes" },
-          "sides": [
-            { "id": "home", "name": "Us", "colour": "lime" },
-            { "id": "away", "name": "Them", "colour": "coral" }
-          ],
-          "tokens": [],
-          "phases": [
-            { "id": "main", "name": "Main", "steps": [ { "id": "s1", "duration": 1.2, "positions": {} } ] }
-          ],
-          "app": { "createdWith": "Agmen 0.1.0" }
-        }
-        """.utf8)
+    /// A blank full-pitch tactic: lime and coral sides (D-53), no tokens, one phase with one step (valid under D-27).
+    static func blank(id: UUID = UUID()) -> Tactic {
+        Tactic(
+            id: id.uuidString,
+            title: "Untitled tactic",
+            pitch: Pitch(kind: .full, style: .stripes),
+            sides: [Side(id: .home, name: "Us", colour: .lime), Side(id: .away, name: "Them", colour: .coral)],
+            tokens: [],
+            phases: [Phase(id: .main, name: "Main", steps: [Step(id: "s1")])],
+            app: Tactic.AppInfo(createdWith: "Agmen 0.1.0")
+        )
     }
 }

@@ -20,8 +20,10 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 **Not verified**
 - Nunito weights rendering on device (Day 3 screenshot); zones vs drawn 7/5-a-side markings (Day 3 render check).
 
+- Save and open now go through the safe reader: `TacticDocument` holds a validated `Tactic`, refuses oversized files before reading when the size is known, and writes clean JSON. `TacticDocumentTests` 6/6; mutation (bypass the reader) → 3 red, restored. Old `NewDocumentTests` now read the saved form instead of raw bytes (same checks).
+
 **Next**
-- Wire `TacticDocument` to `TacticFormat` (safe reader); export speed spike on the iPhone; then Day 3 board.
+- Export speed spike on the iPhone (D2-6); then Day 3 board.
 
 ## Day 1: design references, direction pick, and the core (Fri 6 Nov 2026)
 

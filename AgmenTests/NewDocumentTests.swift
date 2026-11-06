@@ -6,7 +6,7 @@ import Testing
 struct NewDocumentTests {
     @Test func newDocumentIsVersionOneTactic() throws {
         let document = TacticDocument()
-        let object = try #require(JSONSerialization.jsonObject(with: document.data) as? [String: Any])
+        let object = try #require(JSONSerialization.jsonObject(with: document.encoded()) as? [String: Any])
 
         #expect(object["schemaVersion"] as? Int == 1)
         let sides = try #require(object["sides"] as? [[String: Any]])
@@ -20,8 +20,8 @@ struct NewDocumentTests {
     }
 
     @Test func newDocumentsHaveDistinctIDs() throws {
-        let first = try #require(JSONSerialization.jsonObject(with: TacticDocument().data) as? [String: Any])
-        let second = try #require(JSONSerialization.jsonObject(with: TacticDocument().data) as? [String: Any])
+        let first = try #require(JSONSerialization.jsonObject(with: TacticDocument().encoded()) as? [String: Any])
+        let second = try #require(JSONSerialization.jsonObject(with: TacticDocument().encoded()) as? [String: Any])
         #expect(first["id"] as? String != second["id"] as? String)
     }
 

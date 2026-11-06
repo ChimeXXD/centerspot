@@ -4,11 +4,13 @@ import SwiftUI
 struct BoardPlaceholderView: View {
     let document: TacticDocument
 
+    private var stepCount: Int { document.tactic.phases.reduce(0) { $0 + $1.steps.count } }
+
     var body: some View {
         ContentUnavailableView(
             "Agmen",
             systemImage: "sportscourt",
-            description: Text("The board arrives on Day 3. This tactic is \(document.data.count) bytes.")
+            description: Text("The board arrives on Day 3. \(document.tactic.title) has ^[\(document.tactic.tokens.count) token](inflect: true) and ^[\(stepCount) step](inflect: true).")
         )
     }
 }

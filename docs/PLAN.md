@@ -92,7 +92,7 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [ ] Measure on the phone: time and size for 5 and 10 steps; log real numbers in PROGRESS.md
 
 ### Day 6: Share and harden
-- [ ] `TacticDocument` with the exported UTType; open from Files and AirDrop
+- [ ] `TacticDocument` with the exported UTType; open from Files and AirDrop (7 Nov: the document now reads and writes through `TacticFormat`; `TacticDocumentTests` 6/6; on-device open from Files and AirDrop still to check)
 - [ ] Fuzz the importer with malformed, huge and hostile files
 - [ ] VoiceOver pass; Dynamic Type in sheets
 - [ ] CI green; beta build on Chime's iPhone

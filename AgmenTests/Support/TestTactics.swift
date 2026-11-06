@@ -89,3 +89,26 @@ enum TestTactics {
         }
     }
 }
+
+extension TacticDocument {
+    /// The blank tactic as written in docs/FORMAT.md's shape; a test checks it decodes to `blank(id:)`.
+    static func emptyTactic(id: UUID = UUID()) -> Data {
+        Data("""
+        {
+          "schemaVersion": 1,
+          "id": "\(id.uuidString)",
+          "title": "Untitled tactic",
+          "pitch": { "kind": "full", "style": "stripes" },
+          "sides": [
+            { "id": "home", "name": "Us", "colour": "lime" },
+            { "id": "away", "name": "Them", "colour": "coral" }
+          ],
+          "tokens": [],
+          "phases": [
+            { "id": "main", "name": "Main", "steps": [ { "id": "s1", "duration": 1.2, "positions": {} } ] }
+          ],
+          "app": { "createdWith": "Agmen 0.1.0" }
+        }
+        """.utf8)
+    }
+}
