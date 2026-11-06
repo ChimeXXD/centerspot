@@ -59,13 +59,13 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [ ] **Chime picks a direction** (log it as a decision)
 - [ ] Fill UI brief §1–3 (direction, tokens, type, motion); add `Design/Tokens.swift`
 - [ ] Draft app icon
-- [ ] Core lane (D-23): start the Day 2 list, tests first, while Chime looks at the direction board
+- [x] Core lane (D-23): model, format validation and timeline done on Day 1 (84 tests)
 
 ### Day 2: Model, format and timeline (tests first; starts on Day 1 as the core lane, D-23)
-- [ ] `Model/` types per `SPEC.md` §2; `Codable` matches `FORMAT.md`
-- [ ] Round trip: `examples/*.tactic` decode → encode → decode is equal
-- [ ] Import validation: size cap, `schemaVersion`, clamping, count limits, unknown keys ignored
-- [ ] `Timeline.state(at:in:)`: holds, easing, straight moves, path following, end of tactic
+- [x] `Model/` types per `SPEC.md` §2 except the `Formation` and `Role` presets (D2-4); `Codable` matches `FORMAT.md` (6 Nov, core lane: 84 tests pass)
+- [x] Round trip: `examples/*.tactic` decode → encode → decode is equal (6 Nov, core lane: 84 tests pass)
+- [x] Import validation: size cap, `schemaVersion`, clamping, count limits, unknown keys ignored (6 Nov, core lane: 84 tests pass)
+- [x] `Timeline.state(at:in:)`: holds, easing, straight moves, path following, end of tactic (6 Nov, core lane: 84 tests pass)
 - [ ] Presets: load `formations.json` and `roles.json`; applying a formation keeps names and numbers
 - [ ] `Placement`: zone words for VoiceOver ("edge of the box", "left half-space")
 

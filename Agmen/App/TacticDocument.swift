@@ -11,7 +11,7 @@ struct TacticDocument: FileDocument {
     static let readableContentTypes: [UTType] = [.tactic]
 
     /// Files over 256 KB are refused (CLAUDE.md rule 4, docs/FORMAT.md).
-    static let maxFileSize = 256 * 1024
+    static let maxFileSize = TacticFormat.maxByteCount
 
     var data: Data
 

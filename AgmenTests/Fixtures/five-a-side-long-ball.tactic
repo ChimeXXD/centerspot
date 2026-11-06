@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "id": "0B6D3E9A-1C2F-4A7B-9E10-5F3C2D1A0B99",
+  "title": "Five-a-side: long ball to 9",
+  "pitch": {
+    "kind": "fiveASide",
+    "style": "plain"
+  },
+  "sides": [
+    {
+      "id": "home",
+      "name": "Us",
+      "colour": "green"
+    },
+    {
+      "id": "away",
+      "name": "Them",
+      "colour": "white"
+    }
+  ],
+  "tokens": [
+    {
+      "id": "h1",
+      "kind": "player",
+      "side": "home",
+      "number": 1,
+      "roleID": "goalkeeper"
+    },
+    {
+      "id": "h4",
+      "kind": "player",
+      "side": "home",
+      "number": 4,
+      "roleID": "centre-back"
+    },
+    {
+      "id": "h7",
+      "kind": "player",
+      "side": "home",
+      "number": 7,
+      "roleID": "wide-midfielder"
+    },
+    {
+      "id": "h8",
+      "kind": "player",
+      "side": "home",
+      "number": 8,
+      "roleID": "wide-midfielder"
+    },
+    {
+      "id": "h9",
+      "kind": "player",
+      "side": "home",
+      "number": 9,
+      "roleID": "striker"
+    },
+    {
+      "id": "ball",
+      "kind": "ball"
+    }
+  ],
+  "phases": [
+    {
+      "id": "main",
+      "name": "Main",
+      "steps": [
+        {
+          "id": "s1",
+          "duration": 1.2,
+          "positions": {
+            "h1": {
+              "x": 0.5,
+              "y": 0.06
+            },
+            "h4": {
+              "x": 0.5,
+              "y": 0.28
+            },
+            "h7": {
+              "x": 0.22,
+              "y": 0.48
+            },
+            "h8": {
+              "x": 0.78,
+              "y": 0.48
+            },
+            "h9": {
+              "x": 0.5,
+              "y": 0.68
+            },
+            "ball": {
+              "x": 0.5,
+              "y": 0.3
+            }
+          },
+          "arrows": [
+            {
+              "kind": "pass",
+              "points": [
+                {
+                  "x": 0.5,
+                  "y": 0.3
+                },
+                {
+                  "x": 0.62,
+                  "y": 0.8
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "s2",
+          "duration": 1.2,
+          "positions": {
+            "h1": {
+              "x": 0.5,
+              "y": 0.06
+            },
+            "h4": {
+              "x": 0.5,
+              "y": 0.4
+            },
+            "h7": {
+              "x": 0.22,
+              "y": 0.48
+            },
+            "h8": {
+              "x": 0.78,
+              "y": 0.48
+            },
+            "h9": {
+              "x": 0.62,
+              "y": 0.8
+            },
+            "ball": {
+              "x": 0.62,
+              "y": 0.8
+            }
+          },
+          "note": "9 spins and finishes"
+        }
+      ]
+    }
+  ],
+  "app": {
+    "createdWith": "hand-written example"
+  }
+}

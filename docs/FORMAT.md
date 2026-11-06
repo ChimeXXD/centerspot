@@ -50,7 +50,7 @@ Two outcomes (D-27): **refuse** means the whole file is rejected with a plain er
 | `pitch.kind` | `full`, `sevenASide`, `fiveASide`. | Refuse |
 | `sides` | Exactly two, ids `home` and `away`. `colour` is a palette key (`UI-BRIEF.md` §2). | Wrong count or ids: refuse. Unknown colour: repair (default) |
 | `tokens` | 0…30 (an empty board is valid). Unique ids. `kind`: `player` (needs `side`), `ball`, `cone`, `marker`. | Over 30, duplicate id, unknown kind, player without side: refuse |
-| `tokens[].number` | 0…99. | Repair (clamp) |
+| `tokens[].number` | An integer, 0…99. | Out of range: repair (clamp). Not an integer (7.5, 1e20): refuse (D-45) |
 | `tokens[].name` | ≤ 24 characters. | Repair (truncate) |
 | `tokens[].roleID` | From `roles.json`, or omitted. | Unknown: repair (drop) |
 | `phases` | 1…2, unique ids from `main`, `inPossession`, `outOfPossession` (D-20). v1 UI edits the first. | Refuse |
@@ -61,6 +61,10 @@ Two outcomes (D-27): **refuse** means the whole file is rejected with a plain er
 | `steps[].arrows` | ≤ 30 per step, 2…200 points each; `kind`: `run`, `pass`, `dribble`, `press`. | Over the limits or unknown kind: refuse |
 | `note` | ≤ 140 characters. | Repair (truncate) |
 | Unknown keys | Ignored on read, dropped on write. | Repair |
+
+## Timing notes (D-45)
+
+The timeline measures a run's length in metres on the pitch (x scaled by pitch width, y by length), so a runner keeps a steady speed round a bend. Arrows fade in over the first 0.2 s of their step's hold and fade out over the last 0.2 s of the move to the next step; the last step's arrows stay.
 
 ## Links and QR (D-10, D-25; built after Day 7, D-36)
 

@@ -78,8 +78,10 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - AgmenTests
-      - path: examples
+      - path: AgmenTests
+        excludes: ["Fixtures"]
+      # .tactic fixtures, copied flat into the test bundle (start from examples/, D-29)
+      - path: AgmenTests/Fixtures
         buildPhase: resources
     dependencies:
       - target: Agmen

@@ -102,8 +102,8 @@
         "a 5-step hero fixture and an 11-v-11 6-step full fixture exist"
       ],
       "verify": "FormatRoundTripTests",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "6 Nov 2026: xcodebuild -scheme Agmen iPhone 18 Pro OS=27.0 test -> 84 tests pass (code review agent run after fixes); iPad Pro 13-inch (M5) OS=26.5 build succeeds. FormatRoundTripTests: 3 fixtures + empty board round-trip; fixtureMatchesItsExample keeps fixtures equal to examples/."
     },
     {
       "id": "D2-2",
@@ -117,8 +117,8 @@
         "runs anchored; run on the last step dropped"
       ],
       "verify": "ImportValidationTests",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "6 Nov 2026: xcodebuild -scheme Agmen iPhone 18 Pro OS=27.0 test -> 84 tests pass (code review agent run after fixes); iPad Pro 13-inch (M5) OS=26.5 build succeeds. ImportValidationTests (59 incl. repairs): one case per FORMAT rules row; mutation (anchoring removed) -> 2 red; mutation (coordinate clamp removed) -> outOfRangeCoordinatesAreClamped red with 3 issues; both restored."
     },
     {
       "id": "D2-3",
@@ -134,8 +134,8 @@
         "mutation run: breaking the easing turns the tests red"
       ],
       "verify": "TimelineTests",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "6 Nov 2026: xcodebuild -scheme Agmen iPhone 18 Pro OS=27.0 test -> 84 tests pass (code review agent run after fixes); iPad Pro 13-inch (M5) OS=26.5 build succeeds. TimelineTests (15): t=0, end, easing within 0.001, arc-length runs, same input same output; mutation (linear easing) -> 5 issues red; restored."
     },
     {
       "id": "D2-4",

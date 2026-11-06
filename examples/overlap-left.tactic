@@ -322,7 +322,22 @@
               ]
             }
           },
-          "note": "3 starts the overlap"
+          "note": "11 drives inside; 3 starts the overlap",
+          "arrows": [
+            {
+              "kind": "dribble",
+              "points": [
+                {
+                  "x": 0.15,
+                  "y": 0.66
+                },
+                {
+                  "x": 0.24,
+                  "y": 0.7
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "s3",
@@ -373,8 +388,8 @@
               "y": 0.66
             },
             "ball": {
-              "x": 0.15,
-              "y": 0.66
+              "x": 0.24,
+              "y": 0.7
             },
             "a1": {
               "x": 0.5,
@@ -399,20 +414,33 @@
           },
           "arrows": [
             {
-              "kind": "dribble",
+              "kind": "pass",
               "points": [
-                {
-                  "x": 0.15,
-                  "y": 0.66
-                },
                 {
                   "x": 0.24,
                   "y": 0.7
+                },
+                {
+                  "x": 0.08,
+                  "y": 0.78
+                }
+              ]
+            },
+            {
+              "kind": "run",
+              "points": [
+                {
+                  "x": 0.5,
+                  "y": 0.7
+                },
+                {
+                  "x": 0.52,
+                  "y": 0.84
                 }
               ]
             }
           ],
-          "note": "11 drives inside, dragging the full-back"
+          "note": "11 slips it round the corner to 3; 9 attacks the box"
         },
         {
           "id": "s4",
@@ -492,30 +520,17 @@
               "kind": "pass",
               "points": [
                 {
-                  "x": 0.24,
-                  "y": 0.7
-                },
-                {
                   "x": 0.08,
                   "y": 0.78
-                }
-              ]
-            },
-            {
-              "kind": "run",
-              "points": [
-                {
-                  "x": 0.5,
-                  "y": 0.7
                 },
                 {
-                  "x": 0.52,
-                  "y": 0.84
+                  "x": 0.5,
+                  "y": 0.88
                 }
               ]
             }
           ],
-          "note": "Ball round the corner; 3 crosses for 9"
+          "note": "3 crosses for 9"
         },
         {
           "id": "s5",

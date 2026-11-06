@@ -2,6 +2,26 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Day 1: design references, direction pick, and the core (Fri 6 Nov 2026)
+
+**Changed**
+- Design lane: 36 references by surface with a pattern summary (`docs/design/REFERENCES.md`), then 297 more across all 14 surfaces (`docs/design/REFERENCES-ROUND-2.md`, saved to an "Agmen references" collection; links in the git-ignored `reference-board/images/links.md`). Direction board with Floodlight, Chalk and Matchday Print; Chime picked **Floodlight colours with Chalk type** (D-44), added to the board as "Floodlight Chalk".
+- Core lane (agent in its own worktree, merged by hand): `Agmen/Model/` (Tactic, Pitch, Side, Token, Phase, Step, Point, Path, Arrow), `Agmen/Services/TacticFormat*` (decode with every FORMAT rule, encode), `Agmen/Engine/` (Timeline, BoardState, Easing, PathSampler), fixtures in `AgmenTests/Fixtures/` (hero, five-a-side, new full 11-v-11) with a test that keeps them equal to `examples/`.
+- Code review (high, untrusted input): fixed a missing token snapping to the centre, edited runs making tokens jump (runs now re-anchored every frame), fixture drift, a malformed `app` block refusing the file, five copies of the clamp, and two copies of the 256 KB cap.
+- D-45 (format and timeline details the core lane settled), D-46 (a step's arrows show the move about to happen; hero move rewritten: dribble on step 2, pass to 3 and 9's run on step 3, the cross on step 4). Two tests that assert the hero's contents were updated to the new content; the omitted-keys check now uses a blank tactic so it keeps its coverage.
+
+**Checked**
+- iPhone 18 Pro, iOS 27.0: core lane full run `Test run with 80 tests in 4 suites passed`; after the review 84 pass; after D-46 and the new refuse test, `FormatRoundTripTests` 7/7 and `ImportValidationTests` 60/60 pass. The full gate runs at commit.
+- Mutation runs, each restored: anchoring removed → 2 red; coordinate clamp removed → `outOfRangeCoordinatesAreClamped` red with 3 issues; linear easing → 5 red.
+- Verifier: 14 of 16 pass; the 2 gaps fixed (non-integer shirt number now tested; PLAN no longer claims the preset types).
+- Direction board rendered with WebKit and checked by eye: fixed balls hiding numbers and arrowheads hidden under discs.
+
+**Not verified**
+- The look on a real phone (nothing on the device yet beyond Day 0). Presets (D2-4) and Placement (D2-5) not built.
+
+**Next**
+- Chime reviews the round-2 references; refine Floodlight Chalk; write UI brief §1–3 and `Design/Tokens.swift`. Then presets and Placement, and the board renderer (Day 2–3).
+
 ## Day 0: Agmen scaffold (Fri 6 Nov 2026)
 
 **Changed**
