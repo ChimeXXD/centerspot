@@ -28,3 +28,6 @@ fidelity/shots/
 
 # Exports made while testing
 exports/
+
+# proof design-check screenshots
+.proof/

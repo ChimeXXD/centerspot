@@ -1,0 +1,1282 @@
+{
+  "interactions": [
+    {
+      "element": "launch.new",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "new tactic; open the formation picker first",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.overlap-left",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; long-press shows Rename, Duplicate, Share, Delete",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "nav.back",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "effect": "navigate:library",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "nav.undo",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "effect": "undo the last edit (UndoManager)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "nav.redo",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "effect": "redo",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "nav.more",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "disabled"
+      ],
+      "effect": "menu: Pitch, Sides & colours, Duplicate, Debug",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.close",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "dismiss the sheet or mode without changes",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.size.full",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "show full formations",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.size.seven",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "show seven formations",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.size.five",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "show five formations",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.4-3-3",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "select formation 4-3-3",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.4-2-3-1",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "select formation 4-2-3-1",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.4-4-2",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "select formation 4-4-2",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.4-1-4-1",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "select formation 4-1-4-1",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.4-2-1-3",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "select formation 4-2-1-3",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.3-5-2",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "select formation 3-5-2",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "formation.apply",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "confirm"
+      ],
+      "effect": "apply the formation; on a board with players ask once 'Move players to <name>? Names and numbers stay.' (Move / Cancel)",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "selection.edit",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open:player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "selection.run",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "enter draw mode for this player's run",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "selection.delete",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "remove the player; toast with Undo",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "board.token.h1",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h3",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h5",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h4",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h2",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h6",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h8",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h10",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h11",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h9",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.h7",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.a1",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.a2",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.a5",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.a4",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "board.token.a7",
+      "trigger": "tap; drag; double-tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects (lime ring); drag moves the token in the current step, clamped to the pitch; double-tap opens the player sheet",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "ring appears without the lift"
+    },
+    {
+      "element": "steps.chip.1",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed",
+        "current",
+        "lifted"
+      ],
+      "effect": "tap jumps the board to step 1 (positions tween); tap the current step shows its actions; long-press lifts it to reorder",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "board crossfades to the step instead of tweening"
+    },
+    {
+      "element": "steps.chip.2",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed",
+        "current",
+        "lifted"
+      ],
+      "effect": "tap jumps the board to step 2 (positions tween); tap the current step shows its actions; long-press lifts it to reorder",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "board crossfades to the step instead of tweening"
+    },
+    {
+      "element": "steps.chip.3",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed",
+        "current",
+        "lifted"
+      ],
+      "effect": "tap jumps the board to step 3 (positions tween); tap the current step shows its actions; long-press lifts it to reorder",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "board crossfades to the step instead of tweening"
+    },
+    {
+      "element": "steps.chip.4",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed",
+        "current",
+        "lifted"
+      ],
+      "effect": "tap jumps the board to step 4 (positions tween); tap the current step shows its actions; long-press lifts it to reorder",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "board crossfades to the step instead of tweening"
+    },
+    {
+      "element": "steps.chip.5",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed",
+        "current",
+        "lifted"
+      ],
+      "effect": "tap jumps the board to step 5 (positions tween); tap the current step shows its actions; long-press lifts it to reorder",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "board crossfades to the step instead of tweening"
+    },
+    {
+      "element": "steps.add",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "adds a step after the current one, copying its positions, and selects it; the new chip pulses once",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "toolbar.formation",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open:formation sheet",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "toolbar.draw",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "enter draw mode",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "toolbar.play",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "start playback; the steps strip becomes the scrubber",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "toolbar.export",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open:export sheet",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "toolbar.share",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open:share sheet",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "board.empty.pick",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open:formation sheet",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "inspector.close",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "dismiss the sheet or mode without changes",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "inspector.name",
+      "trigger": "tap; type",
+      "states": [
+        "default",
+        "focused",
+        "invalid"
+      ],
+      "effect": "edit name (24 characters max)",
+      "duration_ms": 0,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "none"
+    },
+    {
+      "element": "inspector.number",
+      "trigger": "tap; type",
+      "states": [
+        "default",
+        "focused",
+        "invalid"
+      ],
+      "effect": "edit number (number pad, 0\u201399)",
+      "duration_ms": 0,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "none"
+    },
+    {
+      "element": "inspector.role.centre-back",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "set role centre-back",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "inspector.role.ball-playing-centre-back",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "set role ball-playing-centre-back",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "inspector.role.full-back",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "set role full-back",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "inspector.role.inverted-full-back",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "set role inverted-full-back",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "inspector.side.home",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "move the player to the home side (filled or ring)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "inspector.side.away",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "move the player to the away side (filled or ring)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "inspector.delete",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "delete the player; sheet closes; toast with Undo",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "step.duration",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "step duration 0.3\u20135 s in 0.1 s steps",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "step.duplicate",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "duplicate this step after it",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "step.note",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "edit the step note (140 characters)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "step.delete",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "delete the step; toast 'Deleted step n' with Undo",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "toast.undo",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "restore what was deleted; toast leaves",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "playback.scrubber",
+      "trigger": "drag; tap",
+      "states": [
+        "default",
+        "scrubbing"
+      ],
+      "effect": "set t; the board follows Timeline.state(at:)",
+      "duration_ms": 0,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "snaps to the nearest step"
+    },
+    {
+      "element": "playback.loop",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "on"
+      ],
+      "effect": "toggle looping",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "playback steps through with 0.3 s crossfades"
+    },
+    {
+      "element": "playback.prev",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "jump to the previous step",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "playback steps through with 0.3 s crossfades"
+    },
+    {
+      "element": "playback.toggle",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "play or pause; tapping the pitch also pauses",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "playback steps through with 0.3 s crossfades"
+    },
+    {
+      "element": "playback.next",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "jump to the next step",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "playback steps through with 0.3 s crossfades"
+    },
+    {
+      "element": "playback.speed.half",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "playback speed 0.5\u00d7",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "playback.speed.one",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "playback speed 1\u00d7",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.cancel",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "dismiss the sheet or mode without changes",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.done",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "keep the strokes; leave draw mode",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.kind.run",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "next stroke draws a run (solid)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.kind.pass",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "next stroke draws a pass (dashed)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.kind.dribble",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "next stroke draws a dribble (wavy)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.kind.press",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "next stroke draws a press (chevrons)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.close",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "dismiss the sheet or mode without changes",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.preset.vertical",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "preset 1080 \u00d7 1920",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.preset.square",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "preset 1080 \u00d7 1080",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.preset.wide",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "preset 1920 \u00d7 1080",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.preset.image",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "export a PNG instead",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.title-band",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "toggle the title band",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.notes",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "toggle step notes",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.start",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "render; sheet shows progress",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.cancel",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "stop rendering and delete the temporary file",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.share",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the system share sheet with the video",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.save",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "save to Photos (add-only permission)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.retry",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "render again",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "export.image",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "export a PNG instead",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "share.close",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "dismiss the sheet or mode without changes",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "share.video",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "export flow, then the system share sheet",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "share.image",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "PNG of the current step to the share sheet",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "share.file",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "system share sheet with the .tactic file",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "import.error.ok",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "dismiss; return to the library",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    }
+  ]
+}
