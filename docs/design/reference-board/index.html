@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agmen reference board</title>
+<!-- Chime's pick board (D-47). Images and manifest live in images/ (git-ignored: other apps' screenshots). -->
+<style>
+  :root { --bg: #0B0F14; --surface: #151B23; --surface-2: #1E2630; --surface-3: #27313D; --text: #F2F5F7; --muted: #93A0AD;
+          --like: #C6FF3D; --like-ink: #0B0F14; --avoid: #FF6B6B; --part: #FFD84A; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, -apple-system, sans-serif; }
+  button { font: inherit; color: inherit; border: 0; border-radius: 10px; background: var(--surface-2); min-height: 40px; padding: 8px 12px; cursor: pointer; font-weight: 600; }
+  button:hover { background: var(--surface-3); }
+  .layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+  aside { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--surface); padding: 18px 14px; border-right: 1px solid var(--surface-2); }
+  aside h1 { font-size: 18px; margin: 0 0 4px; }
+  .totals { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .totals b { color: var(--text); }
+  .nav button { display: flex; width: 100%; justify-content: space-between; align-items: center; text-align: left; background: none; margin-bottom: 2px; font-weight: 500; }
+  .nav button[aria-current="true"] { background: var(--surface-3); font-weight: 700; }
+  .nav small { color: var(--muted); font-size: 12px; white-space: nowrap; margin-left: 8px; }
+  .label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .02em; margin: 16px 6px 6px; }
+  .seg { display: flex; flex-wrap: wrap; gap: 4px; }
+  .seg button { font-size: 13px; padding: 6px 10px; min-height: 34px; }
+  .seg button[aria-pressed="true"] { outline: 2px solid var(--like); }
+  .actions button { width: 100%; margin-bottom: 6px; }
+  .actions .primary { background: var(--like); color: var(--like-ink); }
+  .keys { font-size: 12px; color: var(--muted); line-height: 1.7; margin: 12px 6px 0; }
+  kbd { background: var(--surface-3); border-radius: 4px; padding: 1px 5px; font: 11px ui-monospace, monospace; color: var(--text); }
+  main { padding: 18px 24px 80px; }
+  main h2 { font-size: 20px; margin: 4px 0 14px; }
+  main h2 small { color: var(--muted); font-weight: 500; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+  .card { position: relative; background: var(--surface); border-radius: 14px; padding: 6px 6px 8px; border: 3px solid transparent; }
+  .card.like { border-color: var(--like); } .card.part { border-color: var(--part); } .card.avoid { border-color: var(--avoid); }
+  .card .shot { position: relative; cursor: zoom-in; }
+  .card img { width: 100%; aspect-ratio: 9 / 19.5; object-fit: cover; object-position: top; border-radius: 9px; display: block; background: var(--surface-2); }
+  .card.avoid img { opacity: .45; }
+  .card .meta { display: flex; justify-content: space-between; font-size: 12px; margin: 6px 2px; color: var(--muted); }
+  .card .meta b { color: var(--text); }
+  .card .quick { display: flex; gap: 6px; }
+  .card .quick button { flex: 1; font-size: 13px; min-height: 36px; padding: 4px; }
+  .card.like .q-like, .card.part .q-like { background: var(--like); color: var(--like-ink); }
+  .card.avoid .q-avoid { background: var(--avoid); color: #1b0b0b; }
+  .badge { position: absolute; top: 8px; left: 8px; border-radius: 999px; padding: 3px 9px; font-size: 12px; font-weight: 800; }
+  .badge.like { background: var(--like); color: var(--like-ink); } .badge.part { background: var(--part); color: #1b1600; } .badge.avoid { background: var(--avoid); color: #1b0b0b; }
+  .empty { color: var(--muted); padding: 40px 0; }
+  /* Full-screen viewer */
+  .viewer { position: fixed; inset: 0; background: #05070A; display: none; grid-template-rows: 1fr auto; z-index: 20; }
+  .viewer.open { display: grid; }
+  .stage { position: relative; display: grid; place-items: center; min-height: 0; padding: 14px; }
+  .frame { position: relative; display: inline-block; line-height: 0; }
+  .frame img { max-height: calc(100vh - 150px); max-width: calc(100vw - 180px); border-radius: 14px; user-select: none; -webkit-user-drag: none; }
+  .layer { position: absolute; inset: 0; }
+  .viewer.drawing .layer { cursor: crosshair; }
+  .region { position: absolute; border: 3px solid var(--like); background: rgba(198,255,61,.12); border-radius: 6px; line-height: 1.2; }
+  .region.avoid { border-color: var(--avoid); background: rgba(255,107,107,.14); }
+  .region span { position: absolute; top: -26px; left: -3px; background: var(--like); color: var(--like-ink); font: 800 12px system-ui; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+  .region.avoid span { background: var(--avoid); color: #1b0b0b; }
+  .region button { position: absolute; top: -28px; right: -3px; min-height: 24px; padding: 0 8px; font-size: 12px; border-radius: 6px; background: #05070A; }
+  .arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 56px; height: 56px; border-radius: 50%; font-size: 26px; background: rgba(30,38,48,.85); }
+  .arrow.prev { left: 18px; } .arrow.next { right: 18px; }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 18px 16px; background: var(--surface); }
+  .bar .info { flex: 1; min-width: 220px; font-size: 14px; } .bar .info b { font-size: 16px; }
+  .bar .on-like { background: var(--like); color: var(--like-ink); } .bar .on-avoid { background: var(--avoid); color: #1b0b0b; } .bar .on-draw { outline: 2px solid var(--part); }
+  .bar input { min-width: 240px; flex: 1; height: 40px; border-radius: 10px; border: 1px solid var(--surface-3); background: var(--bg); color: var(--text); padding: 0 12px; font: inherit; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--surface-3); padding: 10px 16px; border-radius: 12px; display: none; z-index: 30; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <h1>Agmen references</h1>
+    <div class="totals" id="totals"></div>
+    <div class="nav" id="nav"></div>
+    <div class="label">SHOW</div>
+    <div class="seg" id="show"></div>
+    <div class="label">SEND TO CLAUDE</div>
+    <div class="actions">
+      <button class="primary" id="download">Save my picks file</button>
+      <button id="copy">Copy my picks as text</button>
+    </div>
+    <div class="keys">
+      Click a screen to open it full screen.<br>
+      <kbd>←</kbd> <kbd>→</kbd> previous / next<br>
+      <kbd>L</kbd> like · <kbd>X</kbd> avoid · <kbd>0</kbd> clear<br>
+      <kbd>R</kbd> draw a region you like<br>
+      <kbd>Shift</kbd>+<kbd>R</kbd> draw a region to avoid<br>
+      <kbd>F</kbd> browser full screen · <kbd>Esc</kbd> close
+    </div>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<div class="viewer" id="viewer">
+  <div class="stage">
+    <button class="arrow prev" id="prev" aria-label="Previous">‹</button>
+    <div class="frame" id="frame"><img id="big" alt=""><div class="layer" id="layer"></div></div>
+    <button class="arrow next" id="next" aria-label="Next">›</button>
+  </div>
+  <div class="bar">
+    <div class="info" id="info"></div>
+    <button id="v-like">♥ Like <kbd>L</kbd></button>
+    <button id="v-avoid">✕ Avoid <kbd>X</kbd></button>
+    <button id="v-draw-like">▭ Region I like <kbd>R</kbd></button>
+    <button id="v-draw-avoid">▭ Region to avoid <kbd>⇧R</kbd></button>
+    <input id="note" placeholder="Why? (optional, e.g. 'the bottom bar', 'too busy')">
+    <button id="v-full">⤢ Full screen <kbd>F</kbd></button>
+    <button id="v-close">Close <kbd>Esc</kbd></button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="images/manifest.js"></script>
+<script>
+const KEY = "agmen-board-v2";
+const refs = (typeof REFS === "undefined" ? [] : REFS).map((r, i) => ({ ...r, n: i + 1, src: "images/" + r.file }));
+const surfaces = [...new Set(refs.map(r => r.surface))];
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
+try { // carry over picks from the first board as likes
+  const old = JSON.parse(localStorage.getItem("agmen-picks-v1") || "[]");
+  old.forEach(id => { if (!state[id]) state[id] = { verdict: "like", regions: [], note: "" }; });
+} catch {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+const entry = id => state[id] || (state[id] = { verdict: "", regions: [], note: "" });
+// "part" = liked in part: it has regions you like but no whole-screen verdict.
+const verdictOf = id => { const e = state[id]; if (!e) return ""; return e.verdict || (e.regions?.some(g => g.kind === "like") ? "part" : e.regions?.length ? "avoid" : ""); };
+let section = "All", show = "All", current = -1, drawKind = null;
+
+function visible() {
+  return refs.filter(r => (section === "All" || r.surface === section) && (show === "All" ||
+    (show === "Liked" && ["like", "part"].includes(verdictOf(r.id))) || (show === "Avoided" && verdictOf(r.id) === "avoid") || (show === "Not judged" && !verdictOf(r.id))));
+}
+
+function renderSide() {
+  const all = refs.map(r => verdictOf(r.id));
+  document.getElementById("totals").innerHTML = `<b>${refs.length}</b> screens · <b>${all.filter(v => v === "like").length}</b> liked · <b>${all.filter(v => v === "part").length}</b> liked in part · <b>${all.filter(v => v === "avoid").length}</b> avoided`;
+  document.getElementById("nav").innerHTML = ["All", ...surfaces].map(s => {
+    const xs = s === "All" ? refs : refs.filter(r => r.surface === s), judged = xs.filter(r => verdictOf(r.id)).length;
+    return `<button data-section="${s}" aria-current="${s === section}"><span>${s}</span><small>${judged}/${xs.length}</small></button>`;
+  }).join("");
+  document.getElementById("show").innerHTML = ["All", "Liked", "Avoided", "Not judged"].map(s => `<button data-show="${s}" aria-pressed="${s === show}">${s}</button>`).join("");
+}
+
+function renderGrid() {
+  const list = visible(), main = document.getElementById("main");
+  if (!refs.length) { main.innerHTML = '<p class="empty">No images found in images/. Ask Claude to download them.</p>'; return; }
+  main.innerHTML = surfaces.filter(s => list.some(r => r.surface === s)).map(s => {
+    const xs = list.filter(r => r.surface === s);
+    return `<h2>${s} <small>${xs.length} screens</small></h2><div class="grid">${xs.map(r => {
+      const v = verdictOf(r.id), regs = state[r.id]?.regions?.length || 0;
+      return `<div class="card ${v}" data-id="${r.id}"><div class="shot" data-open="${r.id}"><img loading="lazy" src="${r.src}" alt="${r.app}">
+        ${v ? `<span class="badge ${v}">${v === "like" ? "♥ Like" : v === "part" ? `♥ Part · ${regs}` : "✕ Avoid"}</span>` : ""}</div>
+        <div class="meta"><b>#${r.n}</b><span>${r.app}</span></div>
+        <div class="quick"><button class="q-like" data-quick="like">♥ Like</button><button class="q-avoid" data-quick="avoid">✕ Avoid</button></div></div>`;
+    }).join("")}</div>`;
+  }).join("") || '<p class="empty">Nothing here yet.</p>';
+}
+const render = () => { renderSide(); renderGrid(); if (current >= 0) renderViewer(); };
+
+function setVerdict(id, v) { const e = entry(id); e.verdict = e.verdict === v ? "" : v; save(); render(); }
+
+// Viewer
+const viewer = document.getElementById("viewer"), layer = document.getElementById("layer");
+function openViewer(id) { const list = visible(); current = list.findIndex(r => r.id === id); viewer.classList.add("open"); renderViewer(); }
+function closeViewer() { setDraw(null); viewer.classList.remove("open"); current = -1; if (document.fullscreenElement) document.exitFullscreen(); renderGrid(); }
+function step(d) { const list = visible(); if (!list.length) return; current = (current + d + list.length) % list.length; setDraw(null); renderViewer(); }
+function renderViewer() {
+  const list = visible(), r = list[current]; if (!r) return closeViewer();
+  const e = state[r.id] || { verdict: "", regions: [], note: "" }, v = verdictOf(r.id);
+  document.getElementById("big").src = r.src;
+  document.getElementById("info").innerHTML = `<b>#${r.n} ${r.app}</b><br><span style="color:var(--muted)">${r.surface} · ${current + 1} of ${list.length}${v ? ` · ${v === "part" ? "liked in part" : v === "like" ? "liked" : "avoided"}` : ""}</span>`;
+  document.getElementById("v-like").className = e.verdict === "like" ? "on-like" : "";
+  document.getElementById("v-avoid").className = e.verdict === "avoid" ? "on-avoid" : "";
+  document.getElementById("v-draw-like").className = drawKind === "like" ? "on-draw" : "";
+  document.getElementById("v-draw-avoid").className = drawKind === "avoid" ? "on-draw" : "";
+  const note = document.getElementById("note"); if (document.activeElement !== note) note.value = e.note || "";
+  layer.innerHTML = (e.regions || []).map((g, i) => `<div class="region ${g.kind}" style="left:${g.x * 100}%;top:${g.y * 100}%;width:${g.w * 100}%;height:${g.h * 100}%">
+    <span>${g.kind === "like" ? "Like" : "Avoid"} ${i + 1}</span><button data-remove="${i}" aria-label="Remove region">✕</button></div>`).join("");
+}
+function setDraw(kind) { drawKind = drawKind === kind ? null : kind; viewer.classList.toggle("drawing", !!drawKind); if (current >= 0) renderViewer(); }
+
+let start = null, ghost = null;
+layer.addEventListener("pointerdown", e => {
+  if (!drawKind || e.target.closest("[data-remove]")) return;
+  const b = layer.getBoundingClientRect(); start = { x: (e.clientX - b.left) / b.width, y: (e.clientY - b.top) / b.height };
+  ghost = document.createElement("div"); ghost.className = `region ${drawKind}`; layer.appendChild(ghost); layer.setPointerCapture(e.pointerId);
+});
+layer.addEventListener("pointermove", e => {
+  if (!start) return;
+  const b = layer.getBoundingClientRect(), x = Math.min(Math.max((e.clientX - b.left) / b.width, 0), 1), y = Math.min(Math.max((e.clientY - b.top) / b.height, 0), 1);
+  Object.assign(ghost.style, { left: Math.min(x, start.x) * 100 + "%", top: Math.min(y, start.y) * 100 + "%", width: Math.abs(x - start.x) * 100 + "%", height: Math.abs(y - start.y) * 100 + "%" });
+});
+layer.addEventListener("pointerup", e => {
+  if (!start) return;
+  const b = layer.getBoundingClientRect(), x = Math.min(Math.max((e.clientX - b.left) / b.width, 0), 1), y = Math.min(Math.max((e.clientY - b.top) / b.height, 0), 1);
+  const g = { kind: drawKind, x: Math.min(x, start.x), y: Math.min(y, start.y), w: Math.abs(x - start.x), h: Math.abs(y - start.y) };
+  start = null; ghost = null;
+  if (g.w > 0.02 && g.h > 0.01) { const r = visible()[current]; entry(r.id).regions.push(Object.fromEntries(Object.entries(g).map(([k, v]) => [k, typeof v === "number" ? +v.toFixed(3) : v]))); save(); }
+  setDraw(null);  // one region per R; press R again for the next
+  render();
+});
+layer.addEventListener("click", e => {
+  const rm = e.target.closest("[data-remove]"); if (!rm) return;
+  const r = visible()[current]; entry(r.id).regions.splice(+rm.dataset.remove, 1); save(); render();
+});
+document.getElementById("note").addEventListener("input", e => { const r = visible()[current]; if (r) { entry(r.id).note = e.target.value.slice(0, 280); save(); renderSide(); } });
+
+document.getElementById("nav").addEventListener("click", e => { const b = e.target.closest("[data-section]"); if (b) { section = b.dataset.section; render(); scrollTo(0, 0); } });
+document.getElementById("show").addEventListener("click", e => { const b = e.target.closest("[data-show]"); if (b) { show = b.dataset.show; render(); } });
+document.getElementById("main").addEventListener("click", e => {
+  const q = e.target.closest("[data-quick]"); if (q) return setVerdict(q.closest(".card").dataset.id, q.dataset.quick);
+  const o = e.target.closest("[data-open]"); if (o) openViewer(o.dataset.open);
+});
+document.getElementById("prev").onclick = () => step(-1);
+document.getElementById("next").onclick = () => step(1);
+document.getElementById("v-like").onclick = () => setVerdict(visible()[current].id, "like");
+document.getElementById("v-avoid").onclick = () => setVerdict(visible()[current].id, "avoid");
+document.getElementById("v-draw-like").onclick = () => setDraw("like");
+document.getElementById("v-draw-avoid").onclick = () => setDraw("avoid");
+document.getElementById("v-close").onclick = closeViewer;
+const toggleFull = () => document.fullscreenElement ? document.exitFullscreen() : viewer.requestFullscreen?.().catch(() => {});
+document.getElementById("v-full").onclick = toggleFull;
+document.addEventListener("keydown", e => {
+  if (current < 0 || e.target.id === "note") { if (e.key === "Escape" && e.target.id === "note") e.target.blur(); return; }
+  const id = visible()[current]?.id;
+  if (e.key === "ArrowRight") step(1); else if (e.key === "ArrowLeft") step(-1);
+  else if (e.key === "Escape") drawKind ? setDraw(null) : closeViewer();
+  else if (e.key.toLowerCase() === "l") setVerdict(id, "like");
+  else if (e.key.toLowerCase() === "x") setVerdict(id, "avoid");
+  else if (e.key === "0") { const en = entry(id); en.verdict = ""; save(); render(); }
+  else if (e.key.toLowerCase() === "r") setDraw(e.shiftKey ? "avoid" : "like");
+  else if (e.key.toLowerCase() === "f") toggleFull();
+  else return;
+  e.preventDefault();
+});
+
+// Export what Chime judged, for Claude to read.
+function picks() {
+  return refs.filter(r => verdictOf(r.id) || state[r.id]?.note).map(r => ({ n: r.n, id: r.id, app: r.app, surface: r.surface,
+    verdict: verdictOf(r.id) || "note only", regions: state[r.id]?.regions || [], note: state[r.id]?.note || "" }));
+}
+function toast(t) { const el = document.getElementById("toast"); el.textContent = t; el.style.display = "block"; setTimeout(() => el.style.display = "none", 2600); }
+document.getElementById("download").onclick = () => {
+  const blob = new Blob([JSON.stringify({ saved: new Date().toISOString(), picks: picks() }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "agmen-picks.json"; a.click();
+  toast("Saved agmen-picks.json to Downloads. Tell Claude it's there.");
+};
+document.getElementById("copy").onclick = async () => {
+  const p = picks(), text = `My Agmen picks (${p.length}):\n` + surfaces.map(s => {
+    const xs = p.filter(x => x.surface === s); if (!xs.length) return "";
+    return `${s}:\n` + xs.map(x => `  #${x.n} ${x.app}: ${x.verdict}${x.regions.length ? ` (${x.regions.map((g, i) => `${g.kind} ${i + 1}: x ${Math.round(g.x * 100)}–${Math.round((g.x + g.w) * 100)}%, y ${Math.round(g.y * 100)}–${Math.round((g.y + g.h) * 100)}%`).join("; ")})` : ""}${x.note ? ` — "${x.note}"` : ""}`).join("\n");
+  }).filter(Boolean).join("\n");
+  try { await navigator.clipboard.writeText(text); toast("Copied. Paste it in the chat."); } catch { toast("Copy failed. Use 'Save my picks file' instead."); }
+};
+render();
+</script>
+</body>
+</html>
