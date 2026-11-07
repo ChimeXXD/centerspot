@@ -31,10 +31,11 @@ struct PlayerSheet: View {
                     roles(token)
                     GroupLabel(text: "Side")
                         .padding(.bottom, Tokens.Space.s2)
+                    // Setters are closures, never method references: Xcode 26.6 (Swift 6.3.3) crashes building the thunk.
                     CapsuleSegments(options: [
                         .init(value: Side.ID.home, title: "Us (filled)", identifier: "inspector.side.home"),
                         .init(value: Side.ID.away, title: "Them (ring)", identifier: "inspector.side.away"),
-                    ], selection: Binding(get: { token.side ?? .home }, set: setSide))
+                    ], selection: Binding(get: { token.side ?? .home }, set: { setSide($0) }))
                     .accessibilityElement(children: .contain)
                     .accessibilityLabel("Side")
                     .accessibilityIdentifier("inspector.side")

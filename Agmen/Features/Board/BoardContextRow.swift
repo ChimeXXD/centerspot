@@ -72,7 +72,7 @@ struct BoardContextRow: View {
 
     private func durationMenu(_ duration: Double) -> some View {
         Menu {
-            Picker("Duration", selection: Binding(get: { duration }, set: onDuration)) {
+            Picker("Duration", selection: Binding(get: { duration }, set: { onDuration($0) })) {
                 ForEach(Self.durations, id: \.self) { Text(Self.seconds($0)).tag($0) }
             }
         } label: {

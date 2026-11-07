@@ -100,13 +100,13 @@ extension BoardScreen {
     }
 
     @ViewBuilder private var pitchMenu: some View {
-        Picker("Pitch", selection: Binding(get: { tactic.pitch.kind }, set: setPitchKind)) {
+        Picker("Pitch", selection: Binding(get: { tactic.pitch.kind }, set: { setPitchKind($0) })) {
             Text("11-a-side").tag(Pitch.Kind.full)
             Text("7-a-side").tag(Pitch.Kind.sevenASide)
             Text("5-a-side").tag(Pitch.Kind.fiveASide)
         }
         .pickerStyle(.menu)
-        Picker("Pitch style", selection: Binding(get: { tactic.pitch.style }, set: setPitchStyle)) {
+        Picker("Pitch style", selection: Binding(get: { tactic.pitch.style }, set: { setPitchStyle($0) })) {
             Text("Stripes").tag(Pitch.Style.stripes)
             Text("Plain").tag(Pitch.Style.plain)
         }

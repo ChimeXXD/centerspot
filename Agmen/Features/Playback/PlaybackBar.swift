@@ -139,7 +139,7 @@ struct PlaybackBar: View {
             CapsuleSegments(options: [
                 .init(value: 0.5, title: "½×", identifier: "playback.speed.half"),
                 .init(value: 1.0, title: "1×", identifier: "playback.speed.one"),
-            ], selection: Binding(get: { speed }, set: onSpeed))
+            ], selection: Binding(get: { speed }, set: { onSpeed($0) }))
             .frame(width: 104)
             .accessibilityLabel("Speed")
         }
