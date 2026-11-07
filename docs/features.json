@@ -268,8 +268,8 @@
         "plays in WhatsApp"
       ],
       "verify": "manual, timed; numbers logged in PROGRESS.md",
-      "passes": false,
-      "evidence": "7 Nov 2026, partial: on Chime's iPhone 14 Pro (Debug build, -exportBench): hero 9:16 240 frames in 1.92 s, 1.11 MB (budget 4.27 MB); 1:1 0.84 s 0.60 MB; 16:9 1.34 s 0.74 MB; 10 steps 9:16 471 frames 2.62 s 2.22 MB (budget 8.37 MB). Under 10 s and the size budget. Open: playback in WhatsApp and Discord (Chime)."
+      "passes": true,
+      "evidence": "7 Nov 2026: on Chime's iPhone 14 Pro (Debug, -exportBench): hero 9:16 240 frames 1.92 s, 1.11 MB (budget 4.27); 10 steps 9:16 2.62 s, 2.22 MB (budget 8.37). Chime confirmed the clip plays in WhatsApp and Discord."
     },
     {
       "id": "D5-3",

@@ -2,6 +2,21 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Day 5 fix: Save to Photos crashed (Sat 7 Nov 2026)
+
+**Changed**
+- Chime: the app quit on Save to Photos. Crash reports from the phone (19:44, 19:45): `dispatch_assert_queue` in `closure #1 in ExportModel.saveToPhotos()` called from `PHPhotoLibrary _performCancellableChanges`. The change block inherited the `@MainActor` model's isolation; Photos runs it on its own queue and Swift 6's runtime check stopped the app. The block is now built in a `@concurrent nonisolated` helper.
+- Code review (high): fixed a double tap saving twice and pinned the helper with `@concurrent` (a `nonisolated async` function would run on the caller's actor under SE-0461). The UI test resets the Photos permission each run so the prompt is always exercised.
+- Searched the app for other framework callbacks with inherited main-actor isolation: none.
+
+**Checked**
+- Red: `ExportFlowUITests.testExportFlow` with the new Save to Photos step: "dev.chime.agmen crashed", simulator crash report with the same stack as the phone's. Green after the fix: "Saved to Photos", app still running.
+- All 4 UI tests pass; gate all 3 pass. Installed on the iPhone 14 Pro.
+- WhatsApp and Discord play the exported clip (Chime).
+
+**Not verified**
+- Save to Photos on the phone after the fix (Chime).
+
 ## Day 5: export (Sat 7 Nov 2026)
 
 **Changed**

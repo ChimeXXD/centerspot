@@ -60,6 +60,15 @@ final class ExportFlowUITests: XCTestCase {
         app.buttons["Close"].firstMatch.tap()
         XCTAssertTrue(shareSheet.waitForNonExistence(timeout: timeout))
 
+        // Save to Photos (Chime's phone, 7 Nov: the app quit here). Accept the add-only prompt if iOS shows it.
+        element(app, "export.save").tap()
+        let allow = XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts.buttons["Allow"]
+        XCTAssertTrue(allow.waitForExistence(timeout: 15), "iOS asks to add to Photos")
+        allow.tap()
+        XCTAssertTrue(element(app, "export.save").waitForLabel(matching: "^Saved to Photos$", timeout: 20),
+                      "saved: \(element(app, "export.save").label)")
+        XCTAssertEqual(app.state, .runningForeground, "the app is still running")
+
         // Close, reopen: the image preset.
         element(app, "export.close").tap()
         XCTAssertTrue(element(app, "toolbar.export").waitForExistence(timeout: timeout))
@@ -100,6 +109,8 @@ final class ExportFlowUITests: XCTestCase {
 
     @MainActor private func launch(_ arguments: [String]) -> XCUIApplication {
         let app = XCUIApplication()
+        // Every run asks for Photos afresh, so the permission prompt in Save to Photos is tested each time.
+        app.resetAuthorizationStatus(for: .photos)
         app.launchArguments = ["-resetLibrary", "YES", "-openExample", "YES"] + arguments
         app.launch()
         XCTAssertTrue(element(app, "board.token.h3").waitForExistence(timeout: timeout), "the hero move opens")

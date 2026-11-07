@@ -161,7 +161,8 @@ final class ExportModel {
     }
 
     func saveToPhotos() async {
-        guard case .finished(let file) = phase else { return }
+        // A second tap can land before the button disables: save each file once.
+        guard case .finished(let file) = phase, photos != .saving, photos != .saved else { return }
         photos = .saving
         defer {
             if discardAfterSave {
@@ -171,13 +172,21 @@ final class ExportModel {
         }
         guard await PHPhotoLibrary.requestAuthorization(for: .addOnly) == .authorized else { photos = .failed; return }
         do {
-            try await PHPhotoLibrary.shared().performChanges {
-                let request = PHAssetCreationRequest.forAsset()
-                request.addResource(with: file.isVideo ? .video : .photo, fileURL: file.url, options: nil)
-            }
+            try await Self.addToPhotos(file.url, isVideo: file.isVideo)
             photos = .saved
         } catch {
             photos = .failed
+        }
+    }
+
+    /// Photos runs the change block on its own queue. Built here, outside the main actor, the block isn't tied to it;
+    /// written inline in `saveToPhotos` it inherited main-actor isolation and Swift's runtime check stopped the app
+    /// when Photos called it (Chime's phone, 7 Nov). `@concurrent` keeps it off the caller's actor even if
+    /// nonisolated async functions later default to running on the caller (SE-0461).
+    @concurrent nonisolated private static func addToPhotos(_ url: URL, isVideo: Bool) async throws {
+        try await PHPhotoLibrary.shared().performChanges {
+            let request = PHAssetCreationRequest.forAsset()
+            request.addResource(with: isVideo ? .video : .photo, fileURL: url, options: nil)
         }
     }
 
