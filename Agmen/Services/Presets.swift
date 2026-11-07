@@ -18,6 +18,9 @@ struct Presets: Sendable {
                        roles: try load("roles", as: RoleFile.self).roles)
     }
 
+    /// The bundled presets, loaded once; empty if the bundle lacks them (`PresetTests` checks they load).
+    static let shared: Presets = (try? bundled()) ?? Presets(formations: [], roles: [])
+
     func formation(_ id: String) -> Formation? { formations.first { $0.id == id } }
 
     func role(_ id: String?) -> Role? { id.flatMap { id in roles.first { $0.id == id } } }

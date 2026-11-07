@@ -70,11 +70,11 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [x] `Placement`: zone words for VoiceOver ("edge of the box", "left half-space") (7 Nov: `PlacementTests` 5/5; the on-screen labels are checked on Day 3)
 
 ### Day 3: Board editor
-- [ ] `BoardRenderer`: pitch per type, tokens per side (D-15), ball, selection ring (white chalk, UI-BRIEF §1)
+- [x] `BoardRenderer`: pitch per type, tokens per side (D-15), ball, selection ring (white chalk, UI-BRIEF §1) (7 Nov: `BoardRendererTests` sample pixels for fill, ring, selection and dashed pass)
 - [ ] Render check: 7- and 5-a-side markings match `Placement`'s zone boundaries; Nunito weights (heavy title vs body) visibly differ in a simulator screenshot
-- [ ] Canvas board with drag (snap off by default), tap to select, inspector sheet (name, number, role, side)
-- [ ] Formation picker; pitch picker
-- [ ] Steps strip: add (duplicates current), delete, reorder, duration
+- [x] Canvas board with drag (snap off by default), tap to select, inspector sheet (name, number, role, side) (7 Nov: `TacticEditsTests`, `BoardScreenshotUITests`; drag still to feel on the phone)
+- [ ] Formation picker; pitch picker (7 Nov: formation picker done and walked in the UI test; the pitch picker sits in the title menu and hasn't been exercised yet)
+- [x] Steps strip: add (duplicates current), delete, reorder, duration (7 Nov: `TacticEditsTests`, `DocumentEditorUndoTests` undo and redo for every edit; press-hold reorder still to try on the phone)
 - [ ] Chime approves the screen; baseline saved to `fidelity/refs/`
 
 ### Day 4: Playback and drawn runs

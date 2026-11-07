@@ -2,6 +2,34 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Day 3: board editor (Sat 7 Nov 2026)
+
+**Changed**
+- `TacticEdits` (pure edits: move clamped, steps add/delete/reorder/duration/note, tokens add per D-55 / delete / name / number / role / side, pitch), `Timeline.restingState`, `FormationMatch` (tag follows the step on screen), `Nudge` (VoiceOver moves, 2%, clamped).
+- `Render/`: `BoardGeometry` (the only points conversion, also used by the formation diagrams), `PitchDrawing`, `TokenDrawing`, `ArrowDrawing` (run solid, pass dashed, dribble zigzag, press double chevron), `BoardRenderer` (screen through `withCGContext`, offscreen `image(...)`).
+- Board screen to the mockup: canvas, context row, steps strip (D-54), toolbar (D-55), Share in the nav bar, undo toast, empty state, `DocumentEditor` (every edit through the document's `UndoManager`). Player sheet, formation picker (D-48) with the replace confirmation, launch scene (Nunito title, Kalam tagline, chalk pitch). Placeholder view removed. Play/Draw/Export/Share show "Coming on Day N".
+- `AgmenUITests` target (own scheme, so `test` stays unit-only) walks the screens and saves the screenshots.
+- Code review (medium): 8 found, 6 fixed (delete from the last step skipped one back, reorder lost the current step, cancelled drag left a stale preview, toast Undo could undo a later edit, duplicated resting-position rule, arrows shortened against raw instead of drawn centres); then the toast Undo returns the board to the restored step. Skipped: formation tag cost per frame.
+- Verifier: 3 gaps fixed (undo/redo tests, nudge test, diagram points outside `Render/`); flagged the formation tag reading step 1 while the picker edits the current step; fixed.
+
+**Checked**
+- Gate: build-ios26, test, no-library-name all pass. New suites `DocumentEditorUndoTests`, `BoardAccessibilityTests` and the step-aware tag test: 13/13 on iPhone 18 Pro iOS 27.0.
+- Red runs: TacticEdits 12+ failures against stubs; geometry/renderer/helpers "39 tests in 5 suites failed … 31 issues"; new suites failed to compile without `Nudge`.
+- Mutation runs, each restored: clamp in moveToken, hit radius 22→30, selection ring 55% chalk, formation tolerance 1.0 (8 issues across 4 tests); undo registration removed, nudge clamp removed, tag pinned to step 1 (24 issues across 4 tests).
+- `BoardScreenshotUITests` passed in full (60 s): VoiceOver label on h9, "4-3-3", "Step 2 of 4 · 1.4 s" after delete, Undo brings step 3 back and returns to it. An earlier run failed because the simulator host terminated the app mid-test (log: "Termination requested by simulator host"), not an app crash.
+- Built and installed on the iPhone 14 Pro. The profile was reused, so signing still expires 13 Nov 2026, 21:30 Lagos.
+
+**Not verified**
+- Drag, double-tap, press-hold reorder and undo feel on the phone; the timed 5-step move (< 60 s) and New tactic → share (< 2 min).
+- "New tactic" sometimes creates two documents in the simulator ("Unable to Import Document"); 2 of 4 earlier UI runs. Needs a look on the phone.
+- New tactic is the system's grey button: a custom style on `NewDocumentButton` broke creation, so the lime capsule isn't possible there.
+- Pitch picker (title menu), 7- and 5-a-side render check, AX5 Dynamic Type, Sides & colours sheet, Debug screen, launch animation.
+- Applying a 7/5-a-side shape to 11 players leaves the extras where they were; the confirmation doesn't say so.
+- Chime's approval of the screenshots (`fidelity/shots/day3/`), then baselines to `fidelity/refs/`.
+
+**Next**
+- Chime reviews the screenshots and tries the board on the phone; then Day 4 (playback and drawn runs).
+
 ## Day 1 finished, Day 2 core (Sat 7 Nov 2026)
 
 **Changed**

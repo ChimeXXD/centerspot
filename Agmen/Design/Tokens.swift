@@ -78,6 +78,19 @@ enum Tokens {
     enum Radius {
         static let sheet: CGFloat = 20
         static let item: CGFloat = 12
+        /// Formation tiles and the toast.
+        static let tile: CGFloat = 16
+    }
+
+    /// Fixed control sizes from the mockup. Touch targets are at least 44 pt (UI-BRIEF §2).
+    enum Size {
+        static let touch: CGFloat = 44
+        static let capsule: CGFloat = 52
+        static let field: CGFloat = 48
+        static let stepChip = CGSize(width: 48, height: 58)
+        static let playDisc: CGFloat = 48
+        static let toolbarHeight: CGFloat = 82
+        static let toast: CGFloat = 52
     }
 
     /// UI motion only; playback motion is the Timeline (SPEC §3). Reduce Motion swaps these for crossfades.

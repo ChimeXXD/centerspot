@@ -83,13 +83,13 @@
       "id": "D1-3",
       "day": 1,
       "priority": "must",
-      "title": "UI brief \u00a71\u20133 filled and Design/Tokens.swift added",
+      "title": "UI brief §1–3 filled and Design/Tokens.swift added",
       "criteria": [
         "kit palette passes WCAG AA for numbers"
       ],
       "verify": "xcodebuild ... test (TokenContrastTests)",
       "passes": true,
-      "evidence": "7 Nov 2026: UI-BRIEF \u00a71-3 written; Agmen/Design/Tokens.swift generated from mockup CSS; TokenContrastTests 7/7 pass on iPhone 18 Pro iOS 27.0 (kit numbers >= 4.5:1, rings and outlines >= 3:1 on both pitch stripes, UI text >= 4.5:1, fonts registered); mutation (black outline removed) -> 3 issues red, regenerated."
+      "evidence": "7 Nov 2026: UI-BRIEF §1-3 written; Agmen/Design/Tokens.swift generated from mockup CSS; TokenContrastTests 7/7 pass on iPhone 18 Pro iOS 27.0 (kit numbers >= 4.5:1, rings and outlines >= 3:1 on both pitch stripes, UI text >= 4.5:1, fonts registered); mutation (black outline removed) -> 3 issues red, regenerated."
     },
     {
       "id": "D2-1",
@@ -160,8 +160,8 @@
         "label reads 'Number 9, striker, edge of the box'"
       ],
       "verify": "PlacementTests; BoardAccessibilityUITests (4-3-3 labels, step suffix, adjustable nudge) on Day 3",
-      "passes": false,
-      "evidence": "7 Nov 2026: PlacementTests 5/5 (12 zone cases, hero label 'Number 9, striker, edge of the box, step 4 of 5', away and named players). Mutation: edge-of-box removed -> 3 red. Still needs BoardAccessibilityUITests on Day 3, so passes stays false."
+      "passes": true,
+      "evidence": "7 Nov 2026: PlacementTests 5/5. Day 3: BoardAccessibilityTests (unit, in place of the planned UI test: XCUITest can't send an adjustable increment) checks all 11 labels of a 4-3-3 (number, role, zone, 'step 1 of 1') and the nudge (2% per step, clamped at the edge, moves the token in the tactic); BoardScreenshotUITests reads h9's label on the board ('Number 9, striker, …, step 1 of 5'). Mutation: nudge clamp removed -> red. Gate test passed."
     },
     {
       "id": "D2-6",
@@ -189,7 +189,7 @@
       ],
       "verify": "BoardEditorTests; screenshot review",
       "passes": false,
-      "evidence": ""
+      "evidence": "7 Nov 2026, partial: drag clamps (TacticEditsTests 5 cases), inspector edits name, number, role, side; formation picker applies (UI walk, BoardStateHelpersTests). Open: pitch picker not exercised; Chime's approval; fidelity/refs/ baseline."
     },
     {
       "id": "D3-2",
@@ -203,7 +203,7 @@
       ],
       "verify": "StepEditingTests; manual, timed on the phone",
       "passes": false,
-      "evidence": ""
+      "evidence": "7 Nov 2026, partial: add, delete, reorder, duration in TacticEditsTests; DocumentEditorUndoTests undo and redo each of 7 edits and undo in reverse order (mutation: undo registration removed -> red). Open: timed runs on the phone."
     },
     {
       "id": "D4-1",
