@@ -135,31 +135,39 @@ struct BoardCanvas: View {
         let roles = Presets.shared.roles
         return ForEach(BoardRenderer.drawingOrder(tactic.tokens)) { token in
             if let centre = centres[token.id], let point = state.positions[token.id] {
-                Color.clear
-                    .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
-                    .position(centre)
-                    .accessibilityElement()
-                    .accessibilityLabel(Placement.label(for: token, in: tactic, stepIndex: state.stepIndex, roles: roles))
-                    .accessibilityHint(token.kind == .player ? "Double-tap to edit" : "Double-tap to select")
-                    .accessibilityIdentifier("board.token.\(token.id)")
-                    .accessibilityAddTraits(selection == token.id ? [.isButton, .isSelected] : .isButton)
-                    .accessibilityAction {
-                        guard movesTokens else { return }
-                        if token.kind == .player { onDoubleTap(token.id) } else { onTap(token.id) }
-                    }
-                    .accessibilityAdjustableAction { direction in
-                        guard movesTokens else { return }
-                        switch direction {
-                        // SPEC §8: the adjustable action moves a token by `Nudge.step` of the pitch.
-                        case .increment: onNudge(token.id, Nudge.up.applied(to: point))
-                        case .decrement: onNudge(token.id, Nudge.down.applied(to: point))
-                        @unknown default: break
-                        }
-                    }
-                    .accessibilityAction(named: "Move left") { if movesTokens { onNudge(token.id, Nudge.left.applied(to: point)) } }
-                    .accessibilityAction(named: "Move right") { if movesTokens { onNudge(token.id, Nudge.right.applied(to: point)) } }
+                tokenElement(token, at: centre, point: point, roles: roles)
             }
         }
         .allowsHitTesting(false)
+    }
+
+    /// One token's element. Kept apart, with its traits typed, so Xcode 26.6's type checker finishes in time (CI).
+    private func tokenElement(_ token: Token, at centre: CGPoint, point: Point, roles: [Role]) -> some View {
+        let label = Placement.label(for: token, in: tactic, stepIndex: state.stepIndex, roles: roles)
+        let hint = token.kind == .player ? "Double-tap to edit" : "Double-tap to select"
+        let traits: AccessibilityTraits = selection == token.id ? [.isButton, .isSelected] : [.isButton]
+        return Color.clear
+            .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
+            .position(centre)
+            .accessibilityElement()
+            .accessibilityLabel(label)
+            .accessibilityHint(hint)
+            .accessibilityIdentifier("board.token.\(token.id)")
+            .accessibilityAddTraits(traits)
+            .accessibilityAction {
+                guard movesTokens else { return }
+                if token.kind == .player { onDoubleTap(token.id) } else { onTap(token.id) }
+            }
+            .accessibilityAdjustableAction { direction in
+                guard movesTokens else { return }
+                switch direction {
+                // SPEC §8: the adjustable action moves a token by `Nudge.step` of the pitch.
+                case .increment: onNudge(token.id, Nudge.up.applied(to: point))
+                case .decrement: onNudge(token.id, Nudge.down.applied(to: point))
+                @unknown default: break
+                }
+            }
+            .accessibilityAction(named: "Move left") { if movesTokens { onNudge(token.id, Nudge.left.applied(to: point)) } }
+            .accessibilityAction(named: "Move right") { if movesTokens { onNudge(token.id, Nudge.right.applied(to: point)) } }
     }
 }
