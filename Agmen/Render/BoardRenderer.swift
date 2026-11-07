@@ -13,17 +13,29 @@ enum BoardRenderer {
         var showsLift = false
         /// Fill the rect with the app background first (offscreen frames have no view behind them).
         var fillsBackground = false
+        /// Exports only (D-40): one player ringed with a fading trail, everyone else but the ball dimmed slightly.
+        var spotlight: Spotlight?
 
-        init(selection: String? = nil, dimsUnselected: Bool = false, showsLift: Bool = false, fillsBackground: Bool = false) {
+        init(selection: String? = nil, dimsUnselected: Bool = false, showsLift: Bool = false, fillsBackground: Bool = false,
+             spotlight: Spotlight? = nil) {
             self.selection = selection
             self.dimsUnselected = dimsUnselected
             self.showsLift = showsLift
             self.fillsBackground = fillsBackground
+            self.spotlight = spotlight
         }
+    }
+
+    /// The spotlit player and where they've just been, oldest first (`SpotlightTrail`).
+    struct Spotlight: Sendable, Equatable {
+        var tokenID: String
+        var trail: [Point]
     }
 
     /// Opacity of the other tokens while one is dimmed against (the mockup's 0.35).
     static let dimmedOpacity: CGFloat = 0.35
+    /// Opacity of everyone but the spotlit player and the ball (D-40: "the rest dim slightly").
+    static let spotlightDimmedOpacity: CGFloat = 0.55
 
     static func draw(state: BoardState, tactic: Tactic, in ctx: CGContext, rect: CGRect, options: Options = .init()) {
         let g = BoardGeometry(kind: tactic.pitch.kind, fitting: rect)
@@ -38,6 +50,8 @@ enum BoardRenderer {
         for visible in state.arrows {
             ArrowDrawing.draw(visible.arrow, opacity: CGFloat(visible.opacity), geometry: g, tokenCentres: tokenCentres, in: ctx)
         }
+        let spotlit = options.spotlight.flatMap { spot in tactic.tokens.contains { $0.id == spot.tokenID } ? spot : nil }
+        if let spotlit { SpotlightDrawing.trail(spotlit.trail, geometry: g, in: ctx) }
 
         for token in drawingOrder(tactic.tokens) {
             guard let c = centres[token.id] else { continue }
@@ -46,8 +60,10 @@ enum BoardRenderer {
             style.selected = selected
             style.lift = selected && options.showsLift
             if options.dimsUnselected, !selected { style.opacity = dimmedOpacity }
+            if let spotlit, token.id != spotlit.tokenID, token.kind != .ball { style.opacity = spotlightDimmedOpacity }
             TokenDrawing.draw(token, at: c, kit: kit(for: token, in: tactic), radius: g.tokenRadius, style: style, in: ctx)
         }
+        if let spotlit, let c = centres[spotlit.tokenID] { SpotlightDrawing.ring(at: c, radius: g.tokenRadius, in: ctx) }
     }
 
     /// `state`, with `next` laid over it at `mix` opacity: Reduce Motion's crossfade between resting steps (SPEC §8).

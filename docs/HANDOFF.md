@@ -1,6 +1,6 @@
 # Handoff: read this first when you pick the project back up
 
-## Latest: Day 4 built (playback, drawing, render parity), Sat 7 Nov 2026. Waiting on Chime's phone check and the iPad borrow session; then Day 5 (export).
+## Latest: Day 5 built (export: 9:16/1:1/16:9 video, PNG, lineup card, spotlight; 26 formations), Sat 7 Nov 2026. Next: Chime checks WhatsApp/Discord playback, then Day 6 (share and harden, onboarding D-58).
 
 ### Where it stands
 - **App: Agmen** (D-42), private repo `ChimeXXD/agmen`. Folder on disk is still `Tactics Board`.
@@ -23,6 +23,7 @@
 - One simulator job at a time. Push to GitHub after every commit.
 
 ### Do next
+- Day 5 on the phone: export a clip, send it in WhatsApp and Discord; measured export on the iPhone 14 Pro: hero 1.9 s, 1.1 MB.
 0. Day 4 on devices: playback smoothness and finger drawing on the iPhone; Pencil on the brother's iPad (D4-4), including whether a Pencil stroke from a token also drags it.
 1. Chime approves the Day 3 screenshots and tries the board on the phone (drag, reorder, timed 5-step move). Approved shots go to `fidelity/refs/`.
 2. Ask: does a stroke starting on a player always become a run (passes also start on players)?

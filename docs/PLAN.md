@@ -86,10 +86,10 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [x] Render test: on-screen frame vs offscreen frame at the same `t` (7 Nov: `RendererParityTests` under D-60/D-61; 2 px shift and one recoloured token fail it)
 
 ### Day 5: Export
-- [ ] `VideoExporter`: frames from `BoardRenderer` → `AVAssetWriter`, 1080×1920, 30 fps, H.264, cancellable with progress
-- [ ] Export sheet: preview, preset, size estimate, then the share sheet
-- [ ] PNG of the current step; 16:9 and 1:1 (Should); lineup card (Should)
-- [ ] Measure on the phone: time and size for 5 and 10 steps; log real numbers in PROGRESS.md (spike baseline 7 Nov: 15 s clip in 2.5 s, 5.5 MB at 4 Mbps)
+- [x] `VideoExporter`: frames from `BoardRenderer` → `AVAssetWriter`, 1080×1920, 30 fps, H.264, cancellable with progress (7 Nov: `VideoExportTests` read the files back; three sizes)
+- [x] Export sheet: preview, preset, size estimate, then the share sheet (7 Nov: `ExportFlowUITests`; "Up to" estimate, D-64)
+- [x] PNG of the current step; 16:9 and 1:1 (Should); lineup card (Should) (7 Nov: `ImageExportTests`, lineup tests; spotlight D-40 too; 26 formations, D-63)
+- [x] Measure on the phone: time and size for 5 and 10 steps; log real numbers in PROGRESS.md (spike baseline 7 Nov: 15 s clip in 2.5 s, 5.5 MB at 4 Mbps) (7 Nov, iPhone 14 Pro Debug: hero 1.9 s 1.1 MB; 10 steps 2.6 s 2.2 MB)
 
 ### Day 6: Share and harden
 - [ ] `TacticDocument` with the exported UTType; open from Files and AirDrop (7 Nov: the document now reads and writes through `TacticFormat`; `TacticDocumentTests` 6/6; on-device open from Files and AirDrop still to check)

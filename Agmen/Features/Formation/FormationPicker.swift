@@ -29,15 +29,22 @@ struct FormationPicker: View {
                 LazyVGrid(columns: columns, spacing: Tokens.Space.s2 + 2) {
                     ForEach(shapes) { shape in tile(shape) }
                 }
-                if let formation {
-                    Button("Use \(formation.name)") { hasPlayers ? (confirming = true) : apply(formation) }
-                        .buttonStyle(PrimaryCapsuleStyle())
-                        .accessibilityIdentifier("formation.apply")
-                }
             }
             .padding(.horizontal, Tokens.Space.s5)
             .padding(.top, Tokens.Space.s5)
-            .padding(.bottom, Tokens.Space.s6)
+            .padding(.bottom, Tokens.Space.s4)
+        }
+        // 18 eleven-a-side shapes (D-63) scroll; "Use" stays in reach under them.
+        .safeAreaInset(edge: .bottom) {
+            if let formation {
+                Button("Use \(formation.name)") { hasPlayers ? (confirming = true) : apply(formation) }
+                    .buttonStyle(PrimaryCapsuleStyle())
+                    .accessibilityIdentifier("formation.apply")
+                    .padding(.horizontal, Tokens.Space.s5)
+                    .padding(.top, Tokens.Space.s3)
+                    .padding(.bottom, Tokens.Space.s2)
+                    .background(Tokens.Colour.surface.color)
+            }
         }
         .onAppear {
             size = editor.tactic.pitch.kind

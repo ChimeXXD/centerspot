@@ -368,6 +368,444 @@
       ]
     },
     {
+      "id": "4-1-2-1-2",
+      "name": "4-1-2-1-2",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 3,
+          "roleID": "full-back",
+          "x": 0.15,
+          "y": 0.24
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.38,
+          "y": 0.2
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.62,
+          "y": 0.2
+        },
+        {
+          "number": 2,
+          "roleID": "full-back",
+          "x": 0.85,
+          "y": 0.24
+        },
+        {
+          "number": 6,
+          "roleID": "holding-midfielder",
+          "x": 0.5,
+          "y": 0.33
+        },
+        {
+          "number": 8,
+          "roleID": "box-to-box",
+          "x": 0.25,
+          "y": 0.46
+        },
+        {
+          "number": 7,
+          "roleID": "central-midfielder",
+          "x": 0.75,
+          "y": 0.46
+        },
+        {
+          "number": 10,
+          "roleID": "attacking-midfielder",
+          "x": 0.5,
+          "y": 0.58
+        },
+        {
+          "number": 11,
+          "roleID": "shadow-striker",
+          "x": 0.38,
+          "y": 0.7
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.62,
+          "y": 0.7
+        }
+      ]
+    },
+    {
+      "id": "4-3-2-1",
+      "name": "4-3-2-1",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 3,
+          "roleID": "full-back",
+          "x": 0.15,
+          "y": 0.24
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.38,
+          "y": 0.2
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.62,
+          "y": 0.2
+        },
+        {
+          "number": 2,
+          "roleID": "full-back",
+          "x": 0.85,
+          "y": 0.24
+        },
+        {
+          "number": 8,
+          "roleID": "box-to-box",
+          "x": 0.3,
+          "y": 0.42
+        },
+        {
+          "number": 6,
+          "roleID": "holding-midfielder",
+          "x": 0.5,
+          "y": 0.38
+        },
+        {
+          "number": 7,
+          "roleID": "central-midfielder",
+          "x": 0.7,
+          "y": 0.42
+        },
+        {
+          "number": 10,
+          "roleID": "attacking-midfielder",
+          "x": 0.36,
+          "y": 0.57
+        },
+        {
+          "number": 11,
+          "roleID": "shadow-striker",
+          "x": 0.64,
+          "y": 0.57
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.5,
+          "y": 0.7
+        }
+      ]
+    },
+    {
+      "id": "4-4-1-1",
+      "name": "4-4-1-1",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 3,
+          "roleID": "full-back",
+          "x": 0.15,
+          "y": 0.24
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.38,
+          "y": 0.2
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.62,
+          "y": 0.2
+        },
+        {
+          "number": 2,
+          "roleID": "full-back",
+          "x": 0.85,
+          "y": 0.24
+        },
+        {
+          "number": 11,
+          "roleID": "wide-midfielder",
+          "x": 0.15,
+          "y": 0.46
+        },
+        {
+          "number": 8,
+          "roleID": "central-midfielder",
+          "x": 0.38,
+          "y": 0.44
+        },
+        {
+          "number": 6,
+          "roleID": "central-midfielder",
+          "x": 0.62,
+          "y": 0.44
+        },
+        {
+          "number": 7,
+          "roleID": "wide-midfielder",
+          "x": 0.85,
+          "y": 0.46
+        },
+        {
+          "number": 10,
+          "roleID": "shadow-striker",
+          "x": 0.5,
+          "y": 0.57
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.5,
+          "y": 0.7
+        }
+      ]
+    },
+    {
+      "id": "4-5-1",
+      "name": "4-5-1",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 3,
+          "roleID": "full-back",
+          "x": 0.15,
+          "y": 0.24
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.38,
+          "y": 0.2
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.62,
+          "y": 0.2
+        },
+        {
+          "number": 2,
+          "roleID": "full-back",
+          "x": 0.85,
+          "y": 0.24
+        },
+        {
+          "number": 11,
+          "roleID": "wide-midfielder",
+          "x": 0.13,
+          "y": 0.52
+        },
+        {
+          "number": 8,
+          "roleID": "box-to-box",
+          "x": 0.32,
+          "y": 0.49
+        },
+        {
+          "number": 6,
+          "roleID": "central-midfielder",
+          "x": 0.5,
+          "y": 0.46
+        },
+        {
+          "number": 10,
+          "roleID": "advanced-playmaker",
+          "x": 0.68,
+          "y": 0.49
+        },
+        {
+          "number": 7,
+          "roleID": "wide-midfielder",
+          "x": 0.87,
+          "y": 0.52
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.5,
+          "y": 0.7
+        }
+      ]
+    },
+    {
+      "id": "4-2-2-2",
+      "name": "4-2-2-2",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 3,
+          "roleID": "full-back",
+          "x": 0.15,
+          "y": 0.24
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.38,
+          "y": 0.2
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.62,
+          "y": 0.2
+        },
+        {
+          "number": 2,
+          "roleID": "full-back",
+          "x": 0.85,
+          "y": 0.24
+        },
+        {
+          "number": 6,
+          "roleID": "holding-midfielder",
+          "x": 0.38,
+          "y": 0.36
+        },
+        {
+          "number": 8,
+          "roleID": "box-to-box",
+          "x": 0.62,
+          "y": 0.36
+        },
+        {
+          "number": 11,
+          "roleID": "attacking-midfielder",
+          "x": 0.24,
+          "y": 0.54
+        },
+        {
+          "number": 7,
+          "roleID": "attacking-midfielder",
+          "x": 0.76,
+          "y": 0.54
+        },
+        {
+          "number": 10,
+          "roleID": "shadow-striker",
+          "x": 0.38,
+          "y": 0.7
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.62,
+          "y": 0.7
+        }
+      ]
+    },
+    {
+      "id": "4-3-1-2",
+      "name": "4-3-1-2",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 3,
+          "roleID": "full-back",
+          "x": 0.15,
+          "y": 0.24
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.38,
+          "y": 0.2
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.62,
+          "y": 0.2
+        },
+        {
+          "number": 2,
+          "roleID": "full-back",
+          "x": 0.85,
+          "y": 0.24
+        },
+        {
+          "number": 8,
+          "roleID": "box-to-box",
+          "x": 0.3,
+          "y": 0.42
+        },
+        {
+          "number": 6,
+          "roleID": "holding-midfielder",
+          "x": 0.5,
+          "y": 0.42
+        },
+        {
+          "number": 7,
+          "roleID": "central-midfielder",
+          "x": 0.7,
+          "y": 0.42
+        },
+        {
+          "number": 10,
+          "roleID": "attacking-midfielder",
+          "x": 0.5,
+          "y": 0.56
+        },
+        {
+          "number": 11,
+          "roleID": "shadow-striker",
+          "x": 0.38,
+          "y": 0.7
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.62,
+          "y": 0.7
+        }
+      ]
+    },
+    {
       "id": "3-5-2",
       "name": "3-5-2",
       "pitch": "full",
@@ -514,6 +952,152 @@
       ]
     },
     {
+      "id": "3-4-2-1",
+      "name": "3-4-2-1",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.25,
+          "y": 0.21
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.5,
+          "y": 0.19
+        },
+        {
+          "number": 6,
+          "roleID": "centre-back",
+          "x": 0.75,
+          "y": 0.21
+        },
+        {
+          "number": 3,
+          "roleID": "wing-back",
+          "x": 0.1,
+          "y": 0.44
+        },
+        {
+          "number": 8,
+          "roleID": "central-midfielder",
+          "x": 0.38,
+          "y": 0.42
+        },
+        {
+          "number": 10,
+          "roleID": "central-midfielder",
+          "x": 0.62,
+          "y": 0.42
+        },
+        {
+          "number": 2,
+          "roleID": "wing-back",
+          "x": 0.9,
+          "y": 0.44
+        },
+        {
+          "number": 11,
+          "roleID": "shadow-striker",
+          "x": 0.35,
+          "y": 0.58
+        },
+        {
+          "number": 7,
+          "roleID": "shadow-striker",
+          "x": 0.65,
+          "y": 0.58
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.5,
+          "y": 0.7
+        }
+      ]
+    },
+    {
+      "id": "3-4-1-2",
+      "name": "3-4-1-2",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.25,
+          "y": 0.21
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.5,
+          "y": 0.19
+        },
+        {
+          "number": 6,
+          "roleID": "centre-back",
+          "x": 0.75,
+          "y": 0.21
+        },
+        {
+          "number": 3,
+          "roleID": "wing-back",
+          "x": 0.1,
+          "y": 0.44
+        },
+        {
+          "number": 8,
+          "roleID": "central-midfielder",
+          "x": 0.38,
+          "y": 0.42
+        },
+        {
+          "number": 7,
+          "roleID": "central-midfielder",
+          "x": 0.62,
+          "y": 0.42
+        },
+        {
+          "number": 2,
+          "roleID": "wing-back",
+          "x": 0.9,
+          "y": 0.44
+        },
+        {
+          "number": 10,
+          "roleID": "attacking-midfielder",
+          "x": 0.5,
+          "y": 0.56
+        },
+        {
+          "number": 11,
+          "roleID": "shadow-striker",
+          "x": 0.38,
+          "y": 0.7
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.62,
+          "y": 0.7
+        }
+      ]
+    },
+    {
       "id": "5-3-2",
       "name": "5-3-2",
       "pitch": "full",
@@ -583,6 +1167,152 @@
           "roleID": "striker",
           "x": 0.6,
           "y": 0.66
+        }
+      ]
+    },
+    {
+      "id": "5-4-1",
+      "name": "5-4-1",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 3,
+          "roleID": "wing-back",
+          "x": 0.1,
+          "y": 0.3
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.28,
+          "y": 0.21
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.5,
+          "y": 0.19
+        },
+        {
+          "number": 6,
+          "roleID": "centre-back",
+          "x": 0.72,
+          "y": 0.21
+        },
+        {
+          "number": 2,
+          "roleID": "wing-back",
+          "x": 0.9,
+          "y": 0.3
+        },
+        {
+          "number": 11,
+          "roleID": "wide-midfielder",
+          "x": 0.15,
+          "y": 0.48
+        },
+        {
+          "number": 8,
+          "roleID": "central-midfielder",
+          "x": 0.38,
+          "y": 0.45
+        },
+        {
+          "number": 10,
+          "roleID": "central-midfielder",
+          "x": 0.62,
+          "y": 0.45
+        },
+        {
+          "number": 7,
+          "roleID": "wide-midfielder",
+          "x": 0.85,
+          "y": 0.48
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.5,
+          "y": 0.68
+        }
+      ]
+    },
+    {
+      "id": "5-2-1-2",
+      "name": "5-2-1-2",
+      "pitch": "full",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 3,
+          "roleID": "wing-back",
+          "x": 0.1,
+          "y": 0.3
+        },
+        {
+          "number": 5,
+          "roleID": "centre-back",
+          "x": 0.28,
+          "y": 0.21
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.5,
+          "y": 0.19
+        },
+        {
+          "number": 6,
+          "roleID": "centre-back",
+          "x": 0.72,
+          "y": 0.21
+        },
+        {
+          "number": 2,
+          "roleID": "wing-back",
+          "x": 0.9,
+          "y": 0.3
+        },
+        {
+          "number": 8,
+          "roleID": "box-to-box",
+          "x": 0.36,
+          "y": 0.4
+        },
+        {
+          "number": 7,
+          "roleID": "central-midfielder",
+          "x": 0.64,
+          "y": 0.4
+        },
+        {
+          "number": 10,
+          "roleID": "attacking-midfielder",
+          "x": 0.5,
+          "y": 0.54
+        },
+        {
+          "number": 11,
+          "roleID": "shadow-striker",
+          "x": 0.38,
+          "y": 0.68
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.62,
+          "y": 0.68
         }
       ]
     },
@@ -685,6 +1415,104 @@
       ]
     },
     {
+      "id": "7-3-3",
+      "name": "3-3 (7-a-side)",
+      "pitch": "sevenASide",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 2,
+          "roleID": "full-back",
+          "x": 0.2,
+          "y": 0.25
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.5,
+          "y": 0.22
+        },
+        {
+          "number": 3,
+          "roleID": "full-back",
+          "x": 0.8,
+          "y": 0.25
+        },
+        {
+          "number": 7,
+          "roleID": "winger",
+          "x": 0.2,
+          "y": 0.56
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.5,
+          "y": 0.62
+        },
+        {
+          "number": 11,
+          "roleID": "winger",
+          "x": 0.8,
+          "y": 0.56
+        }
+      ]
+    },
+    {
+      "id": "7-2-1-2-1",
+      "name": "2-1-2-1 (7-a-side)",
+      "pitch": "sevenASide",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 2,
+          "roleID": "centre-back",
+          "x": 0.32,
+          "y": 0.22
+        },
+        {
+          "number": 3,
+          "roleID": "centre-back",
+          "x": 0.68,
+          "y": 0.22
+        },
+        {
+          "number": 6,
+          "roleID": "holding-midfielder",
+          "x": 0.5,
+          "y": 0.35
+        },
+        {
+          "number": 7,
+          "roleID": "central-midfielder",
+          "x": 0.3,
+          "y": 0.53
+        },
+        {
+          "number": 8,
+          "roleID": "central-midfielder",
+          "x": 0.7,
+          "y": 0.53
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.5,
+          "y": 0.68
+        }
+      ]
+    },
+    {
       "id": "5-1-2-1",
       "name": "1-2-1 (5-a-side)",
       "pitch": "fiveASide",
@@ -755,6 +1583,80 @@
           "roleID": "striker",
           "x": 0.7,
           "y": 0.6
+        }
+      ]
+    },
+    {
+      "id": "5-2-1-1",
+      "name": "2-1-1 (5-a-side)",
+      "pitch": "fiveASide",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 2,
+          "roleID": "centre-back",
+          "x": 0.3,
+          "y": 0.26
+        },
+        {
+          "number": 3,
+          "roleID": "centre-back",
+          "x": 0.7,
+          "y": 0.26
+        },
+        {
+          "number": 6,
+          "roleID": "central-midfielder",
+          "x": 0.5,
+          "y": 0.46
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.5,
+          "y": 0.68
+        }
+      ]
+    },
+    {
+      "id": "5-1-1-2",
+      "name": "1-1-2 (5-a-side)",
+      "pitch": "fiveASide",
+      "slots": [
+        {
+          "number": 1,
+          "roleID": "goalkeeper",
+          "x": 0.5,
+          "y": 0.06
+        },
+        {
+          "number": 4,
+          "roleID": "centre-back",
+          "x": 0.5,
+          "y": 0.26
+        },
+        {
+          "number": 6,
+          "roleID": "central-midfielder",
+          "x": 0.5,
+          "y": 0.45
+        },
+        {
+          "number": 10,
+          "roleID": "shadow-striker",
+          "x": 0.3,
+          "y": 0.66
+        },
+        {
+          "number": 9,
+          "roleID": "striker",
+          "x": 0.7,
+          "y": 0.66
         }
       ]
     }

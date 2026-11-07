@@ -2,6 +2,28 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Day 5: export (Sat 7 Nov 2026)
+
+**Changed**
+- `VideoExporter` (+ `VideoExportSettings`, `ExportClock`, `ExportFrame`, `ExportLayout`, `ExportText`): frames from `Timeline` drawn by `BoardRenderer` → AVAssetWriter, H.264, 30 fps, BT.709, 0.5 s lead-in and 1 s end still, off the main actor, progress, cancel deletes the file; no Reduce Motion input. 9:16, 1:1, 16:9 (pitch upright, title left, note right, D-63). "Agmen" corner mark on every frame (D-38).
+- `ImageExporter`: PNG of the current step (2 × the pitch's on-screen width) and a lineup card (1080×1350).
+- Export sheet to the mockup: preview with safe zones, Vertical 9:16 / Square / Wide / Image, "Up to … MB" before export (D-64), "Rendering n of N frames", Cancel, real size, share sheet, Save to Photos, error state. Spotlight a player (D-40): ring, fading trail, others dimmed, export only.
+- 26 formations (D-63). The picker's Use button is pinned under the tiles. `ExportSpike` replaced by `-exportBench`.
+- Code review (high): 10 found, 6 fixed (Cancel race leaving "Rendering" stuck, discard deleting a caller's folder, PNG width from the board area instead of the pitch, layout keyed on width, Release log lines, a colour space per frame); then fixed the lineup help text, "Rendering 0 of 1" on images, and closing the sheet mid-Photos-save.
+- Verifier: the estimate overstated ~4× → "Up to" (D-64); the spotlight trail had no pixel test (added); stale formation counts in SPEC/features; leftover exports are now cleared at launch.
+
+**Checked**
+- On Chime's iPhone 14 Pro (Debug, `-exportBench`): hero 9:16 1.92 s, 1.11 MB (budget 4.27); 1:1 0.84 s, 0.60 MB; 16:9 1.34 s, 0.74 MB; 10 steps 9:16 2.62 s, 2.22 MB (budget 8.37); 1:1 1.62 s, 1.18 MB; 16:9 2.60 s, 1.46 MB. Release will be faster.
+- Gate: all 3 pass; "Test run with 281 tests in 27 suites passed". UI tests: 4 pass (library and board, playback and draw, export flow, export error); screenshots in `fidelity/shots/day5/`.
+- Red runs: the frame plan, long notes on 5-a-side, the corner mark inside the square board, a goal-line player in the text band, long lineup names, the formation count, the leftover cleanup; each failed first.
+- Mutations, each restored: end still, lead-in, end still at t=0, bitrate ×4, cancel without delete, time jitter, three formation breaks, the spotlight trail removed.
+
+**Not verified**
+- Playback in WhatsApp and Discord (Chime). Save to Photos on the phone (permission prompt). iPad layout of the sheet; AX5 Dynamic Type.
+
+**Next**
+- Chime sends a clip to WhatsApp and Discord; then Day 6 (share and harden, onboarding D-58).
+
 ## Day 4 fix: the ball moves smoothly (Sat 7 Nov 2026)
 
 **Changed**

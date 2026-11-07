@@ -5,11 +5,16 @@ struct AgmenApp: App {
     @State private var store: LibraryStore
 
     init() {
+        // Before any export can start: clear clips an earlier run left behind when it was closed mid-export.
+        VideoExporter.removeLeftovers()
         let library = TacticLibrary.documents
         #if DEBUG
-        // D2-6: measure export speed and size on the device (`-exportSpike`); prints AGMEN-SPIKE lines.
-        if ProcessInfo.processInfo.arguments.contains("-exportSpike") { Task.detached { await ExportSpike.report() } }
         BoardDebugLaunch.resetLibraryIfAsked(library)
+        // D5-1: time real exports on the device (`-exportBench`); prints AGMEN-EXPORT lines.
+        if ProcessInfo.processInfo.arguments.contains("-exportBench"), let url = library.exampleURL,
+           let hero = try? library.load(url) {
+            Task.detached { await ExportBench.report(hero: hero) }
+        }
         #endif
         let store = LibraryStore(library: library)
         #if DEBUG

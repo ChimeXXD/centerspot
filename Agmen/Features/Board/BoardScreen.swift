@@ -21,6 +21,9 @@ struct BoardScreen: View {
     @State var canRedo = false
     /// The screen's width, so the title menu can truncate between the back button and the trailing items.
     @State var width: CGFloat = 0
+    /// The pitch's width on screen (not the canvas's, which is wider when the pitch is fitted by height): the step
+    /// PNG is twice it in pixels (SPEC §7).
+    @State var boardWidth: CGFloat = 0
     /// Editing, playing the move (D4-1) or drawing on it (D4-2).
     @State var mode = BoardMode.editing
     /// Loop starts on, as in the mockup's playback frame; later sessions keep the last choice.
@@ -58,6 +61,9 @@ struct BoardScreen: View {
         VStack(spacing: 0) {
             ZStack(alignment: .bottom) {
                 board
+                    .onGeometryChange(for: CGFloat.self) { [kind = tactic.pitch.kind] proxy in
+                        BoardGeometry(kind: kind, fitting: CGRect(origin: .zero, size: proxy.size)).pitchRect.width
+                    } action: { boardWidth = $0 }
                     .padding(.horizontal, Tokens.Space.s5)
                 if tactic.tokens.isEmpty, mode == .editing { emptyState }
                 if let toast {
@@ -143,7 +149,7 @@ struct BoardScreen: View {
             hasBall: tactic.tokens.contains { $0.kind == .ball },
             onFormation: { sheet = .formation }, onAdd: addToken,
             onPlay: startPlayback, onDraw: { startDrawing() },
-            onExport: { show("Export comes on Day 5") }
+            onExport: { sheet = .export }
         )
     }
 
@@ -214,6 +220,8 @@ struct BoardScreen: View {
             FormationPicker(editor: editor, stepIndex: current)
         case .note(let index):
             StepNoteSheet(editor: editor, stepIndex: index)
+        case .export:
+            ExportSheet(tactic: tactic, stepIndex: current, boardWidth: boardWidth)
         }
     }
 }
@@ -223,12 +231,14 @@ enum BoardSheet: Identifiable, Hashable {
     case player(String)
     case formation
     case note(Int)
+    case export
 
     var id: String {
         switch self {
         case .player(let id): "player-\(id)"
         case .formation: "formation"
         case .note(let index): "note-\(index)"
+        case .export: "export"
         }
     }
 

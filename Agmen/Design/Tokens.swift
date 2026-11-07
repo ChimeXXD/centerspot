@@ -55,6 +55,8 @@ enum Tokens {
     enum Typeface {
         static let uiName = "Nunito"
         static let noteName = "Kalam"
+        /// Kalam's PostScript name, for Core Text in exports.
+        static let noteFullName = "Kalam-Regular"
 
         static let largeTitle = Font.custom(uiName, size: 34, relativeTo: .largeTitle).weight(.heavy)
         static let title = Font.custom(uiName, size: 22, relativeTo: .title2).weight(.heavy)

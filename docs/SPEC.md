@@ -88,7 +88,7 @@ Details, copy and test IDs are in `design/UI-BRIEF.md`.
 | --- | --- | --- |
 | Vertical | 1080 × 1920 | Default. Pitch fills the width; title and step note in the top band; safe zones shown only in the preview |
 | Square | 1080 × 1080 | Should |
-| Wide | 1920 × 1080 | Should; pitch rotated to horizontal (D-16 note) |
+| Wide | 1920 × 1080 | Should; pitch upright in the middle, title left, step note right (D-63) |
 | Image | PNG of the current step; pixel width = 2 × the board's on-screen width in points | |
 
 - 30 fps, H.264, `AVAssetWriter` with a pixel buffer adaptor, frames from `BoardRenderer`; a 0.5 s lead-in still and a 1 s end still.
@@ -111,7 +111,7 @@ Fixtures: **the hero fixture** is `examples/overlap-left.tactic`, 5 steps (D-29)
 - [ ] Every file in `examples/` and the fixtures decodes, re-encodes and decodes again to an equal `Tactic`; an empty board (0 tokens) round-trips. verify: `FormatRoundTripTests`
 - [ ] Every row of the FORMAT rules table has a case: each "refuse" row gives the generic or newer-version error and no crash; each "repair" row opens with the value clamped, truncated or dropped as written; runs are anchored to neighbouring positions and a run on the last step is dropped. verify: `ImportValidationTests` (one case per row), then `FuzzImportTests` on Day 6
 - [ ] `Timeline.state(at:in:)` at `t = 0` equals step 1, at the end equals the last step, mid-move matches hand-computed ease-in-out cubic within 0.001, a token with a run follows it by arc length, and two calls with the same input are equal. verify: `TimelineTests`, plus one mutation run (break the easing, confirm red, restore)
-- [ ] 12 formations load (8 eleven-a-side, 2 seven-a-side, 2 five-a-side) and 22 roles; applying a formation keeps every player's name and number. verify: `PresetTests`
+- [ ] 26 formations load (18 eleven-a-side, 4 seven-a-side, 4 five-a-side; D-63) and 22 roles; applying a formation keeps every player's name and number. verify: `PresetTests`
 
 **Look and accessibility**
 - [ ] Every kit palette number ink passes WCAG AA (4.5:1) on its fill. verify: `TokenContrastTests`
