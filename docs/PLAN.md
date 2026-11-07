@@ -97,6 +97,7 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [ ] VoiceOver pass; Dynamic Type in sheets
 - [ ] CI green; beta build on Chime's iPhone
 - [ ] Borrow session on the brother's iPad (D-26): install the beta, open a `.tactic` from Files, VoiceOver pass
+- [ ] Should: onboarding (D-58): mockup of the welcome pages and tip sequence, Chime approves, then build (welcome on first launch, TipKit tips on the example move: drag, step, Play, draw a run, export)
 
 ### Day 7: Portfolio and open source
 - [ ] README: clip, what it does, architecture diagram, format link, how to build, honest numbers

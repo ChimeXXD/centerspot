@@ -369,6 +369,21 @@
       "evidence": ""
     },
     {
+      "id": "D6-5",
+      "day": 6,
+      "priority": "should",
+      "title": "Onboarding: welcome pages and learn-by-doing tips (D-58)",
+      "criteria": [
+        "welcome pages show once on first launch and can be skipped",
+        "tips appear in order on the example move as each action is done: drag a player, tap a step, Play, draw a run, export",
+        "a dismissed or completed tip never shows again; VoiceOver reads every tip",
+        "Chime approves the mockup and the build"
+      ],
+      "verify": "OnboardingTests (tip rules with TipKit's test hooks); UI test walking the tour; screenshot review",
+      "passes": false,
+      "evidence": ""
+    },
+    {
       "id": "D7-1",
       "day": 7,
       "priority": "must",
