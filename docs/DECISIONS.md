@@ -79,6 +79,8 @@ Written 6 Nov 2026 from the PRD (25 Oct), the shortlist research (5 Nov) and wha
 | D-51 | **Custom illustrations and a custom icon set for Agmen**, drawn in the Floodlight Chalk style (chalk line on near-black, lime accent), all our own artwork (D-13): the toolbar and tool icons, the arrow-kind icons, empty and error states, the launch art and the app icon. | Chime, 7 Nov: "can we create custom illustrations for [Agmen]? … Custom illustrations, custom icons too." |
 | D-52 | **The commit gate refuses any tracked file that names the design reference library** (`no-library-name` check); the name was scrubbed from the history on 7 Nov and force-pushed. | Chime approved both, 7 Nov. It slipped into D-44 and D-49 despite the Meridian lesson. |
 | D-53 | **Lime and coral join the kit palette and become the defaults** (new tactics, the demo move, and any missing or unknown colour: lime for home, coral for away). Supersedes the blue/orange defaults in D-45. Other palette keys still work and draw in their own colour. | Chime, 7 Nov, picked "Add lime and coral": the Floodlight Chalk look (D-44) draws home lime and away coral, which weren't palette keys. |
+| D-54 | **Step chips: tap goes to a step; tapping the current step shows Duration · Duplicate · Note · Delete in the row under the pitch; press, hold and drag reorders.** Supersedes UI-BRIEF §4.2's long-press menu. | Chime picked it, 7 Nov (matches the mockup). |
+| D-55 | **"+ Add" in the toolbar** adds Our player, Their player, Ball or Cone in the centre circle, ready to drag. The toolbar becomes Formation · + Add · Play · Draw · Export (Play stays centred); Share moves to the nav bar's share button. | Chime picked "+ Add", 7 Nov; five items keep Play centred. |
 
 ## Lessons carried from Meridian
 
