@@ -50,6 +50,20 @@ enum BoardRenderer {
         }
     }
 
+    /// `state`, with `next` laid over it at `mix` opacity: Reduce Motion's crossfade between resting steps (SPEC §8).
+    /// The same drawing twice, composited, so a crossfade can't look different from either step.
+    static func draw(state: BoardState, crossfadingTo next: BoardState?, mix: Double, tactic: Tactic, in ctx: CGContext,
+                     rect: CGRect, options: Options = .init()) {
+        draw(state: state, tactic: tactic, in: ctx, rect: rect, options: options)
+        guard let next, mix > 0 else { return }
+        ctx.saveGState()
+        ctx.setAlpha(CGFloat(min(mix, 1)))
+        ctx.beginTransparencyLayer(auxiliaryInfo: nil)
+        draw(state: next, tactic: tactic, in: ctx, rect: rect, options: options)
+        ctx.endTransparencyLayer()
+        ctx.restoreGState()
+    }
+
     /// Players and cones in board order, the ball last so it is never hidden under its carrier.
     static func drawingOrder(_ tokens: [Token]) -> [Token] {
         tokens.filter { $0.kind != .ball } + tokens.filter { $0.kind == .ball }

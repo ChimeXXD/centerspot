@@ -130,6 +130,90 @@ final class BoardScreenshotUITests: XCTestCase {
         save("library-after")
     }
 
+    /// Day 4: Play the hero move (the scrubber replaces the strip, Pause, Done returns to the step), then draw a finger
+    /// run from a player on the last step (D-28 adds step 6), Done keeps it, Undo takes it away, Cancel leaves nothing.
+    @MainActor
+    func testPlaybackAndDraw() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-resetLibrary", "YES"]
+        app.launch()
+        let example = card(app, "Overlap down the left, 5 steps")
+        XCTAssertTrue(example.waitForExistence(timeout: timeout))
+        example.tap()
+        XCTAssertTrue(element(app, "board.token.h3").waitForExistence(timeout: timeout))
+
+        // Playback: the scrubber replaces the steps strip and the toolbar.
+        element(app, "toolbar.play").tap()
+        let toggle = element(app, "playback.toggle")
+        XCTAssertTrue(toggle.waitForExistence(timeout: timeout))
+        XCTAssertEqual(toggle.label, "Pause")
+        XCTAssertFalse(element(app, "steps.chip.1").exists, "the scrubber replaces the strip")
+        XCTAssertFalse(element(app, "toolbar.play").exists)
+        toggle.tap()
+        XCTAssertEqual(toggle.label, "Play")
+
+        // Scrub into step 4's segment (3.1 of 5 equal segments: its hold, about 4.85 s).
+        let scrubber = element(app, "playback.scrubber")
+        scrubber.coordinate(withNormalizedOffset: CGVector(dx: 0.62, dy: 0.5)).tap()
+        XCTAssertTrue(element(app, "playback.note").label.hasPrefix("Step 4 of 5 · 3 crosses for 9"), element(app, "playback.note").label)
+        XCTAssertTrue(element(app, "playback.time").label.hasPrefix("0:04."), element(app, "playback.time").label)
+        XCTAssertTrue(element(app, "playback.time").label.hasSuffix(" / 0:06.5"), "the timeline's length, not the export's")
+        XCTAssertEqual(scrubber.label, "Step 4 of 5")
+
+        // Mid-move while playing, as in the mockup (step 4's move runs 5.0…6.2 s).
+        toggle.tap()
+        XCTAssertEqual(toggle.label, "Pause")
+        usleep(600_000)
+        save("playback")
+        toggle.tap()
+        scrubber.coordinate(withNormalizedOffset: CGVector(dx: 0.62, dy: 0.5)).tap()
+        element(app, "playback.done").tap()
+        XCTAssertTrue(element(app, "steps.chip.1").waitForExistence(timeout: timeout))
+        XCTAssertEqual(element(app, "board.step-label").label, "Step 4 of 5 · 1.2 s", "Done returns to the step it stopped on")
+
+        // Draw: a finger run from 3 on the last step adds step 6 (D-28).
+        element(app, "steps.chip.5").tap()
+        element(app, "toolbar.draw").tap()
+        XCTAssertTrue(element(app, "draw.title").waitForExistence(timeout: timeout))
+        XCTAssertTrue(element(app, "draw.kind.run").isSelected, "Run is picked")
+        XCTAssertEqual(element(app, "draw.hint").label, "Start on a player to draw their run.")
+        XCTAssertEqual(element(app, "draw.kind-help").label, "Run · solid line · the player follows it")
+        XCTAssertFalse(element(app, "steps.chip.1").exists)
+        let pitch = element(app, "board.pitch")
+        XCTAssertEqual(pitch.label, "Pitch, step 5 of 5")
+        drawStroke(from: element(app, "board.token.h3"))
+        XCTAssertTrue(pitch.waitForLabel("Pitch, step 5 of 6", timeout: timeout), "the run added a step: \(pitch.label)")
+        sleep(1)
+        save("draw")
+        element(app, "draw.done").tap()
+        XCTAssertTrue(element(app, "steps.chip.6").waitForExistence(timeout: timeout), "the strip shows the new step")
+        XCTAssertEqual(element(app, "board.step-label").label, "Step 5 of 6 · 1.2 s")
+
+        // Undo removes the drawn run and its step.
+        element(app, "nav.undo").tap()
+        XCTAssertTrue(element(app, "steps.chip.6").waitForNonExistence(timeout: timeout), "Undo takes the run back")
+        XCTAssertEqual(element(app, "board.step-label").label, "Step 5 of 5 · 1.2 s")
+
+        // Cancel leaves without changes.
+        element(app, "toolbar.draw").tap()
+        XCTAssertTrue(element(app, "draw.cancel").waitForExistence(timeout: timeout))
+        element(app, "draw.kind.pass").tap()
+        XCTAssertEqual(element(app, "draw.kind-help").label, "Pass · dashed line · the ball follows it")
+        // 3 doesn't have the ball on step 5, so a pass would only draw an arrow; a press moves 3.
+        element(app, "draw.kind.press").tap()
+        drawStroke(from: element(app, "board.token.h3"))
+        XCTAssertTrue(pitch.waitForLabel("Pitch, step 5 of 6", timeout: timeout))
+        element(app, "draw.cancel").tap()
+        XCTAssertTrue(element(app, "steps.chip.5").waitForExistence(timeout: timeout))
+        XCTAssertFalse(element(app, "steps.chip.6").exists, "Cancel took the stroke back")
+    }
+
+    /// A finger stroke up and inside from a token, pressed first so it starts on the token.
+    private func drawStroke(from token: XCUIElement) {
+        let start = token.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        start.press(forDuration: 0.2, thenDragTo: start.withOffset(CGVector(dx: 80, dy: -60)))
+    }
+
     /// A library card by its VoiceOver label ("<title>, N steps").
     private func card(_ app: XCUIApplication, _ label: String) -> XCUIElement {
         app.descendants(matching: .any)
@@ -153,5 +237,13 @@ final class BoardScreenshotUITests: XCTestCase {
         if let dir = ProcessInfo.processInfo.environment["SHOTS_DIR"] {
             try? png.write(to: URL(fileURLWithPath: dir).appendingPathComponent("\(name).png"))
         }
+    }
+}
+
+private extension XCUIElement {
+    /// Waits for the element's label to become `label`.
+    func waitForLabel(_ label: String, timeout: TimeInterval) -> Bool {
+        let expectation = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@", label), object: self)
+        return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
     }
 }

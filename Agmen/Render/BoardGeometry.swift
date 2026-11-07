@@ -93,4 +93,24 @@ struct BoardGeometry: Sendable, Equatable {
         }
         return best?.id
     }
+
+    /// The token a drawn stroke starts on (D-59): a player within `hitRadius` first, so a stroke from the ball at a
+    /// carrier's feet starts on the carrier; a loose ball nearer the finger than any player starts its own stroke;
+    /// else nil (grass, or a cone).
+    func strokeStart(at location: CGPoint, positions: [String: Point], tokens: [Token]) -> String? {
+        let centres = drawnCentres(positions: positions, tokens: tokens)
+        func nearest(_ kind: Token.Kind) -> (id: String, distance: CGFloat)? {
+            tokens.filter { $0.kind == kind }
+                .compactMap { token in centres[token.id].map { (token.id, hypot($0.x - location.x, $0.y - location.y)) } }
+                .filter { $0.1 <= Self.hitRadius }
+                .min { $0.1 < $1.1 }
+        }
+        let player = nearest(.player), ball = nearest(.ball)
+        // A carried ball is drawn off its position (at the carrier's feet); a loose one is drawn where it is.
+        if let ball, let p = positions[ball.id], centres[ball.id] == point(p),
+           ball.distance < player?.distance ?? .infinity {
+            return ball.id
+        }
+        return player?.id ?? ball?.id
+    }
 }

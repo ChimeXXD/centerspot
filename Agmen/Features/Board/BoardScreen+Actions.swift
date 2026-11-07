@@ -18,7 +18,7 @@ extension BoardScreen {
 
     func endDrag(_ id: String, _ point: Point) {
         let name = tactic.tokens.first { $0.id == id }.map(Self.moveActionName) ?? "Move"
-        editor.apply(name) { TacticEdits.moveToken(id, to: point, step: current, in: &$0) }
+        applyEdit(name) { TacticEdits.moveToken(id, to: point, step: current, in: &$0) }
         dragPreview = nil
         selection = id
         showsStepActions = false
@@ -26,7 +26,7 @@ extension BoardScreen {
 
     func nudge(_ id: String, _ point: Point) {
         let name = tactic.tokens.first { $0.id == id }.map(Self.moveActionName) ?? "Move"
-        editor.apply(name) { TacticEdits.moveToken(id, to: point, step: current, in: &$0) }
+        applyEdit(name) { TacticEdits.moveToken(id, to: point, step: current, in: &$0) }
     }
 
     static func moveActionName(_ token: Token) -> String {

@@ -30,6 +30,8 @@ struct DocumentEditorUndoTests {
         ("Move player", { TacticEdits.moveToken("h9", to: Point(x: 0.3, y: 0.7), step: 0, in: &$0) }),
         ("Add player", { _ = TacticEdits.addToken(.ourPlayer, in: &$0) }),
         ("Remove player", { TacticEdits.deleteToken("h3", in: &$0) }),
+        ("Draw run", { StrokeEdits.draw([Point(x: 0.15, y: 0.25), Point(x: 0.1, y: 0.5)], kind: .run, from: "h3", step: 1, in: &$0) }),
+        ("Draw pass", { StrokeEdits.draw([Point(x: 0.3, y: 0.4), Point(x: 0.6, y: 0.5)], kind: .pass, from: "h8", step: 4, in: &$0) }),
     ]
 
     @Test(arguments: edits.indices)

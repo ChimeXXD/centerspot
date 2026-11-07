@@ -78,12 +78,12 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [ ] Chime approves the screen; baseline saved to `fidelity/refs/`
 
 ### Day 4: Playback and drawn runs
-- [ ] Play, pause, scrub, loop; `TimelineView(.animation)` drives `Timeline`
-- [ ] Reduce Motion: step-through with crossfades
-- [ ] Draw mode: Pencil on iPad, toggle on iPhone; stroke → simplified path → token run for that step
+- [x] Play, pause, scrub, loop; `TimelineView(.animation)` drives `Timeline` (7 Nov: `PlaybackClockTests`, `PlaybackTrackTests`, UI walk; smoothness still to feel on the phone)
+- [x] Reduce Motion: step-through with crossfades (7 Nov: `PlaybackTrackTests`, 651 sampled `t`s never between steps; on-device look still to check)
+- [x] Draw mode: Pencil on iPad, toggle on iPhone; stroke → simplified path → token run for that step (7 Nov: `StrokeEditsTests`, `PathSimplifierTests`, UI walk draws a finger run; D-59/D-62; finger feel on the phone and Pencil on the iPad still to check)
 - [ ] Borrow session on the brother's iPad (D-26): install, Pencil draws a run, finger moves tokens
-- [ ] Arrows per step (Should)
-- [ ] Render test: on-screen frame vs offscreen frame at the same `t`
+- [x] Arrows per step (Should) (7 Nov: every stroke leaves its arrow, D-62)
+- [x] Render test: on-screen frame vs offscreen frame at the same `t` (7 Nov: `RendererParityTests` under D-60/D-61; 2 px shift and one recoloured token fail it)
 
 ### Day 5: Export
 - [ ] `VideoExporter`: frames from `BoardRenderer` → `AVAssetWriter`, 1080×1920, 30 fps, H.264, cancellable with progress

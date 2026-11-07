@@ -65,4 +65,36 @@ struct BoardGeometryTests {
         #expect(g.drawnCentres(positions: loose, tokens: hero.tokens)["ball"] == g.point(.centre))
         #expect(g.hitToken(at: ball, positions: state.positions, tokens: hero.tokens) == "ball")
     }
+
+    /// D-59: a stroke starts on a player when it can; a loose ball counts; cones and grass don't.
+    @Test func aStrokeStartsOnThePlayerBeforeTheBallAtTheirFeet() throws {
+        var hero = try Fixtures.tactic("overlap-left")
+        let state = Timeline.restingState(step: 0, in: hero)
+        let g = BoardGeometry(kind: .full, fitting: CGRect(x: 0, y: 0, width: 334, height: 516))
+        let ball = try #require(g.drawnCentres(positions: state.positions, tokens: hero.tokens)["ball"])
+        #expect(g.strokeStart(at: ball, positions: state.positions, tokens: hero.tokens) == "h8", "8 carries it")
+        var loose = state.positions
+        loose["ball"] = Point(x: 0.5, y: 0.5)
+        #expect(g.strokeStart(at: g.point(.centre), positions: loose, tokens: hero.tokens) == "ball")
+        let three = g.point(try #require(state.positions["h3"]))
+        #expect(g.strokeStart(at: three, positions: state.positions, tokens: hero.tokens) == "h3")
+        #expect(g.strokeStart(at: g.point(.centre), positions: state.positions, tokens: hero.tokens) == nil)
+        _ = TacticEdits.addToken(.cone, in: &hero)
+        let withCone = Timeline.restingState(step: 0, in: hero).positions
+        #expect(g.strokeStart(at: g.point(.centre), positions: withCone, tokens: hero.tokens) == nil, "a cone is grass")
+    }
+
+    /// A loose ball just out of a player's reach but inside their hit radius: starting on the ball picks the ball.
+    @Test func aLooseBallNearAPlayerStartsItsOwnStroke() throws {
+        let hero = try Fixtures.tactic("overlap-left")
+        let g = BoardGeometry(kind: .full, fitting: CGRect(x: 0, y: 0, width: 345, height: 345 * 105 / 68))
+        var positions = Timeline.restingState(step: 0, in: hero).positions
+        let six = try #require(positions["h6"])
+        // 18 pt to the right of 6: past the 1.2-radius reach (about 15.7 pt), inside the 22 pt hit radius.
+        positions["ball"] = Point(x: six.x + 18 / 345, y: six.y)
+        let ball = try #require(g.drawnCentres(positions: positions, tokens: hero.tokens)["ball"])
+        #expect(ball == g.point(try #require(positions["ball"])), "the ball is loose, drawn where it is")
+        #expect(g.strokeStart(at: ball, positions: positions, tokens: hero.tokens) == "ball")
+        #expect(g.strokeStart(at: g.point(six), positions: positions, tokens: hero.tokens) == "h6", "on 6 is still 6")
+    }
 }

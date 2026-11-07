@@ -1,6 +1,6 @@
 # Handoff: read this first when you pick the project back up
 
-## Latest: Day 3 built, plus Agmen's own library (D-56), Sat 7 Nov 2026. Waiting on Chime's review; then Day 4 (playback and drawn runs).
+## Latest: Day 4 built (playback, drawing, render parity), Sat 7 Nov 2026. Waiting on Chime's phone check and the iPad borrow session; then Day 5 (export).
 
 ### Where it stands
 - **App: Agmen** (D-42), private repo `ChimeXXD/agmen`. Folder on disk is still `Tactics Board`.
@@ -23,6 +23,7 @@
 - One simulator job at a time. Push to GitHub after every commit.
 
 ### Do next
+0. Day 4 on devices: playback smoothness and finger drawing on the iPhone; Pencil on the brother's iPad (D4-4), including whether a Pencil stroke from a token also drags it.
 1. Chime approves the Day 3 screenshots and tries the board on the phone (drag, reorder, timed 5-step move). Approved shots go to `fidelity/refs/`.
 2. Ask: does a stroke starting on a player always become a run (passes also start on players)?
 3. Day 4: playback (`TimelineView(.animation)` → `Timeline`), scrubber, Reduce Motion step-through, drawn runs (finger on iPhone, Pencil on the brother's iPad).

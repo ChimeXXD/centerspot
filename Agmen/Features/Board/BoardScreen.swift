@@ -17,10 +17,21 @@ struct BoardScreen: View {
     @State var pulse = 0
     @State var renaming = false
     @State var newTitle = ""
-    @State private var canUndo = false
-    @State private var canRedo = false
+    @State var canUndo = false
+    @State var canRedo = false
     /// The screen's width, so the title menu can truncate between the back button and the trailing items.
-    @State private var width: CGFloat = 0
+    @State var width: CGFloat = 0
+    /// Editing, playing the move (D4-1) or drawing on it (D4-2).
+    @State var mode = BoardMode.editing
+    /// Loop starts on, as in the mockup's playback frame; later sessions keep the last choice.
+    @State var clock = PlaybackClock(duration: 0, loops: true)
+    /// Whether the move was playing when the scrubber was grabbed, so it plays on when let go.
+    @State var scrub: (resumes: Bool, active: Bool) = (false, false)
+    @State var drawKind = Arrow.Kind.run
+    /// Edits made since draw mode opened (strokes, and on iPad the finger's token moves), so Cancel can take them
+    /// all back (the mockup's "without changes").
+    @State var drawEdits = 0
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
 
     struct DragPreview: Equatable {
         let id: String
@@ -43,15 +54,9 @@ struct BoardScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack(alignment: .bottom) {
-                BoardCanvas(
-                    tactic: tactic, state: boardState, selection: selectedToken?.id,
-                    dimsUnselected: sheet?.isPlayer == true,
-                    onTap: tap, onDoubleTap: openPlayer,
-                    onDrag: { id, point in dragPreview = DragPreview(id: id, point: point) },
-                    onDragEnd: endDrag, onDragCancel: { dragPreview = nil }, onNudge: nudge
-                )
-                .padding(.horizontal, Tokens.Space.s5)
-                if tactic.tokens.isEmpty { emptyState }
+                board
+                    .padding(.horizontal, Tokens.Space.s5)
+                if tactic.tokens.isEmpty, mode == .editing { emptyState }
                 if let toast {
                     BoardToastView(toast: toast) { undoFromToast(toast) }
                         .padding(.horizontal, Tokens.Space.s4)
@@ -65,29 +70,20 @@ struct BoardScreen: View {
             }
             .padding(.top, Tokens.Space.s2)
 
-            contextRow
-                .padding(.horizontal, Tokens.Space.s5)
-                .padding(.vertical, Tokens.Space.s1)
-                .animation(Tokens.Motion.ease(Tokens.Motion.select), value: contextKey)
-
-            if !tactic.tokens.isEmpty {
-                StepsStrip(steps: steps, current: current, pulse: pulse,
-                           onSelect: selectStep, onAdd: { addStep("Add step") }, onMove: moveStep)
-                    .padding(.vertical, Tokens.Space.s1)
+            switch mode {
+            case .editing: editingBar
+            case .playing: playbackBar
+            case .drawing: DrawPanel(kind: $drawKind)
             }
-
-            BoardToolbar(
-                hasBall: tactic.tokens.contains { $0.kind == .ball },
-                onFormation: { sheet = .formation }, onAdd: addToken,
-                onPlay: { show("Playback comes on Day 4") }, onDraw: { show("Drawing comes on Day 4") },
-                onExport: { show("Export comes on Day 5") }
-            )
         }
         .background(Tokens.Colour.bg.color.ignoresSafeArea())
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
         .navigationTitle(tactic.title)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(mode == .drawing)
         .toolbar { navigationItems }
+        .onChange(of: tactic) { if mode == .playing { clock.setDuration(phaseDuration, at: Self.now) } }
+        .task(id: clock) { await pauseAtTheEnd() }
         .alert("Rename tactic", isPresented: $renaming) {
             TextField("Title", text: $newTitle)
             Button("Cancel", role: .cancel) {}
@@ -103,6 +99,50 @@ struct BoardScreen: View {
     }
 
     // MARK: Parts
+
+    /// The pitch for the current mode: at rest on the step while editing and drawing, the timeline while playing.
+    @ViewBuilder private var board: some View {
+        if mode == .playing {
+            TimelineView(.animation(minimumInterval: nil, paused: !clock.isPlaying)) { _ in
+                let frame = PlaybackTrack.frame(at: clock.t(at: Self.now), in: tactic, reduceMotion: reduceMotion)
+                canvas(frame.base, crossfade: frame.next.map { ($0, frame.mix) })
+            }
+        } else {
+            canvas(boardState, crossfade: nil)
+        }
+    }
+
+    private func canvas(_ state: BoardState, crossfade: (state: BoardState, mix: Double)?) -> some View {
+        BoardCanvas(
+            tactic: tactic, state: state, selection: mode == .playing ? nil : selectedToken?.id,
+            dimsUnselected: sheet?.isPlayer == true, crossfade: crossfade,
+            movesTokens: mode == .editing || (mode == .drawing && Self.pencilDraws),
+            strokeInput: strokeInput, strokeKind: drawKind, onStroke: drawStroke,
+            onTap: tapBoard, onDoubleTap: doubleTapBoard,
+            onDrag: { id, point in dragPreview = DragPreview(id: id, point: point) },
+            onDragEnd: endDrag, onDragCancel: { dragPreview = nil }, onNudge: nudge
+        )
+    }
+
+    @ViewBuilder private var editingBar: some View {
+        contextRow
+            .padding(.horizontal, Tokens.Space.s5)
+            .padding(.vertical, Tokens.Space.s1)
+            .animation(Tokens.Motion.ease(Tokens.Motion.select), value: contextKey)
+
+        if !tactic.tokens.isEmpty {
+            StepsStrip(steps: steps, current: current, pulse: pulse,
+                       onSelect: selectStep, onAdd: { addStep("Add step") }, onMove: moveStep)
+                .padding(.vertical, Tokens.Space.s1)
+        }
+
+        BoardToolbar(
+            hasBall: tactic.tokens.contains { $0.kind == .ball },
+            onFormation: { sheet = .formation }, onAdd: addToken,
+            onPlay: startPlayback, onDraw: { startDrawing() },
+            onExport: { show("Export comes on Day 5") }
+        )
+    }
 
     private var emptyState: some View {
         VStack(spacing: Tokens.Space.s4) {
@@ -129,7 +169,7 @@ struct BoardScreen: View {
         } else if let token = selectedToken {
             BoardContextRow(
                 mode: .token(label: Self.selectionLabel(token), isPlayer: token.kind == .player),
-                onEdit: { openPlayer(token.id) }, onDrawRun: { show("Drawing runs comes on Day 4") },
+                onEdit: { openPlayer(token.id) }, onDrawRun: { startDrawing(.run) },
                 onRemove: { removeToken(token) }
             )
         } else {
@@ -163,65 +203,6 @@ struct BoardScreen: View {
         }
     }
 
-    @ToolbarContentBuilder private var navigationItems: some ToolbarContent {
-        ToolbarItemGroup(placement: .topBarTrailing) {
-            // The board's UndoManager isn't the window's (D-56), so a hardware keyboard needs these shortcuts.
-            Button("Undo", systemImage: "arrow.uturn.backward") { undoManager?.undo() }
-                .keyboardShortcut("z", modifiers: .command)
-                .disabled(!canUndo)
-                .accessibilityIdentifier("nav.undo")
-            Button("Redo", systemImage: "arrow.uturn.forward") { undoManager?.redo() }
-                .keyboardShortcut("z", modifiers: [.command, .shift])
-                .disabled(!canRedo)
-                .accessibilityIdentifier("nav.redo")
-        }
-        // The title is our own menu (Rename, then the mockup's "more" options: the pitch). The system's editable
-        // title sits leading at full width and folds Redo and Share into an overflow menu when the title is long;
-        // this one truncates, so Share stays visible (D-55).
-        ToolbarItem(placement: .principal) {
-            Menu {
-                Button("Rename", systemImage: "pencil") {
-                    newTitle = tactic.title
-                    renaming = true
-                }
-                pitchMenu
-            } label: {
-                HStack(spacing: Tokens.Space.s1) {
-                    Text(tactic.title)
-                        .font(Tokens.Typeface.headline)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                    Image(systemName: "chevron.down")
-                        .font(Tokens.Typeface.caption.weight(.heavy))
-                        .foregroundStyle(Tokens.Colour.muted.color)
-                }
-                .foregroundStyle(Tokens.Colour.text.color)
-                .frame(maxWidth: max(width - Tokens.Size.navBarItems, Tokens.Size.touch * 2))
-            }
-            .accessibilityLabel(tactic.title)
-            .accessibilityHint("Rename or change the pitch")
-            .accessibilityIdentifier("nav.title")
-        }
-        ToolbarItem(placement: .topBarTrailing) {
-            Button("Share", systemImage: "square.and.arrow.up") { show("Sharing comes on Day 6") }
-                .accessibilityIdentifier("nav.share")
-        }
-    }
-
-    @ViewBuilder private var pitchMenu: some View {
-        Picker("Pitch", selection: Binding(get: { tactic.pitch.kind }, set: setPitchKind)) {
-            Text("11-a-side").tag(Pitch.Kind.full)
-            Text("7-a-side").tag(Pitch.Kind.sevenASide)
-            Text("5-a-side").tag(Pitch.Kind.fiveASide)
-        }
-        .pickerStyle(.menu)
-        Picker("Pitch style", selection: Binding(get: { tactic.pitch.style }, set: setPitchStyle)) {
-            Text("Stripes").tag(Pitch.Style.stripes)
-            Text("Plain").tag(Pitch.Style.plain)
-        }
-        .pickerStyle(.menu)
-    }
-
     @ViewBuilder private func sheetContent(_ sheet: BoardSheet) -> some View {
         switch sheet {
         case .player(let id):
@@ -231,23 +212,6 @@ struct BoardScreen: View {
         case .note(let index):
             StepNoteSheet(editor: editor, stepIndex: index)
         }
-    }
-
-    // MARK: Undo state
-
-    private var undoChanges: AnyPublisher<Notification, Never> {
-        let center = NotificationCenter.default
-        return Publishers.MergeMany(
-            center.publisher(for: .NSUndoManagerDidCloseUndoGroup),
-            center.publisher(for: .NSUndoManagerDidUndoChange),
-            center.publisher(for: .NSUndoManagerDidRedoChange)
-        )
-        .eraseToAnyPublisher()
-    }
-
-    private func refreshUndo() {
-        canUndo = undoManager?.canUndo ?? false
-        canRedo = undoManager?.canRedo ?? false
     }
 }
 
@@ -266,4 +230,9 @@ enum BoardSheet: Identifiable, Hashable {
     }
 
     var isPlayer: Bool { if case .player = self { true } else { false } }
+}
+
+/// What the board is doing: editing a step, playing the move (D4-1) or drawing on it (D4-2).
+enum BoardMode: Equatable {
+    case editing, playing, drawing
 }

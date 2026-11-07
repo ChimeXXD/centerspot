@@ -79,7 +79,7 @@ Details, copy and test IDs are in `design/UI-BRIEF.md`.
 - **Drag** a token to move it in the current step. One finger; long-press then drag to multi-select (Should). Clamped to the pitch; no snap by default.
 - **Tap** a token to select; tap the pitch to deselect; double-tap a token to open the inspector.
 - **New step** duplicates the current step and selects it. Steps can be reordered by drag, deleted (with undo) and given a duration.
-- **Draw mode**: on iPad the Pencil always draws and the finger always moves tokens; on iPhone a toolbar toggle switches the finger to drawing. A stroke that starts on a token becomes that token's run; any other stroke becomes an arrow of the chosen kind.
+- **Draw mode**: on iPad the Pencil always draws and the finger always moves tokens; on iPhone a toolbar toggle switches the finger to drawing. The picked line type decides what a stroke from a player does (D-59): Run moves the player, Pass moves the ball, Dribble moves both, Press moves the player; a stroke from empty grass is an arrow of the picked type and moves nothing.
 - **Undo/redo** through the document's `UndoManager` for every edit.
 
 ## 7. Export (D-11)
@@ -117,7 +117,7 @@ Fixtures: **the hero fixture** is `examples/overlap-left.tactic`, 5 steps (D-29)
 - [ ] Every kit palette number ink passes WCAG AA (4.5:1) on its fill. verify: `TokenContrastTests`
 - [ ] Every player token has a VoiceOver label from number, role and zone ("Number 9, striker, edge of the box"), with ", step 3 of 6" while editing; the adjustable action nudges a selected token by 2% of the pitch. verify: `PlacementTests` for zone words; UI test `BoardAccessibilityUITests` reads the 4-3-3 labels and performs one increment
 - [ ] Every toolbar and strip control has a VoiceOver label, and every sheet lays out at AX5 Dynamic Type without clipped text. verify: `ControlLabelUITests` (every hittable control has a non-empty label); AX5 simulator screenshots of each sheet reviewed by Chime
-- [ ] The board on screen and an exported frame at the same `t` and size agree on at least 99.5% of pixels within 2/255 per channel (D-24). The screen side is captured from the real board view (`Canvas` + `withCGContext`) with `ImageRenderer`, not from a second offscreen call. verify: `RendererParityTests`
+- [ ] The board on screen and an exported frame at the same `t` and size agree on at least 99.5% of pixels within 16/255 per channel (D-60, supersedes D-24), and no pixel is more than 64/255 off (D-61). The screen side is captured from the real board view (`Canvas` + `withCGContext`) with `ImageRenderer`, not from a second offscreen call. verify: `RendererParityTests`
 
 **Editing**
 - [ ] Drag moves a token in the current step and clamps it to the pitch; tap selects; the inspector changes name, number, role and side; formation and pitch pickers apply. verify: `BoardEditorTests` on the editing model; Chime approves the board screenshot (baseline in `fidelity/refs/`)

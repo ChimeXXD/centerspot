@@ -80,6 +80,8 @@ enum Tokens {
         static let item: CGFloat = 12
         /// Formation tiles and the toast.
         static let tile: CGFloat = 16
+        /// The draw mode's kind picker panel.
+        static let panel: CGFloat = 24
     }
 
     /// Fixed control sizes from the mockup. Touch targets are at least 44 pt (UI-BRIEF §2).
@@ -91,6 +93,13 @@ enum Tokens {
         static let playDisc: CGFloat = 48
         static let toolbarHeight: CGFloat = 82
         static let toast: CGFloat = 52
+        /// The line under the finger or Pencil while drawing.
+        static let liveStroke: CGFloat = 3
+        /// The playback scrubber: one bar per step, this thick, this far apart.
+        static let scrubberBar: CGFloat = 6
+        static let scrubberGap: CGFloat = 6
+        /// The draw mode's kind tiles.
+        static let kindTile: CGFloat = 64
         /// Nav bar width kept clear of the board's title: the back button and Undo, Redo, Share with their gaps.
         static let navBarItems: CGFloat = 260
     }

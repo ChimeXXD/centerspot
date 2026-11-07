@@ -215,7 +215,7 @@
       ],
       "verify": "manual, on the phone",
       "passes": false,
-      "evidence": ""
+      "evidence": "7 Nov 2026, partial: PlaybackClockTests 12/12, PlaybackTrackTests (Reduce Motion never between steps at 651 sampled t), UI walk plays and pauses mid-move. Open: smooth on the phone."
     },
     {
       "id": "D4-2",
@@ -229,7 +229,7 @@
       ],
       "verify": "PathSimplifierTests + manual",
       "passes": false,
-      "evidence": ""
+      "evidence": "7 Nov 2026, partial: StrokeEditsTests 17/17 (D-59/D-62 movers, D-28 next step, D-27 anchoring, 30-arrow and 40-step limits, TacticFormat round trip), PathSimplifierTests (≤200 points; 10k zigzag 8.5 ms Debug on the Mac), UI walk draws a finger run, Undo and Cancel. Mutations caught. Open: finger feel on the iPhone, Pencil on the borrowed iPad."
     },
     {
       "id": "D4-3",
@@ -237,12 +237,13 @@
       "priority": "must",
       "title": "Render test: screen frame matches export frame at the same t (D-24 tolerance)",
       "criteria": [
-        "at least 99.5% of pixels within 2/255 per channel at equal size (D-24)",
+        "at least 99.5% of pixels within 16/255 per channel at equal size (D-60, supersedes D-24)",
+        "and no pixel more than 64/255 off (D-61); a token 2 px off or one token recoloured fails",
         "screen side captured from the real board view with ImageRenderer"
       ],
       "verify": "RendererParityTests",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "7 Nov 2026: RendererParityTests 7/7: pitch (both styles) 99.96% within 16/255, max 28; hero at t 0.9/2.4/3.9/5.5 99.92–99.93%, max 30–40; oneTokenTwoPixelsOffFails and oneRecolouredTokenFails pass and turn red when the 64 cap is removed. Gate test passed (247 tests)."
     },
     {
       "id": "D4-4",

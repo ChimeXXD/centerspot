@@ -2,6 +2,32 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Day 4: playback and drawn runs (Sat 7 Nov 2026)
+
+**Changed**
+- Playback: `PlaybackClock` (pure: play, pause, scrub, loop, ½×/1×, time passed in), `PlaybackTrack` (step starts, segments, scrubber, prev/next, Reduce Motion step-through with 0.3 s crossfades), `TimelineView(.animation)` drives the board; the playback bar follows the mockup (segments, Kalam note, time with tenths, Loop on by default). Editing is off while playing; the toast is cleared on Play.
+- Draw mode: `PathSimplifier` (thin, bound at 1 000, Douglas–Peucker, cap 200), `StrokeEdits` (D-59/D-62: Run moves the player, Pass moves the ball only from its carrier, Dribble moves the player and the ball they carry, Press moves the player, grass is an arrow; D-28 next step; D-27 anchoring; every stroke leaves its arrow and is one undo), `StrokeCapture` (touch-down recognizer: finger in iPhone draw mode, Pencil always on iPad). Draw panel to the mockup; Cancel undoes the session's edits.
+- Render parity (D4-3): screen board via `ImageRenderer` vs `BoardRenderer.image` at the same `t`. Chime set D-60 (99.5% within 16/255; SwiftUI anti-aliases line edges differently) and D-61 (no pixel over 64/255, because a share rule can't see one token 2 px off).
+- Code review (high): 8 found, 5 fixed (Cancel undoing non-draw edits, inspector in iPad draw mode, Pencil blocked by other touches, stroke across a mode change, edge-to-centre stroke adding a step, stale scrub). Chime decided: a pass from a non-carrier is only the arrow; Cancel + Redo is fine.
+- Verifier: fixed the UI test that drew a pass from a non-carrier, the dribble ball jump, a loose ball near a player not starting its own stroke, the toast's Undo during playback, and kept D-61's two mutations as tests.
+
+**Checked**
+- Gate: build-ios26, test, no-library-name all pass; "Test run with 247 tests in 23 suites passed".
+- UI tests: `testLibraryAndBoard` and `testPlaybackAndDraw` pass ("Executed 2 tests, with 0 failures", 97 s); screenshots in `fidelity/shots/day4/`.
+- Red runs: 38 of 52 failed against stubs (the first red run crashed the host on raw indexing and was redone with guarded indexes); the carrier, dribble and loose-ball tests failed before their code.
+- Mutations, each restored: 13 in the build (loop wrap, restart, Reduce Motion, scrubber mapping, simplifier cap/aspect/bound, pass mover, step add, re-anchoring, tap length, ball-before-player); carrier rule, dribble rule, the 64 cap (both D-61 tests go red).
+- Parity: pitch 99.96% within 16/255 (max 28); hero 99.92–99.93% (max 30–40).
+- Simplifier: the first version took 64 s on a 10k zigzag (quadratic, re-run 40 times); now 8.5 ms Debug, 0.6 ms for a realistic finger stroke (Mac timings).
+- Installed on the iPhone 14 Pro (signing still expires 13 Nov 2026, 21:30 Lagos).
+
+**Not verified**
+- Playback smoothness and drawing feel on the iPhone; Reduce Motion on a device.
+- iPad: Pencil draws while the finger moves tokens; whether a Pencil stroke from a token also triggers a drag (verifier's risk); Cancel mid-Pencil-stroke.
+- Mac notes: the proof hook's automatic test runs collided with the build agent's simulator runs (14:33–15:10, not evidence); one UI run was stopped at the 85% memory ceiling and re-run.
+
+**Next**
+- Chime tries playback and drawing on the phone; iPad borrow session for the Pencil (D4-4); then Day 5 (export).
+
 ## Day 3 follow-up: Agmen's own library (Sat 7 Nov 2026)
 
 **Changed**
