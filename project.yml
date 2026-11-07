@@ -32,7 +32,7 @@ targets:
         buildPhase: resources
       - path: presets/roles.json
         buildPhase: resources
-      # The hero move (D-29): the Debug -openExample argument and, later, the Debug screen load it.
+      # The hero move (D-29): added to the library on first launch (D-56); Debug -openExample opens it.
       - path: examples/overlap-left.tactic
         buildPhase: resources
     settings:
@@ -45,9 +45,10 @@ targets:
         CFBundleShortVersionString: "0.1.0"
         CFBundleVersion: "1"
         UILaunchScreen: {}
-        # Floodlight Chalk is dark only (D-44); the system document browser follows.
+        # Floodlight Chalk is dark only (D-44).
         UIUserInterfaceStyle: Dark
-        UISupportsDocumentBrowser: true
+        # Agmen draws its own library (D-56): tactics live in Documents, which Files shows as On My iPhone › Agmen.
+        UIFileSharingEnabled: true
         LSSupportsOpeningDocumentsInPlace: true
         # INFOPLIST_KEY_* settings are ignored without GENERATE_INFOPLIST_FILE, so orientations live here.
         UISupportedInterfaceOrientations~iphone:
@@ -57,7 +58,7 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        # The .tactic document type (D-09, docs/FORMAT.md)
+        # The .tactic document type (D-09, docs/FORMAT.md): files from AirDrop, WhatsApp or Files open in Agmen (D-56)
         UTExportedTypeDeclarations:
           - UTTypeIdentifier: dev.chime.agmen.tactic
             UTTypeDescription: Tactic

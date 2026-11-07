@@ -25,7 +25,7 @@ An iPhone and iPad app that turns a formation into a **step-by-step animated mov
 
 - Swift 6 with strict concurrency, SwiftUI, **iOS and iPadOS 26.0 minimum** (D-03). iOS 27 APIs (image input to the on-device model) sit behind `#available`.
 - One universal app target, `Agmen` (iPhone and iPad). No widget extension this week.
-- **Document-based app** (D-09): `DocumentGroup` with a `FileDocument` (`TacticDocument`) that reads and writes `.tactic` JSON. The system browser is the library; customise its launch screen.
+- **Own library, `.tactic` files** (D-56, supersedes D-09's system browser): a `WindowGroup` with Agmen's library screen; tactics are `.tactic` JSON files in the app's Documents folder (`Services/TacticLibrary`), opened into the board through `TacticDocument` with the board's own `UndoManager` and autosave. `.tactic` files from AirDrop, WhatsApp or Files are validated and copied in.
 - **One renderer** (D-07): `BoardRenderer` draws with Core Graphics into a `CGContext`. The screen calls it through `GraphicsContext.withCGContext` inside `Canvas`; export calls it on an offscreen context. Never draw the board twice in two ways.
 - PencilKit is **capture only** (D-08). Strokes become our own path model; export never renders a `PKDrawing`.
 - Video: `AVAssetWriter` + `AVAssetWriterInputPixelBufferAdaptor`, H.264, 30 fps (D-11).
@@ -39,7 +39,7 @@ An iPhone and iPad app that turns a formation into a **step-by-step animated mov
 project.yml                 XcodeGen spec
 Config/                     Base.xcconfig; Signing.local.xcconfig is git-ignored
 Agmen/                      the app target
-  App/                      AgmenApp (DocumentGroup), launch scene, URL handling
+  App/                      AgmenApp (WindowGroup + library), URL handling
   Features/                 Board, Steps, Inspector, Export, Share, Settings, Debug
   Services/                 VideoExporter, ImageExporter, LinkCodec, QRCode, PencilCapture
   Model/                    Tactic, Side, Token, Step, Arrow, Path, Pitch, Formation, Role (one type per file)

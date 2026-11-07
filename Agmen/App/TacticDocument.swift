@@ -6,7 +6,7 @@ extension UTType {
     static let tactic = UTType(exportedAs: "dev.chime.agmen.tactic")
 }
 
-/// A `.tactic` file. Opening runs every rule in docs/FORMAT.md through `TacticFormat`, so a bad file shows a plain
+/// A `.tactic` file: the value the board edits (the library stores it, D-56) and, later, file export. Opening runs every rule in docs/FORMAT.md through `TacticFormat`, so a bad file shows a plain
 /// error and never crashes (CLAUDE.md rule 4); saving writes clean v1 JSON.
 struct TacticDocument: FileDocument {
     static let readableContentTypes: [UTType] = [.tactic]
@@ -15,6 +15,10 @@ struct TacticDocument: FileDocument {
 
     init() {
         tactic = Self.blank()
+    }
+
+    init(tactic: Tactic) {
+        self.tactic = tactic
     }
 
     init(data: Data) throws(TacticFormatError) {

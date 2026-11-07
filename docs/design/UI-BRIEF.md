@@ -32,10 +32,13 @@ Generated once from the mockup's CSS by `mockup/tokens_to_swift.py`; edit the Sw
 
 ## 4. Screens
 
-### 4.1 Launch / library (`DocumentGroupLaunchScene`)
-- Title art (the app name over a pitch fragment with one animated run), **New tactic** (primary), the system browser below.
-- New tactic opens the formation picker first.
-- Test IDs: `launch.new`.
+### 4.1 Launch / library (Agmen's own screen, D-56; supersedes `DocumentGroupLaunchScene`)
+- Title art: "Agmen" in heavy Nunito and the Kalam tagline over a faint chalk pitch fragment. Then **New tactic** (the lime capsule), a "Recent" header and a two-column grid of tactic cards, newest first (one column at accessibility text sizes).
+- A card draws its step 1 at rest with `BoardRenderer` (D-07), then the title and "11-a-side · 5 steps". Tap opens the board. Press and hold: Rename (alert with a text field), Duplicate ("… copy"), Share (the `.tactic` file), Delete, which asks first: "Delete “<title>”?" / "This can't be undone." VoiceOver reads "<title>, N steps" and offers the same four actions.
+- First launch adds the example move "Overlap down the left". With no tactics: "Your tactics show up here."
+- Footer (caption, muted): "Saved on this iPhone. Find them in Files › On My iPhone › Agmen." ("iPad" on iPad). If files in the folder can't be read, a count says so.
+- New tactic opens the formation picker first. A `.tactic` opened from AirDrop, WhatsApp or Files is checked, copied into the library and opened; a bad one shows the §4.8 message.
+- Test IDs: `launch.new`, `library.title`, `library.tagline`, `library.recent`, `library.card.<n>` (1 is the newest), `library.empty`, `library.recents-hint`, `library.rename.save`, `library.delete.confirm`.
 
 ### 4.2 Board (iPhone)
 - **Top bar:** back to library (system), title (tap to rename), **Undo**, **Redo**, overflow (Pitch, Sides & colours, Duplicate, Debug).
@@ -78,7 +81,7 @@ Generated once from the mockup's CSS by `mockup/tokens_to_swift.py`; edit the Sw
 - Invalid or too big: "This file isn't a tactic we can open." *(new)*
 
 ## 5. iPad (Should, O-3)
-- `NavigationSplitView`: library is the document browser; board in the centre; inspector trailing.
+- `NavigationSplitView`: Agmen's library screen (§4.1, D-56) in place of the system document browser; board in the centre; inspector trailing.
 - Pencil draws, finger moves (SPEC §6). Hover with Pencil shows where a run will start.
 
 ## 6. Accessibility checklist

@@ -1,17 +1,18 @@
 # Handoff: read this first when you pick the project back up
 
-## Latest: Day 3 built, Sat 7 Nov 2026. Waiting on Chime's review; then Day 4 (playback and drawn runs).
+## Latest: Day 3 built, plus Agmen's own library (D-56), Sat 7 Nov 2026. Waiting on Chime's review; then Day 4 (playback and drawn runs).
 
 ### Where it stands
 - **App: Agmen** (D-42), private repo `ChimeXXD/agmen`. Folder on disk is still `Tactics Board`.
 - **Design:** Floodlight Chalk (D-44), mockup in `mockup/` is the baseline (D-50), `Agmen/Design/Tokens.swift` is the source of truth. Lime/coral defaults (D-53).
+- **Library (D-56):** Agmen's own home screen replaced the system document browser: cards drawn by `BoardRenderer`, lime New tactic, press-and-hold Rename · Duplicate · Share · Delete (Delete asks first), the example on first launch. Files are `.tactic` in Documents (Files › On My iPhone › Agmen); outside files are checked and copied in. Board title is Agmen's own menu (D-57).
 - **Built:** the board editor (renderer, drag, select, context row, steps strip D-54, toolbar D-55, undo toast, player sheet, formation picker D-48, launch scene). Every edit undoes and redoes through the document's `UndoManager`. VoiceOver labels from `Placement`, adjustable nudge.
 - **Checks:** gate green; `BoardScreenshotUITests` walks the screens and writes `fidelity/shots/day3/*.png` (git-ignored). Run it alone: `xcodebuild -scheme AgmenUITests -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' test`.
 - **On the phone:** Day 3 Debug build installed 7 Nov. The signing profile was reused: it expires **13 Nov 2026, 21:30 Lagos**; reinstall before then.
 
 ### Known issues
-- "New tactic" sometimes makes two documents in the simulator ("Unable to Import Document"). Suspect: the launch scene's hidden toolbar copy of the button. Check on the phone.
-- New tactic can't be lime: a custom `ButtonStyle` on `NewDocumentButton` breaks creation.
+- Not checked on the phone yet: importing a `.tactic` from AirDrop/WhatsApp/Files, and the Files folder showing up.
+- Never run a UI test while the gate (or another xcodebuild) uses the same simulator: they kill each other's runs.
 - Applying a smaller shape to 11 players leaves extras in place; the confirmation doesn't warn.
 - Not built: pitch picker check, Sides & colours sheet, Debug screen, launch animation, AX5 screenshots.
 

@@ -155,4 +155,9 @@ extension BoardScreen {
         }
         self.toast = nil
     }
+
+    /// Renames the tactic as one undoable edit; the library renames its file on the next save (D-56).
+    func rename(to title: String) {
+        editor.apply("Rename") { $0.title = TacticLibrary.cleanTitle(title) }
+    }
 }

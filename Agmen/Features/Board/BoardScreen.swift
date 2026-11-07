@@ -5,7 +5,8 @@ import SwiftUI
 /// Every edit goes through `DocumentEditor`, so it lands in the document and can be undone.
 struct BoardScreen: View {
     @Binding var document: TacticDocument
-    @Environment(\.undoManager) var undoManager
+    /// The board's own undo history (D-56), held by `TacticEditorHost`.
+    let undoManager: UndoManager?
 
     @State var stepIndex = 0
     @State var selection: String?
@@ -14,8 +15,12 @@ struct BoardScreen: View {
     @State var toast: BoardToast?
     @State var dragPreview: DragPreview?
     @State var pulse = 0
+    @State var renaming = false
+    @State var newTitle = ""
     @State private var canUndo = false
     @State private var canRedo = false
+    /// The screen's width, so the title menu can truncate between the back button and the trailing items.
+    @State private var width: CGFloat = 0
 
     struct DragPreview: Equatable {
         let id: String
@@ -79,9 +84,16 @@ struct BoardScreen: View {
             )
         }
         .background(Tokens.Colour.bg.color.ignoresSafeArea())
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
+        .navigationTitle(tactic.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { navigationItems }
-        .toolbarTitleMenu { pitchMenu }
+        .alert("Rename tactic", isPresented: $renaming) {
+            TextField("Title", text: $newTitle)
+            Button("Cancel", role: .cancel) {}
+            Button("Rename") { rename(to: newTitle) }
+                .accessibilityIdentifier("rename.save")
+        }
         .sheet(item: $sheet) { sheet in sheetContent(sheet) }
         .onReceive(undoChanges) { _ in refreshUndo() }
         .onAppear {
@@ -153,15 +165,43 @@ struct BoardScreen: View {
 
     @ToolbarContentBuilder private var navigationItems: some ToolbarContent {
         ToolbarItemGroup(placement: .topBarTrailing) {
+            // The board's UndoManager isn't the window's (D-56), so a hardware keyboard needs these shortcuts.
             Button("Undo", systemImage: "arrow.uturn.backward") { undoManager?.undo() }
+                .keyboardShortcut("z", modifiers: .command)
                 .disabled(!canUndo)
                 .accessibilityIdentifier("nav.undo")
             Button("Redo", systemImage: "arrow.uturn.forward") { undoManager?.redo() }
+                .keyboardShortcut("z", modifiers: [.command, .shift])
                 .disabled(!canRedo)
                 .accessibilityIdentifier("nav.redo")
         }
-        // Share stays visible (D-55). Next to the document title there is room for three items, so the mockup's
-        // "more" options (the pitch) live in the title menu instead.
+        // The title is our own menu (Rename, then the mockup's "more" options: the pitch). The system's editable
+        // title sits leading at full width and folds Redo and Share into an overflow menu when the title is long;
+        // this one truncates, so Share stays visible (D-55).
+        ToolbarItem(placement: .principal) {
+            Menu {
+                Button("Rename", systemImage: "pencil") {
+                    newTitle = tactic.title
+                    renaming = true
+                }
+                pitchMenu
+            } label: {
+                HStack(spacing: Tokens.Space.s1) {
+                    Text(tactic.title)
+                        .font(Tokens.Typeface.headline)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                    Image(systemName: "chevron.down")
+                        .font(Tokens.Typeface.caption.weight(.heavy))
+                        .foregroundStyle(Tokens.Colour.muted.color)
+                }
+                .foregroundStyle(Tokens.Colour.text.color)
+                .frame(maxWidth: max(width - Tokens.Size.navBarItems, Tokens.Size.touch * 2))
+            }
+            .accessibilityLabel(tactic.title)
+            .accessibilityHint("Rename or change the pitch")
+            .accessibilityIdentifier("nav.title")
+        }
         ToolbarItem(placement: .topBarTrailing) {
             Button("Share", systemImage: "square.and.arrow.up") { show("Sharing comes on Day 6") }
                 .accessibilityIdentifier("nav.share")

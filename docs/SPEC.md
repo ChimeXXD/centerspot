@@ -65,7 +65,7 @@ Details, copy and test IDs are in `design/UI-BRIEF.md`.
 
 | Screen | iPhone | iPad (Should, O-3) |
 | --- | --- | --- |
-| Launch / library | `DocumentGroupLaunchScene` with the app's title art and "New tactic" | Same |
+| Launch / library | Agmen's own home screen (D-56, supersedes the system document browser): title art, lime "New tactic", then a grid of tactic cards, newest first, each drawing step 1; press and hold for Rename, Duplicate, Share, Delete | Same |
 | Board | Full-screen vertical pitch; toolbar (formation, pitch, draw, play, export, share); steps strip at the bottom | Centre column of a split view; inspector on the right |
 | Inspector | Sheet: name, number, role, side, delete | Trailing column |
 | Formation picker | Sheet grid of mini pitches | Popover |

@@ -2,36 +2,41 @@ import SwiftUI
 
 @main
 struct AgmenApp: App {
+    @State private var store: LibraryStore
+
     init() {
+        let library = TacticLibrary.documents
         #if DEBUG
         // D2-6: measure export speed and size on the device (`-exportSpike`); prints AGMEN-SPIKE lines.
         if ProcessInfo.processInfo.arguments.contains("-exportSpike") { Task.detached { await ExportSpike.report() } }
+        BoardDebugLaunch.resetLibraryIfAsked(library)
         #endif
-    }
-
-    /// A blank tactic; in Debug, `-openExample YES` starts from the hero move instead.
-    static func newDocument() -> TacticDocument {
+        let store = LibraryStore(library: library)
         #if DEBUG
-        if let example = BoardDebugLaunch.newDocument() { return example }
+        BoardDebugLaunch.openExampleIfAsked(store)
         #endif
-        return TacticDocument()
+        _store = State(initialValue: store)
     }
 
     var body: some Scene {
-        // The system document browser is the library (D-09).
-        DocumentGroup(newDocument: Self.newDocument()) { file in
-            BoardScreen(document: file.$document)
-                .tint(Tokens.Colour.text.color)
+        // Agmen draws its own library (D-56); tactics stay `.tactic` files in Documents.
+        WindowGroup {
+            NavigationStack(path: Bindable(store).path) {
+                LibraryScreen(store: store)
+                    .navigationDestination(for: OpenTactic.self) { open in
+                        TacticEditorHost(open: open, store: store)
+                    }
+            }
+            .tint(Tokens.Colour.text.color)
+            // A .tactic from AirDrop, WhatsApp or Files: checked, copied in, opened (D-56, CLAUDE.md rule 4).
+            .onOpenURL { store.importAndOpen($0) }
+            .alert(store.alert ?? "", isPresented: alertShown) {
+                Button("OK", role: .cancel) {}
+            }
         }
+    }
 
-        // The launch screen (UI-BRIEF §4.1): the name in heavy Nunito and the tagline in Kalam over a faint chalk
-        // pitch, New tactic in lime. The system title is left out because it can't take the Nunito face.
-        DocumentGroupLaunchScene(Text(verbatim: "")) {
-            // The scene styles this button itself (glass); a custom style is ignored, so the lime capsule waits.
-            NewDocumentButton("New tactic")
-                .accessibilityIdentifier("launch.new")
-        } background: {
-            LaunchBackground()
-        }
+    private var alertShown: Binding<Bool> {
+        Binding(get: { store.alert != nil }, set: { if !$0 { store.alert = nil } })
     }
 }

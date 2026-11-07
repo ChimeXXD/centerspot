@@ -1,10 +1,12 @@
 import SwiftUI
 
-/// The launch screen's background (UI-BRIEF §4.1, mockup "library"): the Floodlight dark with a faint chalk pitch
+/// The library's background (UI-BRIEF §4.1, mockup "library"): the Floodlight dark with a faint chalk pitch
 /// fragment, drawn by the same `BoardRenderer` as the board (D-07).
 struct LaunchBackground: View {
-    /// The pitch fragment's strength behind the title: the opponent's box and the centre circle, fading out.
+    /// The pitch fragment's strength behind the title: the opponent's box, fading out.
     static let opacity = 0.6
+    /// Gone before the centre circle starts (about 0.41 of the pitch), so no stray arc shows beside the cards.
+    static let fadeEnd = 0.38
 
     var body: some View {
         GeometryReader { proxy in
@@ -19,18 +21,13 @@ struct LaunchBackground: View {
             }
             .frame(width: width, height: height)
             .opacity(Self.opacity)
-            .mask(LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom))
+            .mask(LinearGradient(stops: [.init(color: .black, location: 0), .init(color: .clear, location: Self.fadeEnd)],
+                                  startPoint: .top, endPoint: .bottom))
             .frame(maxHeight: .infinity, alignment: .top)
             .offset(y: proxy.safeAreaInsets.top - height * 0.12)
             .accessibilityHidden(true)
         }
         .background(Tokens.Colour.bg.color.ignoresSafeArea())
-        .overlay(alignment: .topLeading) {
-            // Sits where the system title would, above the New tactic button the scene places.
-            LaunchTitle()
-                .padding(.horizontal, Tokens.Space.s5)
-                .padding(.top, Tokens.Space.s6 + Tokens.Space.s5)
-        }
     }
 }
 

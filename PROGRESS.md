@@ -2,6 +2,31 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Day 3 follow-up: Agmen's own library (Sat 7 Nov 2026)
+
+**Changed**
+- Chime saw the system document browser on the phone (raw-JSON thumbnail, "Untitled.tactic", "632 bytes", grey button) and asked for an app, not a file manager. D-56 replaces `DocumentGroup` with Agmen's library: lime New tactic, cards drawn by `BoardRenderer` (step 1, title, "11-a-side · 5 steps"), press-and-hold Rename · Duplicate · Share · Delete, Delete asks first, the example "Overlap down the left" on first launch only.
+- `TacticLibrary` (+Import): `.tactic` files in Documents (visible in Files › On My iPhone › Agmen), safe names, dedupe, rename-on-save, duplicate, delete, import through `TacticFormat` with a size cap before reading. `LibraryStore`, `TacticCard`, `LibraryScreen`, `TacticEditorHost` (own `UndoManager`, autosave 0.5 s after a change, on close and on background; no write when untouched).
+- D-57: the board title is Agmen's own menu (Rename, pitch), so Undo, Redo and Share stay visible with long titles.
+- Code review (high): 9 found, 4 fixed (long emoji titles past the 255-byte name limit, ⌘Z/⇧⌘Z on the board, autosave re-reading the whole folder, unchanged rename reordering). Then fixed: an untouched New tactic is discarded on close; the launch pitch fades before the centre circle (stray arc beside the cards).
+- Verifier: 2 data-safety gaps fixed. (a) Re-opening an open tactic from Files read the file before the board's last edits were saved; the store now flushes the open board first. (b) Names differing only in case: the simulator refuses "press.tactic" next to "Press.tactic" yet reports it missing, and a case-sensitive disk would keep both and fail later renames; names are now compared without case, so such pairs are never made. The library re-reads the folder when the app returns.
+
+**Checked**
+- Gate: build-ios26, test, no-library-name all pass. Library suites 37/37 (`TacticLibraryTests`, `TacticLibraryImportTests`, `LibraryStoreTests`).
+- Red runs: library stub "27 tests in 2 suites failed … 33 issues"; `LibraryStoreTests` and the safety tests failed to compile before the code existed.
+- Mutations, each restored: 20 library rules (M1–M20 in the agent's run, M14 and M21 explained); discard guards (2); case-insensitive names, flush before import, unregister by board (3). Each went red in its own test.
+- `BoardScreenshotUITests.testLibraryAndBoard` passed (63 s): example card, New tactic → formation picker → empty board, rename from the board title and from the menu, Delete asks first, plus every Day 3 board check. Two earlier failures were clashes with the gate's run on the same simulator; the same tests passed alone (library suite 3/3).
+- Installed on the iPhone 14 Pro (signing still expires 13 Nov 2026, 21:30 Lagos).
+
+**Not verified**
+- On the phone: a `.tactic` from AirDrop/WhatsApp/Files reaching the app; the folder in Files › On My iPhone › Agmen; whether the phone's disk is case-sensitive (handled either way).
+- Hardware-keyboard ⌘Z on iPad; VoiceOver card actions (especially Share); AX5 sizes; iPad layout; the title width cap on a 375 pt screen.
+- No test covers `TacticEditorHost`'s autosave timing directly (store-level tests cover close and flush).
+- Skipped from review: the save-failure alert can't show over an open sheet; import decodes the whole folder to collect ids.
+
+**Next**
+- Chime tries the library and board on the phone and approves the screenshots in `fidelity/shots/day3/`; then Day 4.
+
 ## Day 3: board editor (Sat 7 Nov 2026)
 
 **Changed**

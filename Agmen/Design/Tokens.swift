@@ -91,6 +91,8 @@ enum Tokens {
         static let playDisc: CGFloat = 48
         static let toolbarHeight: CGFloat = 82
         static let toast: CGFloat = 52
+        /// Nav bar width kept clear of the board's title: the back button and Undo, Redo, Share with their gaps.
+        static let navBarItems: CGFloat = 260
     }
 
     /// UI motion only; playback motion is the Timeline (SPEC §3). Reduce Motion swaps these for crossfades.
