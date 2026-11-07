@@ -147,6 +147,69 @@ const SCREENS = [
     <div class="alert">${txt("import.error.title", "Can't open this file", "", "h3")}${txt("import.error.message", "This file isn't a tactic we can open.", "muted", "p", "margin:0 0 16px")}${btn("import.error.ok", "OK", "capsule quiet")}</div>`],
 ];
 
+// Onboarding (D-58). Welcome: three pages on first launch, each showing the real board (BoardRenderer + Timeline in the app,
+// decorative, one VoiceOver label). Then tips on the example move, one at a time, each pointing at the real control.
+const runArrows = i => Object.values(STEPS[i].runs || {}).map(r => ({ kind: "run", points: r.points }));
+const lerpPos = (a, b, t) => Object.fromEntries(Object.entries(a).map(([k, p]) => [k, b[k] ? { x: p.x + (b[k].x - p.x) * t, y: p.y + (b[k].y - p.y) * t } : p]));
+const still = (w, positions, arrows, opts = {}) => Board.html(w, positions, arrows, { ...opts, hits: false, testid: "x" }).replace(' data-testid="x"', "");
+const WELCOME = [
+  { title: "Draw the move, not just the shape.", body: "Place your players, then add steps. Each step is one moment of the move.",
+    label: "A pitch showing a five-step move", art: () => `${still(222, pos(1), [...STEPS[1].arrows, ...runArrows(1)])}
+      <div class="ob-chips">${STEPS.map((s, i) => `<span class="step ${i === 1 ? "on" : ""}"><b>${i + 1}</b><small>${s.duration} s</small></span>`).join("")}</div>` },
+  { title: "Press Play. Watch it move.", body: "Every player runs from step to step, along the runs and passes you draw.",
+    label: "A pitch with the move playing: a run and a pass", art: () => `${still(222, lerpPos(pos(2), pos(3), 0.45), STEPS[2].arrows, { trails: runArrows(1) })}
+      <div class="ob-scrub">${STEPS.map((_, i) => `<i style="background:linear-gradient(90deg,var(--accent) ${i < 2 ? 100 : i === 2 ? 45 : 0}%,var(--surface-2) 0)"></i>`).join("")}</div>` },
+  { title: "Share it as a 9:16 clip.", body: "One tap makes a vertical video for the team chat, with your title on top.",
+    label: "A vertical video of the move, with its title at the top", art: () => `<div class="ob-clip"><div class="title-band">${HERO.title}</div>
+      ${still(203, lerpPos(pos(0), pos(1), 0.8), STEPS[0].arrows)}<div class="clip-note">${STEPS[0].note}</div><div class="mark">Agmen</div></div>` },
+];
+const dots = (page, extra = "") => `<div class="dots" data-testid="onboarding.dots" role="slider" tabindex="0" aria-label="Page ${page} of 3" aria-valuenow="${page}" aria-valuemin="1" aria-valuemax="3" ${extra}>${[1, 2, 3].map(i => `<i class="${i === page ? "on" : ""}"></i>`).join("")}</div>`;
+const cta = page => page < 3 ? btn("onboarding.next", "Next", "capsule ob-cta") : btn("onboarding.start", "Start", "capsule ob-cta");
+const welcome = page => {
+  const p = WELCOME[page - 1];
+  return `${status()}<div class="abs" style="inset:0" data-testid="onboarding.page">
+    <div class="ob-art" role="img" aria-label="${p.label}" data-testid="onboarding.art.${page}">${p.art()}</div>
+    <div class="ob-copy">${txt("onboarding.title", p.title, "", "h1")}${txt("onboarding.body", p.body, "", "p")}</div></div>
+    ${btn("onboarding.skip", "Skip", "skip")}${dots(page)}${cta(page)}<div class="home-bar"></div>`;
+};
+// At accessibility text sizes the decorative board steps aside, the copy scrolls, and Skip, the dots and Next stay pinned.
+const welcomeAX5 = () => `${status()}<div class="abs" data-testid="onboarding.page" style="top:104px;left:0;right:0;height:572px;overflow:hidden">
+    <div style="padding:8px 24px 0">${txt("onboarding.title", WELCOME[0].title, "", "h1", "margin:0 0 16px;font:800 60px/1.1 var(--font-ui)")}
+    ${txt("onboarding.body", WELCOME[0].body, "", "p", "margin:0;font:600 47px/1.25 var(--font-ui);color:var(--muted)")}</div>
+    <div style="position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(rgba(11,15,20,0),var(--bg))"></div>
+    <div data-testid="onboarding.scroll-indicator" style="position:absolute;right:4px;top:6px;width:3px;height:180px;border-radius:2px;background:var(--muted);opacity:.7"></div></div>
+  ${btn("onboarding.skip", "Skip", "skip")}${dots(1, 'style="top:684px"')}${btn("onboarding.next", "Next", "capsule ob-cta", "", 'style="height:76px;font-size:53px;bottom:36px"')}<div class="home-bar"></div>`;
+
+// A tip is a Floodlight Chalk popover: title, one line, a close button, and an arrow at the control it names.
+// data-anchor names that control; placeTips() below positions the tip from its real frame, as popoverTip(arrowEdge:) does.
+const TIPS = [
+  ["drag", "Move a player", "Drag any player to where they should be.", "board.token.h3", "bottom"],
+  ["step", "Every step is a moment", "Tap step 2 to see where everyone goes.", "steps.chip.2", "top"],
+  ["play", "Watch it move", "Press Play and your players run the move.", "toolbar.play", "top"],
+  ["draw", "Draw a run", "Tap Draw, then drag from a player to show their run.", "toolbar.draw", "top"],
+  ["export", "Share the clip", "Export turns it into a 9:16 video.", "toolbar.export", "top"],
+];
+const tip = name => {
+  const [, title, message, anchor, edge] = TIPS.find(t => t[0] === name);
+  return `<div class="tip" role="dialog" aria-label="Tip: ${title}" data-testid="tip.${name}" data-anchor="${anchor}" data-edge="${edge}">
+    <div class="tip-text">${txt(`tip.${name}.title`, title, "", "h4")}${txt(`tip.${name}.message`, message, "", "p")}</div>
+    ${btn(`tip.${name}.close`, ic("close", 18), "icon-btn", "Close tip")}
+    <svg class="arrow" data-testid="tip.${name}.arrow" viewBox="0 0 20 10" aria-hidden="true"><path d="M0 1.5 L10 9.5 L20 1.5 Z" fill="var(--surface-3)"/>
+      <rect x="0.5" y="0" width="19" height="2.5" fill="var(--surface-3)"/><path d="M0 1.5 L10 9.5 L20 1.5" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/></svg></div>`;
+};
+const boardWithTip = (i, name, opts = {}) => `${editor(i, "4-3-3", opts)}${strip(i)}${toolbar()}${tip(name)}`;
+SCREENS.push(
+  ["onboarding-1", "Welcome 1 of 3: steps are the idea (board cycles steps 1 to 5)", () => welcome(1)],
+  ["onboarding-2", "Welcome 2 of 3: Play (the overlap plays, with a run and a pass)", () => welcome(2)],
+  ["onboarding-3", "Welcome 3 of 3: the 9:16 clip (plays inside the frame)", () => welcome(3)],
+  ["onboarding-1--ax5", "Welcome 1 at AX5 text: board hidden, copy scrolls, Skip and Next pinned", welcomeAX5],
+  ["tip-drag", "Tip 1: drag a player (after Start opens the example)", () => boardWithTip(0, "drag")],
+  ["tip-step", "Tip 2: tap a step (after a player is dragged)", () => boardWithTip(0, "step")],
+  ["tip-play", "Tip 3: press Play (after step 2 is tapped)", () => boardWithTip(1, "play")],
+  ["tip-draw", "Tip 4: draw a run (after playback stops)", () => boardWithTip(0, "draw")],
+  ["tip-export", "Tip 5: export (after a run is drawn)", () => boardWithTip(1, "export", { arrows: [...STEPS[1].arrows, ...runArrows(1)] })],
+);
+
 function presets() {
   return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">${[["vertical", "Story 9:16", 18, 30], ["square", "Square 1:1", 26, 26], ["wide", "Wide 16:9", 32, 18], ["image", "Image", 26, 22]].map(([id, l, w, h], i) =>
     `<button role="tab" class="tile" data-testid="export.preset.${id}" aria-selected="${i === 0}" style="height:78px;gap:6px;font-size:12px"><i style="width:${w * .8}px;height:${h * .8}px;border:2px solid var(--text);border-radius:4px"></i>${l}</button>`).join("")}</div>`;
@@ -168,3 +231,25 @@ SCREENS.forEach(([id, caption, render]) => {
   wrap.innerHTML = `<p class="cap">${caption}</p><section class="frame" data-screen="${id}">${render()}</section>`;
   gallery.appendChild(wrap);
 });
+
+// Puts each tip next to the control it names: full width less 16 pt each side (TipKit on iPhone), arrow on the control's centre,
+// its point touching, never covering, what the control draws (a token's 44 pt hit area; the Play disc, which rises above its button).
+function placeTips() {
+  document.querySelectorAll(".tip[data-anchor]").forEach(t => {
+    const frame = t.closest("[data-screen]"), f = frame.getBoundingClientRect();
+    const el = frame.querySelector(`[data-testid="${t.dataset.anchor}"]`);
+    const rects = [el, ...el.querySelectorAll("*")].map(e => e.getBoundingClientRect()).filter(r => r.width && r.height);
+    const a = { top: Math.min(...rects.map(r => r.top)), bottom: Math.max(...rects.map(r => r.bottom)), cx: el.getBoundingClientRect().left + el.offsetWidth / 2 };
+    const cx = a.cx - f.left, w = t.offsetWidth, gap = 0, arrowH = 8, left = 16, arrow = t.querySelector(".arrow");
+    arrow.style.left = `${Math.min(Math.max(14, cx - left - 10), w - 34)}px`;
+    if (t.dataset.edge === "top") {
+      t.style.bottom = `${f.bottom - a.top + gap + arrowH}px`;
+      arrow.style.top = "calc(100% - 1px)";
+    } else {
+      t.style.top = `${a.bottom - f.top + gap + arrowH}px`;
+      arrow.style.bottom = "calc(100% - 1px)";
+      arrow.style.transform = "rotate(180deg)";
+    }
+  });
+}
+placeTips();

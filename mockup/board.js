@@ -10,10 +10,11 @@ const Board = {
   radius: W => W * 0.038,
   pt: (p, W, H) => [p.x * W, (1 - p.y) * H],
 
-  pitch(W, H) {
-    const s = W / 68, cx = W / 2, L = css("--chalk"), w = 1.4 * (W / 345);
+  // look "bc" is the broadcast pitch (D-65): near-black, faint stripes, thinner-looking lines at lower opacity.
+  pitch(W, H, look) {
+    const bc = look === "bc", s = W / 68, cx = W / 2, L = css(bc ? "--bc-line" : "--chalk"), w = 1.4 * (W / 345);
     let out = "";
-    for (let i = 0; i < 10; i++) out += `<rect x="0" y="${i * H / 10}" width="${W}" height="${H / 10 + .5}" fill="${css(i % 2 ? "--pitch-b" : "--pitch-a")}"/>`;
+    for (let i = 0; i < 10; i++) out += `<rect x="0" y="${i * H / 10}" width="${W}" height="${H / 10 + .5}" fill="${css(i % 2 ? (bc ? "--bc-pitch-b" : "--pitch-b") : (bc ? "--bc-pitch-a" : "--pitch-a"))}"/>`;
     out += `<g fill="none" stroke="${L}" stroke-width="${w}" stroke-linecap="round"><rect x="0" y="0" width="${W}" height="${H}"/>`;
     out += `<line x1="0" y1="${H / 2}" x2="${W}" y2="${H / 2}"/><circle cx="${cx}" cy="${H / 2}" r="${9.15 * s}"/><circle cx="${cx}" cy="${H / 2}" r="${1.4 * w}" fill="${L}"/>`;
     for (const top of [true, false]) {
@@ -67,7 +68,8 @@ const Board = {
   // A pitch drawing plus one invisible 44 pt button per token, like the accessibility layer over the Canvas.
   html(W, positions, arrows = [], opts = {}) {
     const H = W * Board.ratio;
-    let svg = Board.pitch(W, H);
+    let svg = Board.pitch(W, H, opts.look);
+    if (opts.under) svg += opts.under(W, H, positions);  // zones, heat, shape lines and glow rings lie under everything (D-65)
     (opts.trails || []).forEach(a => svg += Board.arrow(a, W, H, positions, .3));
     arrows.forEach(a => svg += Board.arrow(a, W, H, positions));
     if (opts.stroke) svg += `<path d="${opts.stroke.map((p, i) => (i ? "L" : "M") + Board.pt(p, W, H).join(" ")).join(" ")}" fill="none" stroke="${css("--run")}" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 0"/>`;

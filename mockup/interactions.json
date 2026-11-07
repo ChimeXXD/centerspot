@@ -1277,6 +1277,586 @@
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
       "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "onboarding.page",
+      "trigger": "swipe left / right",
+      "states": [
+        "page 1",
+        "page 2",
+        "page 3"
+      ],
+      "effect": "page to the next or previous welcome page (TabView .page); first launch only (AppStorage welcomeSeen = false)",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "crossfade between pages, no slide"
+    },
+    {
+      "element": "onboarding.skip",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "set welcomeSeen; close the welcome and show the library (the example move is already in it); the tips stay armed and start the first time a board opens. Same button on every page; at AX5 it keeps its size and shows the Large Content Viewer on long press",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "crossfade only"
+    },
+    {
+      "element": "onboarding.dots",
+      "trigger": "tap; VoiceOver adjust (swipe up / down)",
+      "states": [
+        "page 1",
+        "page 2",
+        "page 3"
+      ],
+      "effect": "page indicator; tap the left or right half to go back or forward one page. VoiceOver: one adjustable element, \"Page 1 of 3\"; the active dot is lime and wider, so the page is not shown by colour alone",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "dot width and colour change without animation"
+    },
+    {
+      "element": "onboarding.next",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "go to the next welcome page (pages 1 and 2)",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade between pages"
+    },
+    {
+      "element": "onboarding.start",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "set welcomeSeen; open the example move \"Overlap down the left\" (step 1); tip.drag appears once the board is on screen",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "onboarding.art.1",
+      "trigger": "page becomes visible",
+      "states": [
+        "playing",
+        "paused (page off screen)"
+      ],
+      "effect": "decorative, VoiceOver reads only \"A pitch showing a five-step move\". The real board (BoardRenderer, Timeline.state(at:) in a TimelineView) cycles steps 1 to 5: each step holds 1.0 s, then moves at the step's own duration (1.2 s / 1.4 s); the chip under the board moves with it (step change 220 ms, the one curve); after step 5 it holds 1.5 s and starts again. Hidden at accessibility text sizes (AX1 to AX5)",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no movement: shows each step still for 2 s, then a 300 ms crossfade to the next"
+    },
+    {
+      "element": "onboarding.art.2",
+      "trigger": "page becomes visible",
+      "states": [
+        "playing",
+        "paused (page off screen)"
+      ],
+      "effect": "decorative, VoiceOver reads only \"A pitch with the move playing: a run and a pass\". The real board plays the whole overlap (steps 1 to 5, 6.2 s at 1x, Timeline-driven, arrows fade in and out per FORMAT.md) with a progress bar under it, holds 1.5 s on the last step and loops. Hidden at accessibility text sizes",
+      "duration_ms": 6200,
+      "easing": "linear (Timeline easing per step)",
+      "delay_ms": 300,
+      "reduced_motion": "no movement: step-through, each step still for 2 s with 300 ms crossfades; the bar jumps per step"
+    },
+    {
+      "element": "onboarding.art.3",
+      "trigger": "page becomes visible",
+      "states": [
+        "playing",
+        "paused (page off screen)"
+      ],
+      "effect": "decorative, VoiceOver reads only \"A vertical video of the move, with its title at the top\". The same playback as page 2 inside a 9:16 frame drawn like the export (title band in Nunito, step notes in Kalam crossfading per step in 220 ms, \"Agmen\" corner mark), loops after a 1.5 s hold. Hidden at accessibility text sizes",
+      "duration_ms": 6200,
+      "easing": "linear (Timeline easing per step)",
+      "delay_ms": 300,
+      "reduced_motion": "no movement: step-through with 300 ms crossfades; notes change with the step"
+    },
+    {
+      "element": "tip.drag",
+      "trigger": "appears when the example move opens (Start, or the first board opened after Skip)",
+      "states": [
+        "hidden",
+        "showing",
+        "completed",
+        "closed"
+      ],
+      "effect": "TipKit popover, one TipGroup(.ordered) for all five. A closed or completed tip is invalidated and never shows again (TipKit datastore, survives relaunch); tips never show while playing, drawing or with a sheet open. Anchor: board.token.h3, below it, arrow up; anchored to the token's 44 pt accessibility hit view, not the Canvas. Completed (invalidate .actionPerformed) when any player is dragged (moving a token in any step); the next tip becomes eligible. The tip never covers its control.",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 400,
+      "reduced_motion": "fade only, no scale"
+    },
+    {
+      "element": "tip.drag.close",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "close this tip (invalidate .tipClosed): it never shows again; the next tip in the group becomes eligible as if tip.drag were done. VoiceOver: \"Close tip\"",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "fade only"
+    },
+    {
+      "element": "tip.step",
+      "trigger": "appears when tip.drag is done or closed",
+      "states": [
+        "hidden",
+        "showing",
+        "completed",
+        "closed"
+      ],
+      "effect": "TipKit popover, one TipGroup(.ordered) for all five. A closed or completed tip is invalidated and never shows again (TipKit datastore, survives relaunch); tips never show while playing, drawing or with a sheet open. Anchor: steps.chip.2, above it, arrow down. Completed (invalidate .actionPerformed) when any step chip is tapped; the next tip becomes eligible. The tip never covers its control.",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 400,
+      "reduced_motion": "fade only, no scale"
+    },
+    {
+      "element": "tip.step.close",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "close this tip (invalidate .tipClosed): it never shows again; the next tip in the group becomes eligible as if tip.step were done. VoiceOver: \"Close tip\"",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "fade only"
+    },
+    {
+      "element": "tip.play",
+      "trigger": "appears when tip.step is done or closed",
+      "states": [
+        "hidden",
+        "showing",
+        "completed",
+        "closed"
+      ],
+      "effect": "TipKit popover, one TipGroup(.ordered) for all five. A closed or completed tip is invalidated and never shows again (TipKit datastore, survives relaunch); tips never show while playing, drawing or with a sheet open. Anchor: toolbar.play, above it, arrow down. Completed (invalidate .actionPerformed) when Play is pressed; the next tip becomes eligible. The tip never covers its control.",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 400,
+      "reduced_motion": "fade only, no scale"
+    },
+    {
+      "element": "tip.play.close",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "close this tip (invalidate .tipClosed): it never shows again; the next tip in the group becomes eligible as if tip.play were done. VoiceOver: \"Close tip\"",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "fade only"
+    },
+    {
+      "element": "tip.draw",
+      "trigger": "appears when tip.play is done or closed and playback has stopped",
+      "states": [
+        "hidden",
+        "showing",
+        "completed",
+        "closed"
+      ],
+      "effect": "TipKit popover, one TipGroup(.ordered) for all five. A closed or completed tip is invalidated and never shows again (TipKit datastore, survives relaunch); tips never show while playing, drawing or with a sheet open. Anchor: toolbar.draw, above it, arrow down. Completed (invalidate .actionPerformed) when a run is drawn (Draw mode, Done with at least one stroke kept); the next tip becomes eligible. The tip never covers its control.",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 400,
+      "reduced_motion": "fade only, no scale"
+    },
+    {
+      "element": "tip.draw.close",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "close this tip (invalidate .tipClosed): it never shows again; the next tip in the group becomes eligible as if tip.draw were done. VoiceOver: \"Close tip\"",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "fade only"
+    },
+    {
+      "element": "tip.export",
+      "trigger": "appears when tip.draw is done or closed",
+      "states": [
+        "hidden",
+        "showing",
+        "completed",
+        "closed"
+      ],
+      "effect": "TipKit popover, one TipGroup(.ordered) for all five. A closed or completed tip is invalidated and never shows again (TipKit datastore, survives relaunch); tips never show while playing, drawing or with a sheet open. Anchor: toolbar.export, above it, arrow down. Completed (invalidate .actionPerformed) when the Export sheet opens; the next tip becomes eligible. The tip never covers its control.",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 400,
+      "reduced_motion": "fade only, no scale"
+    },
+    {
+      "element": "tip.export.close",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "close this tip (invalidate .tipClosed): it never shows again; the next tip in the group becomes eligible as if tip.export were done. VoiceOver: \"Close tip\"",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "fade only"
+    },
+    {
+      "element": "nav.title",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "opens the title menu: Rename (alert), Pitch, Pitch style (D-57)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "nav.share",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "opens Share: video, image of the step, tactic file (D-55)",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "sheet crossfades in"
+    },
+    {
+      "element": "toolbar.add",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "menu: Our player, Their player, Ball (disabled if one exists), Cone; the new token lands on the centre spot, ready to drag (D-55)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "playback.done",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "stops playback and returns to editing on the step it stopped on; the camera goes back to flat top-down",
+      "duration_ms": 480,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "cut to the editing board with a 300 ms crossfade; never a camera move"
+    },
+    {
+      "element": "playback.camera.flat",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "camera: Flat (top-down, the editing framing, same numbered discs). From Broadcast the camera tilts back up over --d-camera while the Timeline keeps playing; the choice is remembered per tactic (app.camera) and is the export default",
+      "duration_ms": 480,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no tilt animation: crossfade 300 ms between the two cameras"
+    },
+    {
+      "element": "playback.camera.broadcast",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "camera: Broadcast (tilted, looking up the pitch, following the ball's path as a pure function of t, D-06, D-66). Tilts down over --d-camera; discs, zones, lines, arrows and glow rings lie flat on the grass (discs become ellipses); numbers stay upright so they read at any distance",
+      "duration_ms": 480,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no tilt or pan animation: crossfade 300 ms; under Reduce Motion the broadcast camera holds a fixed framing per step and cuts between steps, never swoops"
+    },
+    {
+      "element": "draw.kind.zone",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "picks Zone: a drag on the grass draws a see-through box on the current step; a drag that starts on a player draws a box too (players don't move in Zone)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.kind.line",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "picks Line: tap players in order to join them (2 or more, one side); tapping the last player again, picking another tool or Done finishes the line; a tap on the grass does nothing",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.kind.glow",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "picks Glow: tap a player to put rings under them (they follow the player), or tap the grass to drop a heat glow there; tapping an existing glow selects it",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.zone",
+      "trigger": "drag (on the grass, Zone tool)",
+      "states": [
+        "idle",
+        "dragging",
+        "placed"
+      ],
+      "effect": "a box from the touch-down point to the finger, dashed while dragging, filled on lift; under 4% of the pitch on either side is ignored (a tap); the new zone is selected with four corner handles",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no fade-in; the zone appears on lift"
+    },
+    {
+      "element": "draw.zone.1",
+      "trigger": "tap; drag",
+      "states": [
+        "default",
+        "selected",
+        "dragging"
+      ],
+      "effect": "tap selects the zone (handles + the 'Zone 1 \u00b7 step 4' row with Remove); drag inside a selected zone moves it, clamped to the pitch (0\u20261)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no lift scale"
+    },
+    {
+      "element": "draw.zone.handle.tl",
+      "trigger": "drag",
+      "states": [
+        "default",
+        "dragging"
+      ],
+      "effect": "resizes the zone from its top-left corner; the opposite corner stays put; minimum 4% each side; clamped to 0\u20261",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale"
+    },
+    {
+      "element": "draw.zone.handle.tr",
+      "trigger": "drag",
+      "states": [
+        "default",
+        "dragging"
+      ],
+      "effect": "resizes the zone from its top-right corner; the opposite corner stays put; minimum 4% each side; clamped to 0\u20261",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale"
+    },
+    {
+      "element": "draw.zone.handle.bl",
+      "trigger": "drag",
+      "states": [
+        "default",
+        "dragging"
+      ],
+      "effect": "resizes the zone from its bottom-left corner; the opposite corner stays put; minimum 4% each side; clamped to 0\u20261",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale"
+    },
+    {
+      "element": "draw.zone.handle.br",
+      "trigger": "drag",
+      "states": [
+        "default",
+        "dragging"
+      ],
+      "effect": "resizes the zone from its bottom-right corner; the opposite corner stays put; minimum 4% each side; clamped to 0\u20261",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale"
+    },
+    {
+      "element": "draw.mark.remove",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "removes the selected mark (zone, line or glow) from this step; undoable; Cancel takes back the whole draw session (D-62)",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "crossfade only"
+    },
+    {
+      "element": "draw.line",
+      "trigger": "tap a player (Line tool)",
+      "states": [
+        "first",
+        "adding",
+        "finished"
+      ],
+      "effect": "each tap adds the player to the line and draws the segment to them; the last-tapped player shows a dashed pending ring; a player already in the line is ignored except the last (finishes); a player of the other side starts nothing and shows the hint 'One side per line'",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "segments appear without growing"
+    },
+    {
+      "element": "draw.glow",
+      "trigger": "tap (Glow tool)",
+      "states": [
+        "placed",
+        "selected"
+      ],
+      "effect": "on a player: rings fade in under them (they follow the player through the step); on the grass: a heat glow fades in at that point; a second tap on the same glow selects it (Remove in the row)",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no ring expansion: appears at full size with a 220 ms opacity fade"
+    },
+    {
+      "element": "board.marks",
+      "trigger": "timeline (playback and export)",
+      "states": [
+        "entering",
+        "shown",
+        "leaving"
+      ],
+      "effect": "marks belong to a step like arrows (D-46): they fade in over the first 15% of their step and out over the last 15% of the step they end on (or hold for 'holdSteps'); shape lines and rings follow their players' interpolated positions every frame; zones and heat stay put. Pure function of t (D-06); same in the export (D-07)",
+      "duration_ms": 0,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "in-app playback under Reduce Motion steps through with 300 ms crossfades; exported video never changes (rule 8)"
+    },
+    {
+      "element": "export.camera.flat",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "video camera: Flat (top-down, pitch upright; in 16:9 the pitch sits in the middle, title left, note right, D-63); the preview re-renders; the size line updates (\"Up to ...\", D-64)",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "preview cuts, no crossfade needed"
+    },
+    {
+      "element": "export.camera.broadcast",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "selected"
+      ],
+      "effect": "video camera: Broadcast (tilted, follows the ball, fills more of the frame; discs flat on the grass with upright numbers); the preview re-renders; the size line updates (\"Up to ...\", D-64)",
+      "duration_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "preview cuts; the exported video is the same with Reduce Motion on (rule 8)"
+    },
+    {
+      "element": "library.card.1",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF \u00a74.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.2",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF \u00a74.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.3",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF \u00a74.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.4",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF \u00a74.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
     }
   ]
 }
