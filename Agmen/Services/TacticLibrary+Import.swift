@@ -14,7 +14,7 @@ extension TacticLibrary {
             return external
         }
 
-        var tactic = try load(external)
+        var tactic = try loadCoordinated(external)
         let existingIDs = Set(((try? entries())?.entries ?? []).map(\.tactic.id))
         if existingIDs.contains(tactic.id) { tactic.id = UUID().uuidString }
         guard let url = try? write(tactic, to: uniqueURL(for: tactic.title)) else { throw .unreadable }
@@ -24,6 +24,21 @@ extension TacticLibrary {
             try? FileManager.default.removeItem(at: external)
         }
         return url
+    }
+
+    /// Reads an outside file through file coordination, so iOS first downloads one that lives only in iCloud Drive
+    /// (a non-blocking open of a not-yet-downloaded file would otherwise be refused).
+    private func loadCoordinated(_ url: URL) throws(TacticFormatError) -> Tactic {
+        // The coordinator itself waits on a named pipe, so anything but a regular file is refused first (an iCloud file
+        // not yet downloaded is still a regular file). `readCapped` checks again on the open descriptor.
+        var info = stat()
+        guard lstat(url.path, &info) == 0, info.st_mode & S_IFMT == S_IFREG else { throw .unreadable }
+        var result: Result<Tactic, TacticFormatError> = .failure(.unreadable)
+        var coordinationError: NSError?
+        NSFileCoordinator().coordinate(readingItemAt: url, options: [], error: &coordinationError) { readURL in
+            do throws(TacticFormatError) { result = .success(try load(readURL)) } catch { result = .failure(error) }
+        }
+        return try result.get()
     }
 
     /// Adds the example move on the very first launch only; deleting it later doesn't bring it back. If the bundled

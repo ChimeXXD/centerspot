@@ -84,6 +84,7 @@ The proof gate (`.claude/proof.json`) runs test (which builds first) and build-i
 - Work day by day from `docs/PLAN.md`. Pass a day's gate before starting the next.
 - **Tests first** for everything in `Model/`, `Engine/` and `Services/LinkCodec` (codec round trips, interpolation, clamping, format validation). Fixtures are `.tactic` files in `AgmenTests/Fixtures/` (start from `examples/`).
 - Commit after each green step with a conventional message (`feat:`, `fix:`, `test:`, `chore:`, `docs:`). Push to GitHub after every commit (private repo until Day 7).
+- After every push, check the CI run (`gh run list --limit 1`, `gh run watch`). CI builds with the released Xcode (26.x), not the local Xcode 27, so it catches code the older compiler can't build. A red CI is fixed before the next feature.
 - After UI work: build, take a simulator screenshot, and compare with the approved baseline before calling the step done.
 - Update the checkbox in `docs/PLAN.md` and the matching item in `docs/features.json` (with evidence) when a task is complete. Log each session in `PROGRESS.md` (newest first) and rewrite `docs/HANDOFF.md` at the end of each session.
 - New product or architecture choices get a numbered entry in `docs/DECISIONS.md` (supersede, never edit, old entries).

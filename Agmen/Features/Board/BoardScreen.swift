@@ -41,7 +41,10 @@ struct BoardScreen: View {
         let point: Point
     }
 
-    var editor: DocumentEditor { DocumentEditor(document: $document, undoManager: undoManager) }
+    var editor: DocumentEditor {
+        DocumentEditor(document: $document, undoManager: undoManager,
+                       onTooBig: { show("This move is full. Remove a step or some lines to add more.") })
+    }
     var tactic: Tactic { document.tactic }
     var steps: [Step] { tactic.phases.first?.steps ?? [] }
     /// The step on screen, kept in range when an undo removes steps.

@@ -24,18 +24,39 @@ enum TacticFormat {
         guard version == Tactic.currentSchemaVersion else { throw .unreadable }
 
         guard let tactic = try? JSONDecoder().decode(Tactic.self, from: data) else { throw .unreadable }
-        return try validated(tactic, knownRoleIDs: knownRoleIDs)
+        let repaired = try validated(tactic, knownRoleIDs: knownRoleIDs)
+
+        // The cap holds for the tactic as Agmen will save it too. Repairs can grow a file (every step gets a position
+        // for every token), and a saved file over the cap could never be opened again (D6-3 fuzz).
+        // `encode` writes compact JSON when the pretty form is over the cap, so the compact size is the one to check.
+        guard let saved = try? encodedSize(repaired), saved <= maxByteCount else { throw .unreadable }
+        return repaired
+    }
+
+    /// The tactic's smallest saved size (compact JSON): the size the cap is checked against, on import and on every
+    /// in-app edit (D-69).
+    static func encodedSize(_ tactic: Tactic) throws -> Int {
+        try encoder(pretty: false).encode(tactic).count
     }
 
     private struct VersionProbe: Decodable {
         let schemaVersion: Int
     }
 
-    /// Pretty, key-sorted JSON so files diff cleanly and read well in any editor.
+    /// Pretty, key-sorted JSON so files diff cleanly and read well in any editor. A tactic whose pretty form would pass
+    /// the size cap is written compactly instead, so an imported tactic always saves under the cap; in-app edits that
+    /// would pass it are refused by `DocumentEditor` (D-69).
     static func encode(_ tactic: Tactic) throws -> Data {
+        let pretty = try encoder(pretty: true).encode(tactic)
+        guard pretty.count > maxByteCount else { return pretty }
+        return try encoder(pretty: false).encode(tactic)
+    }
+
+    private static func encoder(pretty: Bool) -> JSONEncoder {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-        return try encoder.encode(tactic)
+        encoder.outputFormatting = pretty ? [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+            : [.sortedKeys, .withoutEscapingSlashes]
+        return encoder
     }
 
     /// Role ids from the bundled `roles.json` (D-14), or `nil` if it can't be read.

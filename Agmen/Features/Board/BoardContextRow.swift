@@ -21,7 +21,22 @@ struct BoardContextRow: View {
     /// Durations offered for a step (SPEC §2: 0.3…5 s).
     static let durations: [Double] = [0.3, 0.5, 0.8, 1, 1.2, 1.4, 1.6, 2, 2.5, 3, 4, 5]
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    /// At the accessibility sizes the row scrolls sideways at full size instead of truncating every label (D6-3).
     var body: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            ScrollView(.horizontal) {
+                row.fixedSize()
+                    .frame(minHeight: Tokens.Size.touch)
+            }
+            .scrollIndicators(.hidden)
+        } else {
+            row.frame(height: Tokens.Size.touch)
+        }
+    }
+
+    private var row: some View {
         HStack(spacing: Tokens.Space.s2) {
             switch mode {
             case let .summary(tag, step):
@@ -52,7 +67,6 @@ struct BoardContextRow: View {
                 button("Delete", "step.delete", onDeleteStep).disabled(!canDelete)
             }
         }
-        .frame(height: Tokens.Size.touch)
         .lineLimit(1)
     }
 

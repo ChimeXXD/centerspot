@@ -17,6 +17,8 @@ struct PlaybackBar: View {
     /// A place on the scrubber (0…1), and whether the finger has lifted.
     var onScrub: (Double, Bool) -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     private var stepIndex: Int {
         let starts = PlaybackTrack.starts(of: phase)
         return starts.lastIndex { $0 <= t + 1e-9 } ?? 0
@@ -92,7 +94,7 @@ struct PlaybackBar: View {
             .font(Tokens.Typeface.note)
             .foregroundStyle(Tokens.Colour.text.color)
         return Text("\(lead)\(written)")
-            .lineLimit(2)
+            .lineLimit(dynamicTypeSize.isAccessibilitySize ? 4 : 2)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, Tokens.Space.s1)
             .accessibilityIdentifier("playback.note")
@@ -134,6 +136,9 @@ struct PlaybackBar: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(isPlaying ? "Pause" : "Play")
+            .accessibilityShowsLargeContentViewer {
+                Label(isPlaying ? "Pause" : "Play", systemImage: isPlaying ? "pause.fill" : "play.fill")
+            }
             .accessibilityIdentifier("playback.toggle")
             icon("forward.end.fill", label: "Next step", identifier: "playback.next", action: onNext)
             CapsuleSegments(options: [
@@ -148,6 +153,8 @@ struct PlaybackBar: View {
         .frame(height: Tokens.Size.toolbarHeight, alignment: .top)
         .frame(maxWidth: .infinity)
         .background(Tokens.Colour.surface.color.ignoresSafeArea(edges: .bottom))
+        // The board toolbar's rule: capped like a tab bar, with the Large Content Viewer beyond it (D6-3).
+        .dynamicTypeSize(...DynamicTypeSize.large)
     }
 
     private func icon(_ symbol: String, label: String, identifier: String, tint: RGBA = Tokens.Colour.text,

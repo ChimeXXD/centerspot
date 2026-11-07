@@ -22,6 +22,9 @@ struct BoardToolbar: View {
         .frame(height: Tokens.Size.toolbarHeight, alignment: .top)
         .frame(maxWidth: .infinity)
         .background(Tokens.Colour.surface.color.ignoresSafeArea(edges: .bottom))
+        // Like a system tab bar, the labels stop growing at the default size; at the accessibility sizes a long
+        // press shows each one in the Large Content Viewer (D6-3, AX5 review: "Fo…", "Dr…", "Ex…").
+        .dynamicTypeSize(...DynamicTypeSize.large)
     }
 
     private func label(_ title: String, symbol: String) -> some View {

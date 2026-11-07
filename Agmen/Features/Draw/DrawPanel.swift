@@ -5,24 +5,36 @@ import SwiftUI
 /// style in its colour, so kinds never differ by colour alone (D-15).
 struct DrawPanel: View {
     @Binding var kind: Arrow.Kind
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    /// Four tiles in a row, or two by two at the accessibility sizes so "Dribble" fits (D6-3).
+    private var columns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: Tokens.Space.s1 + 2),
+              count: dynamicTypeSize.isAccessibilitySize ? 2 : 4)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-            Text("Start on a player to draw their \(Self.noun(kind)).")
-                .font(Tokens.Typeface.note)
-                .foregroundStyle(Tokens.Colour.muted.color)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, Tokens.Space.s5)
-                .padding(.top, Tokens.Space.s3)
-                .accessibilityIdentifier("draw.hint")
-                .padding(.bottom, Tokens.Space.s5)
+            // At the accessibility sizes the hint would push the pitch down to a thumbnail, so it's left out and the
+            // pitch keeps the room (D-68). The help line below names the kind's line, not where to start.
+            if !dynamicTypeSize.isAccessibilitySize {
+                Text("Start on a player to draw their \(Self.noun(kind)).")
+                    .font(Tokens.Typeface.note)
+                    .foregroundStyle(Tokens.Colour.muted.color)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, Tokens.Space.s5)
+                    .padding(.top, Tokens.Space.s3)
+                    .accessibilityIdentifier("draw.hint")
+                    .padding(.bottom, Tokens.Space.s5)
+            }
             VStack(alignment: .leading, spacing: Tokens.Space.s2) {
                 Text(Self.help(kind))
                     .font(Tokens.Typeface.caption)
                     .foregroundStyle(Tokens.Colour.muted.color)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, Tokens.Space.s1 + 2)
                     .accessibilityIdentifier("draw.kind-help")
-                HStack(spacing: Tokens.Space.s1 + 2) {
+                LazyVGrid(columns: columns, spacing: Tokens.Space.s1 + 2) {
                     ForEach(Arrow.Kind.allCases, id: \.self) { tile($0) }
                 }
             }
@@ -31,6 +43,7 @@ struct DrawPanel: View {
             .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.panel))
             .shadow(color: .black.opacity(0.5), radius: 15, y: 8)
             .padding(.horizontal, Tokens.Space.s4)
+            .padding(.top, dynamicTypeSize.isAccessibilitySize ? Tokens.Space.s3 : 0)
             .padding(.bottom, Tokens.Space.s2)
         }
     }

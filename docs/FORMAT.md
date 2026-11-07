@@ -45,6 +45,8 @@ Two outcomes (D-27): **refuse** means the whole file is rejected with a plain er
 | Field | Rule | If broken |
 | --- | --- | --- |
 | Size | A file or decoded link payload over 256 KB. | Refuse, before decoding |
+| Saved size | A tactic whose repaired, saved form would be over 256 KB (repairs such as filling missing positions can grow a file). Agmen saves compact JSON when pretty-printed JSON would pass the cap (D-68). | Refuse |
+| File type | Only a regular file is read; a pipe, device or folder named `.tactic` is never waited on (D-68). | Refuse |
 | `schemaVersion` | Must be `1`. | Refuse: "Made with a newer version of Agmen." when higher; the generic error otherwise |
 | Coordinates | `x`, `y` in 0…1 (D-05): `x` left → right, `y` own goal line (0) → opponent's goal line (1). | Out of range: repair (clamp). NaN or infinity: refuse |
 | `pitch.kind` | `full`, `sevenASide`, `fiveASide`. | Refuse |

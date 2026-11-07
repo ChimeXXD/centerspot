@@ -93,11 +93,19 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 
 ### Day 6: Share and harden
 - [ ] `TacticDocument` with the exported UTType; open from Files and AirDrop (7 Nov: the document now reads and writes through `TacticFormat`; `TacticDocumentTests` 6/6; on-device open from Files and AirDrop still to check)
-- [ ] Fuzz the importer with malformed, huge and hostile files
-- [ ] VoiceOver pass; Dynamic Type in sheets
+- [x] Fuzz the importer with malformed, huge and hostile files (7 Nov: `FuzzImportTests`, 6,437 seeded cases; 4 bugs fixed, D-68)
+- [x] VoiceOver pass; Dynamic Type in sheets (7 Nov: `ControlLabelUITests` with Apple's accessibility audit; `DynamicTypeUITests` AX5, 5 screens fixed; on-device VoiceOver still to try)
 - [ ] CI green; beta build on Chime's iPhone
 - [ ] Borrow session on the brother's iPad (D-26): install the beta, open a `.tactic` from Files, VoiceOver pass
-- [ ] Should: onboarding (D-58): mockup of the welcome pages and tip sequence, Chime approves, then build (welcome on first launch, TipKit tips on the example move: drag, step, Play, draw a run, export)
+- [ ] Should: onboarding (D-58), after the broadcast restyle (D-65): mockup of the welcome pages and tip sequence (first draft 7 Nov, to redo in the new look), Chime approves, then build (welcome on first launch, TipKit tips on the example move: drag, step, Play, draw a run, export)
+
+### Broadcast restyle and 3D camera (D-65, added 7 Nov; before Day 7)
+- [ ] Mockup: broadcast pitch, figures in playback/export, discs in editing, glow rings, zones, shape lines, heat glow, the tilted camera; Chime approves
+- [ ] Format: zones, shape lines and glows as additive v1 fields (FORMAT.md, import rules, fuzz cases, round trips)
+- [ ] Renderer: broadcast pitch, figures (home vs away by shape, not only colour), glow rings, zones, shape lines, heat glow; parity stays green
+- [ ] Draw tools for zones, shape lines and glow; undoable; VoiceOver words for each
+- [ ] Tilted camera in `BoardRenderer` (perspective projection, far-to-near figures) for playback and exports on iPhone and iPad; editing stays flat; export timing re-measured on the phone
+- [ ] Then the onboarding (D-58) in the new look
 
 ### Day 7: Portfolio and open source
 - [ ] README: clip, what it does, architecture diagram, format link, how to build, honest numbers

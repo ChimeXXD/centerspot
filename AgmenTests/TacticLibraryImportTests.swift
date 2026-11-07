@@ -52,6 +52,16 @@ struct TacticLibraryImportTests {
         #expect(try FileManager.default.contentsOfDirectory(atPath: folder.path).isEmpty)
     }
 
+    /// D6-3 fuzz: a valid tactic whose title holds a NUL opened but couldn't be copied in, because the title became
+    /// the file name.
+    @Test func aTitleWithControlCharactersImports() throws {
+        let (library, _) = try TacticLibraryTests.make()
+        let text = try TestTactics.json(TestTactics.small()).replacingOccurrences(of: "\"Small\"", with: #""Sm\u0000all\n""#)
+        let url = try library.importFile(from: outside(Data(text.utf8), name: "nul.tactic"))
+        #expect(url.lastPathComponent == "Sm all.tactic")
+        #expect(try library.load(url).title == "Sm\u{0}all\n", "the title itself is kept")
+    }
+
     @Test func openingAFileAlreadyInTheLibraryDoesNotCopyIt() throws {
         let (library, folder) = try TacticLibraryTests.make()
         let url = try library.create()

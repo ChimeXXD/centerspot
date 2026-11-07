@@ -6,14 +6,28 @@ import SwiftUI
 struct DocumentEditor {
     let document: Binding<TacticDocument>
     let undoManager: UndoManager?
+    /// The saved file's size limit (docs/FORMAT.md); tests pass a small one.
+    var byteCap = TacticFormat.maxByteCount
+    /// Called when an edit is refused because the file would pass `byteCap`.
+    var onTooBig: () -> Void = {}
 
     var tactic: Tactic { document.wrappedValue.tactic }
 
     /// Runs `edit` on a copy of the tactic and commits it as one undoable action named `actionName` ("Move player").
-    func apply(_ actionName: String, _ edit: (inout Tactic) -> Void) {
-        var tactic = document.wrappedValue.tactic
+    /// An edit that would grow the saved file past the cap doesn't happen (D-69: a file that saved but couldn't reopen
+    /// would vanish from the library); it returns false and calls `onTooBig`. Edits that make it smaller always apply.
+    @discardableResult
+    func apply(_ actionName: String, _ edit: (inout Tactic) -> Void) -> Bool {
+        let old = document.wrappedValue.tactic
+        var tactic = old
         edit(&tactic)
+        if tactic != old, let size = try? TacticFormat.encodedSize(tactic), size > byteCap,
+           size > (try? TacticFormat.encodedSize(old)) ?? 0 {
+            onTooBig()
+            return false
+        }
         set(tactic, actionName: actionName)
+        return true
     }
 
     /// Swaps in `new` and registers the swap back. Undo calls this again, which registers the redo.

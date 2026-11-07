@@ -89,9 +89,22 @@ struct CapsuleSegments<Value: Hashable>: View {
 
     let options: [Option]
     @Binding var selection: Value
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
+    /// One row; at the accessibility sizes, a column when the row won't fit ("11-a-s…", D6-3).
     var body: some View {
-        HStack(spacing: 2) {
+        if dynamicTypeSize.isAccessibilitySize {
+            ViewThatFits(in: .horizontal) {
+                segments(HStackLayout(spacing: 2), in: Capsule())
+                segments(VStackLayout(spacing: 2), in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
+            }
+        } else {
+            segments(HStackLayout(spacing: 2), in: Capsule())
+        }
+    }
+
+    private func segments(_ layout: some Layout, in shape: some Shape) -> some View {
+        layout {
             ForEach(options, id: \.identifier) { option in
                 let on = option.value == selection
                 Button { selection = option.value } label: {
@@ -101,16 +114,17 @@ struct CapsuleSegments<Value: Hashable>: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                         .frame(maxWidth: .infinity, minHeight: Tokens.Size.touch)
-                        .background(on ? Tokens.Colour.surface3.color : .clear, in: Capsule())
-                        .contentShape(Capsule())
+                        .background(on ? Tokens.Colour.surface3.color : .clear, in: shape)
+                        .contentShape(shape)
                 }
                 .buttonStyle(.plain)
+                .accessibilityShowsLargeContentViewer { Text(option.title) }
                 .accessibilityIdentifier(option.identifier)
                 .accessibilityAddTraits(on ? .isSelected : [])
             }
         }
         .padding(3)
-        .background(Tokens.Colour.surface2.color, in: Capsule())
+        .background(Tokens.Colour.surface2.color, in: shape)
     }
 }
 

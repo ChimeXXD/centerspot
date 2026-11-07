@@ -76,4 +76,32 @@ struct DocumentEditorUndoTests {
         // An empty group still reports canUndo; a registered edit would have named it.
         #expect(undo.undoActionName.isEmpty)
     }
+
+    /// D-69: an edit that would grow the saved file past the cap doesn't happen (nothing can save and then fail to
+    /// reopen); it says so, and registers no undo. An edit that makes it smaller still goes through.
+    @Test func anEditThatWouldOverflowTheFileIsRefused() throws {
+        let box = Box(try Fixtures.tactic("overlap-left"))
+        let undo = UndoManager()
+        undo.groupsByEvent = false
+        let size = try TacticFormat.encodedSize(box.document.tactic)
+        var refusals = 0
+        let editor = DocumentEditor(document: Binding(get: { box.document }, set: { box.document = $0 }),
+                                    undoManager: undo, byteCap: size + 10, onTooBig: { refusals += 1 })
+        let before = box.document.tactic
+
+        undo.beginUndoGrouping()
+        let grew = editor.apply("Add step") { _ = TacticEdits.addStep(after: 0, in: &$0) }
+        undo.endUndoGrouping()
+        #expect(!grew)
+        #expect(box.document.tactic == before, "the step was not added")
+        #expect(refusals == 1)
+        #expect(undo.undoActionName.isEmpty, "nothing to undo")
+
+        undo.beginUndoGrouping()
+        let shrank = editor.apply("Delete step") { _ = TacticEdits.deleteStep(at: 4, in: &$0) }
+        undo.endUndoGrouping()
+        #expect(shrank)
+        #expect(box.document.tactic.phases[0].steps.count == 4)
+        #expect(refusals == 1)
+    }
 }

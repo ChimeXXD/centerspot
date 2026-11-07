@@ -39,9 +39,14 @@ struct TacticLibrary {
 
     // MARK: Names
 
-    /// A title made safe as a file name: trimmed, `/` and `:` replaced, no leading dot, not empty, not too long.
+    /// A title made safe as a file name: control characters (Unicode Cc) become spaces (a NUL can't be in a file name),
+    /// trimmed, `/` and `:` replaced, no leading dot, not empty, not too long. Format characters (Cf) are kept: the
+    /// zero-width joiner inside an emoji like 👨‍👩‍👧 and the non-joiner some scripts need are part of the title.
     static func fileStem(for title: String) -> String {
-        var stem = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let visible = String(String.UnicodeScalarView(title.unicodeScalars.map {
+            $0.properties.generalCategory == .control ? " " : $0
+        }))
+        var stem = visible.trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: "/", with: "-")
             .replacingOccurrences(of: ":", with: "-")
         while stem.hasPrefix(".") { stem.removeFirst() }
@@ -110,13 +115,18 @@ struct TacticLibrary {
         try TacticFormat.decode(Self.readCapped(url))
     }
 
-    /// At most `maxByteCount + 1` bytes, so an oversized file is refused without loading all of it.
+    /// At most `maxByteCount + 1` bytes, so an oversized file is refused without loading all of it. Only a regular
+    /// file is read: it's opened without blocking and checked on the open descriptor, so a named pipe or a device
+    /// can't hang the read (D6-3 fuzz) and the file can't be swapped between the check and the read.
     static func readCapped(_ url: URL) throws(TacticFormatError) -> Data {
-        if let size = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize, size > TacticFormat.maxByteCount {
-            throw .unreadable
-        }
-        guard let handle = try? FileHandle(forReadingFrom: url) else { throw .unreadable }
-        defer { try? handle.close() }
+        let descriptor = open(url.path, O_RDONLY | O_NONBLOCK | O_CLOEXEC)
+        guard descriptor >= 0 else { throw .unreadable }
+        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+        var info = stat()
+        guard fstat(descriptor, &info) == 0,
+              info.st_mode & S_IFMT == S_IFREG,
+              info.st_size <= TacticFormat.maxByteCount
+        else { throw .unreadable }
         guard let data = try? handle.read(upToCount: TacticFormat.maxByteCount + 1) else { throw .unreadable }
         guard data.count <= TacticFormat.maxByteCount else { throw .unreadable }
         return data

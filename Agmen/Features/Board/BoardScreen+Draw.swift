@@ -44,9 +44,10 @@ extension BoardScreen {
     func drawStroke(_ points: [Point], from tokenID: String?) {
         let kind = drawKind
         var outcome = StrokeEdits.Outcome()
-        applyEdit("Draw \(DrawPanel.noun(kind))") {
+        let applied = applyEdit("Draw \(DrawPanel.noun(kind))") {
             outcome = StrokeEdits.draw(points, kind: kind, from: tokenID, step: current, in: &$0)
         }
+        guard applied else { return }
         if outcome.hitStepLimit {
             show("A move can have up to \(Phase.stepCountRange.upperBound) steps, so nothing can run from the last one.")
         } else if outcome.hitArrowLimit {
@@ -56,10 +57,12 @@ extension BoardScreen {
 
     /// One undoable edit. In draw mode it is counted when it changed the tactic (an unchanged edit registers no undo),
     /// so Cancel undoes exactly the edits made there and nothing from before.
-    func applyEdit(_ actionName: String, _ edit: (inout Tactic) -> Void) {
+    @discardableResult
+    func applyEdit(_ actionName: String, _ edit: (inout Tactic) -> Void) -> Bool {
         let before = tactic
-        editor.apply(actionName, edit)
+        guard editor.apply(actionName, edit) else { return false }
         if mode == .drawing, tactic != before { drawEdits += 1 }
+        return true
     }
 
     /// The inspector opens only while editing: in iPad draw mode its edits would land between the strokes Cancel undoes.

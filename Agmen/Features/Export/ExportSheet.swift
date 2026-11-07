@@ -6,6 +6,7 @@ import SwiftUI
 struct ExportSheet: View {
     @State private var model: ExportModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     init(tactic: Tactic, stepIndex: Int, boardWidth: CGFloat) {
         _model = State(initialValue: ExportModel(tactic: tactic, stepIndex: stepIndex, boardWidth: boardWidth))
@@ -16,8 +17,14 @@ struct ExportSheet: View {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(title: "Export", closeIdentifier: "export.close") { dismiss() }
                     .padding(.bottom, Tokens.Space.s4)
-                HStack(alignment: .top, spacing: Tokens.Space.s4) {
+                // Side by side, or the preview above the choices at the accessibility sizes, where the narrow column
+                // broke words mid-way ("Renderi / ng", D6-3).
+                let stacked = dynamicTypeSize.isAccessibilitySize
+                let layout = stacked ? AnyLayout(VStackLayout(alignment: .leading, spacing: Tokens.Space.s4))
+                    : AnyLayout(HStackLayout(alignment: .top, spacing: Tokens.Space.s4))
+                layout {
                     ExportPreview(model: model)
+                        .frame(maxWidth: stacked ? .infinity : nil)
                     side
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -106,11 +113,14 @@ struct ExportSheet: View {
     /// the image.
     @ViewBuilder private var extras: some View {
         if model.preset.video != nil {
-            HStack {
+            // The label over its menu at the accessibility sizes, where side by side broke it ("Spotlig / ht").
+            let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading))
+                : AnyLayout(HStackLayout())
+            layout {
                 Text("Spotlight")
                     .font(Tokens.Typeface.headline)
                     .foregroundStyle(Tokens.Colour.text.color)
-                Spacer()
+                Spacer(minLength: 0)
                 Picker("Spotlight", selection: $model.spotlight) {
                     Text("No one").tag(String?.none)
                     ForEach(model.spotlightChoices, id: \.id) { choice in Text(choice.label).tag(Optional(choice.id)) }
@@ -187,6 +197,7 @@ struct ExportSheet: View {
 /// The four preset tiles (mockup): a ratio outline over the name, lime outline on the chosen one.
 private struct ExportPresetTiles: View {
     @Binding var selection: ExportModel.Preset
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private static let shapes: [ExportModel.Preset: CGSize] = [
         .vertical: CGSize(width: 14, height: 24), .square: CGSize(width: 21, height: 21),
@@ -206,7 +217,8 @@ private struct ExportPresetTiles: View {
                         Text(preset.title)
                             .font(Tokens.Typeface.caption.weight(.bold))
                             .foregroundStyle(Tokens.Colour.text.color)
-                            .lineLimit(1)
+                            .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
+                            .multilineTextAlignment(.center)
                             .minimumScaleFactor(0.8)
                     }
                     .frame(maxWidth: .infinity, minHeight: 78)

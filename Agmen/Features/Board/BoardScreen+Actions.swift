@@ -56,7 +56,7 @@ extension BoardScreen {
 
     func addStep(_ actionName: String) {
         var added: Int?
-        editor.apply(actionName) { added = TacticEdits.addStep(after: current, in: &$0) }
+        guard editor.apply(actionName, { added = TacticEdits.addStep(after: current, in: &$0) }) else { return }
         guard let added else {
             show("A move can have up to \(Phase.stepCountRange.upperBound) steps.")
             return
@@ -111,7 +111,7 @@ extension BoardScreen {
         case .cone: "Add cone"
         }
         var id: String?
-        editor.apply(name) { id = TacticEdits.addToken(kind, in: &$0) }
+        guard editor.apply(name, { id = TacticEdits.addToken(kind, in: &$0) }) else { return }
         guard let id else {
             show(kind == .ball ? "There's already a ball on the board." : "A board holds up to \(TacticFormat.maxTokens) players, balls and cones.")
             return

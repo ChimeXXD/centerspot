@@ -15,6 +15,12 @@ struct TacticLibraryTests {
         ("..hidden", "hidden"),
         (" ..hidden ", "hidden"),
         ("/", "-"),
+        // Control characters can't all live in a file name (NUL never can), so they become spaces (D6-3 fuzz).
+        ("Sm\u{0}all", "Sm all"),
+        ("Low\nblock\t", "Low block"),
+        ("\u{1}\u{7F}", "Untitled tactic"),
+        // Format characters stay: the joiner holds an emoji family together.
+        ("\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467} press", "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467} press"),
     ])
     func fileStemIsSafe(_ title: String, _ stem: String) {
         #expect(TacticLibrary.fileStem(for: title) == stem)
