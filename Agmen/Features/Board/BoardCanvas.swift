@@ -15,6 +15,16 @@ struct BoardCanvas: View {
     /// Which touches draw a stroke (SPEC §6), and the kind it draws, for the live line's colour.
     var strokeInput: StrokeInput = .pencil
     var strokeKind: Arrow.Kind = .run
+    /// Draw mode (D-65): the selected mark (a zone shows its handles), the line being tapped out, and the dashed box
+    /// under the finger while a zone is drawn, moved or resized.
+    var selectedMark: String?
+    var pendingLine: [String] = []
+    var zonePreview: Zone?
+    /// While a mark tool is picked: taps and drags on the pitch make marks instead of strokes.
+    var marking: BoardMarking?
+    /// Each mark is read out by VoiceOver; in draw mode these actions select, remove, move and resize them.
+    var showsMarks = true
+    var markActions: MarkActions?
     /// A finished stroke: its points on the pitch (unclamped) and the token it started on (`strokeStart`).
     var onStroke: ([Point], String?) -> Void = { _, _ in }
     var onTap: (String?) -> Void
@@ -33,6 +43,10 @@ struct BoardCanvas: View {
     /// The stroke being drawn, in view points, and the token it started on.
     @State private var stroke: [CGPoint] = []
     @State private var strokeStart: String?
+    /// A touch with a mark tool: where it began, and what kind of drag it became once it moved (nil: still a tap).
+    @State var markTouch: (start: CGPoint, drag: BoardMarking.DragKind?)?
+    /// The last tap a mark tool took, so a tap reported both as a short stroke and by the tap gesture counts once.
+    @State var lastMarkTap: (time: ContinuousClock.Instant, at: CGPoint, viaStroke: Bool)?
 
     var body: some View {
         GeometryReader { proxy in
@@ -43,8 +57,7 @@ struct BoardCanvas: View {
                     context.withCGContext { cg in
                         BoardRenderer.draw(state: state, crossfadingTo: crossfade?.state, mix: crossfade?.mix ?? 0,
                                            tactic: tactic, in: cg, rect: CGRect(origin: .zero, size: size),
-                                           options: .init(selection: strokeStart ?? selection, dimsUnselected: dimsUnselected,
-                                                          showsLift: true))
+                                           options: options)
                     }
                 }
                 .accessibilityElement()
@@ -56,12 +69,15 @@ struct BoardCanvas: View {
                     if let id = hit(value.location, geometry) { onDoubleTap(id) }
                 }, including: movesTokens ? .all : .none)
                 .simultaneousGesture(SpatialTapGesture(count: 1).onEnded { value in
-                    onTap(hit(value.location, geometry))
+                    if let marking { markTap(value.location, geometry, marking, viaStroke: false) } else { onTap(hit(value.location, geometry)) }
                 })
                 .gesture(StrokeCapture(input: strokeInput) { phase, location in capture(phase, location, geometry) })
 
                 liveStroke
+                zoneBox(geometry)
 
+                // Marks under the players, as drawn: a player on a zone or line is found by touch first.
+                if showsMarks { markLayer(geometry) }
                 accessibilityLayer(geometry)
             }
         }
@@ -78,7 +94,16 @@ struct BoardCanvas: View {
         }
     }
 
+    private var options: BoardRenderer.Options {
+        .init(selection: strokeStart ?? selection, dimsUnselected: dimsUnselected, showsLift: true,
+              selectedMark: selectedMark, pendingLine: pendingLine)
+    }
+
     private func capture(_ phase: StrokeCapture.Phase, _ location: CGPoint, _ geometry: BoardGeometry) {
+        if let marking {
+            captureMark(phase, location, geometry, marking)
+            return
+        }
         switch phase {
         case .began:
             if dragging != nil { dragging = nil; onDragCancel() }
@@ -99,7 +124,7 @@ struct BoardCanvas: View {
 
     private var stepCount: Int { tactic.phases.first?.steps.count ?? 1 }
 
-    private func hit(_ location: CGPoint, _ geometry: BoardGeometry) -> String? {
+    func hit(_ location: CGPoint, _ geometry: BoardGeometry) -> String? {
         geometry.hitToken(at: location, positions: state.positions, tokens: tactic.tokens)
     }
 
@@ -155,6 +180,8 @@ struct BoardCanvas: View {
             .accessibilityIdentifier("board.token.\(token.id)")
             .accessibilityAddTraits(traits)
             .accessibilityAction {
+                // With a mark tool, activating a player taps it out for a line or puts rings on it (D-65).
+                if let marking { marking.onTap(point, token.id); return }
                 guard movesTokens else { return }
                 if token.kind == .player { onDoubleTap(token.id) } else { onTap(token.id) }
             }

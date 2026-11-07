@@ -101,10 +101,10 @@ private final class FrameCache {
     private var card: LineupCard?
 
     func frame(_ model: ExportModel, canvas: ExportCanvas) -> ExportFrame {
-        let key = "\(canvas)|\(model.showsTitle)|\(model.showsNotes)|\(model.spotlight ?? "")"
+        let key = "\(canvas)|\(model.showsTitle)|\(model.showsNotes)"
         if key == self.key, let cached { return cached }
         let made = ExportFrame(tactic: model.tactic, canvas: canvas, showsTitle: model.showsTitle,
-                               showsNotes: model.showsNotes, spotlight: model.spotlight)
+                               showsNotes: model.showsNotes)
         self.key = key
         cached = made
         return made

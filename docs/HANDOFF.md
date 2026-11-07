@@ -1,33 +1,35 @@
 # Handoff: read this first when you pick the project back up
 
-## Latest: Day 5 built (export: 9:16/1:1/16:9 video, PNG, lineup card, spotlight; 26 formations), Sat 7 Nov 2026. Next: Chime checks WhatsApp/Discord playback, then Day 6 (share and harden, onboarding D-58).
+## Latest: broadcast restyle part 1 built (marks, dark pitch, Zone / Line / Glow, Spotlight removed), Sun 8 Nov 2026. Next: install on the iPhone and the borrowed iPad, then part 2 (tilted camera following the ball), then onboarding (D-58), then Day 7.
 
 ### Where it stands
 - **App: Agmen** (D-42), private repo `ChimeXXD/agmen`. Folder on disk is still `Tactics Board`.
-- **Design:** Floodlight Chalk (D-44), mockup in `mockup/` is the baseline (D-50), `Agmen/Design/Tokens.swift` is the source of truth. Lime/coral defaults (D-53).
-- **Library (D-56):** Agmen's own home screen replaced the system document browser: cards drawn by `BoardRenderer`, lime New tactic, press-and-hold Rename · Duplicate · Share · Delete (Delete asks first), the example on first launch. Files are `.tactic` in Documents (Files › On My iPhone › Agmen); outside files are checked and copied in. Board title is Agmen's own menu (D-57).
-- **Built:** the board editor (renderer, drag, select, context row, steps strip D-54, toolbar D-55, undo toast, player sheet, formation picker D-48, launch scene). Every edit undoes and redoes through the document's `UndoManager`. VoiceOver labels from `Placement`, adjustable nudge.
-- **Checks:** gate green; `BoardScreenshotUITests` walks the screens and writes `fidelity/shots/day3/*.png` (git-ignored). Run it alone: `xcodebuild -scheme AgmenUITests -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' test`.
-- **On the phone:** Day 3 Debug build installed 7 Nov. The signing profile was reused: it expires **13 Nov 2026, 21:30 Lagos**; reinstall before then.
+- **Design:** broadcast look (D-65), approved mockup tagged `design-v2` in `mockup/`; circles everywhere, no figures (D-66); dark outline on every disc and every number on top (D-67). `Agmen/Design/Tokens.swift` is the source of truth (broadcast tokens added by hand; the generator would overwrite them).
+- **Library (D-56):** Agmen's own home screen; `.tactic` files in Documents; outside files checked and copied in through file coordination (D-69).
+- **Built:** board editor, playback, drawn runs/passes/dribbles/presses (D-59/D-62), export (9:16, 1:1, 16:9 video, PNG, lineup card), 26 formations, hardening (fuzzed importer D-68, 256 KB cap on edits D-69), marks per step (zones, shape lines, glows) with draw tools. Spotlight removed.
+- **Checks:** gate (unit tests, iPad iOS 26.5 build, library-name check). UI scheme `AgmenUITests` (7 tests); pass `TEST_RUNNER_SHOTS_DIR=$PWD/fidelity/shots/<dir>` to save screenshots.
+- **CI** builds with Xcode 26.6 / Swift 6.3.3: Binding setters as closure literals, split long expressions and give them types. Check every push (`gh run list --limit 1`).
+- **On the phone:** Day 5 + Photos-fix build. Signing expires **13 Nov 2026, 21:30 Lagos**; reinstall before then.
 
 ### Known issues
-- Not checked on the phone yet: importing a `.tactic` from AirDrop/WhatsApp/Files, and the Files folder showing up.
-- Never run a UI test while the gate (or another xcodebuild) uses the same simulator: they kill each other's runs.
+- Never run a UI test while the gate (or another xcodebuild) uses the same simulator: they kill each other's runs (the gate runs automatically at the end of each turn).
+- On iPad only the Pencil draws in Draw mode, zones included; Chime to decide if a finger should draw zones.
+- The heat glow's tap area is a circle a little bigger than the drawn ellipse.
 - Applying a smaller shape to 11 players leaves extras in place; the confirmation doesn't warn.
-- Not built: pitch picker check, Sides & colours sheet, Debug screen, launch animation, AX5 screenshots.
 
 ### How Chime wants to work (keep doing this)
 - Click-through questions (three options, recommendation first) for every decision.
-- Chime picks references; never pre-select. Show a small sample (10–20) before any bulk run.
+- Chime picks references; ask which elements of a reference to adopt before designing from it.
 - Names: propose only names verified unused. Never name the design reference library in the repo (D-52 gate).
-- One simulator job at a time. Push to GitHub after every commit.
+- One simulator job at a time. Ship each feature to GitHub when it's built; check CI after every push.
+- Give complete absolute paths, or `open` images, when showing Chime anything.
 
 ### Do next
-- Day 5 on the phone: export a clip, send it in WhatsApp and Discord; measured export on the iPhone 14 Pro: hero 1.9 s, 1.1 MB.
-0. Day 4 on devices: playback smoothness and finger drawing on the iPhone; Pencil on the brother's iPad (D4-4), including whether a Pencil stroke from a token also drags it.
-1. Chime approves the Day 3 screenshots and tries the board on the phone (drag, reorder, timed 5-step move). Approved shots go to `fidelity/refs/`.
-2. Ask: does a stroke starting on a player always become a run (passes also start on players)?
-3. Day 4: playback (`TimelineView(.animation)` → `Timeline`), scrubber, Reduce Motion step-through, drawn runs (finger on iPhone, Pencil on the brother's iPad).
+1. Install on the iPhone and the borrowed iPad (D4-4, D6-4: Pencil drawing, open a `.tactic` from Files, VoiceOver pass).
+2. Part 2 (BR-2): tilted camera in `BoardRenderer` following the ball, playback and export, iPhone and iPad; editing stays flat; re-measure export on the phone.
+3. Onboarding (D-58) mockup in the broadcast look; Skip goes to the library; × closes that tip and the next can come. Chime approves, then TipKit.
+4. From Chime: AX5 screenshots (`fidelity/shots/broadcast/ax5-*`), Day 3/4 screenshot approval, a timed 5-step move, AirDrop a `.tactic`.
+5. Day 7: README, demo video made in the app, case study, repo public, `pull_request` in CI.
 
 ### On hold
 - Custom icons and illustrations (D-51), until Chime says go.

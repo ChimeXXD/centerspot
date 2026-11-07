@@ -28,7 +28,7 @@ struct ExportSheet: View {
                     side
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                if model.phase == .choosing { extras.padding(.top, Tokens.Space.s4) }
+                if model.phase == .choosing, model.preset.video == nil { extras.padding(.top, Tokens.Space.s4) }
                 footer
                     .padding(.top, Tokens.Space.s5)
             }
@@ -109,33 +109,13 @@ struct ExportSheet: View {
         }
     }
 
-    /// The Shoulds under the preview (D-63): spotlight a player in a video (D-40), or the step or the lineup card as
-    /// the image.
-    @ViewBuilder private var extras: some View {
-        if model.preset.video != nil {
-            // The label over its menu at the accessibility sizes, where side by side broke it ("Spotlig / ht").
-            let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading))
-                : AnyLayout(HStackLayout())
-            layout {
-                Text("Spotlight")
-                    .font(Tokens.Typeface.headline)
-                    .foregroundStyle(Tokens.Colour.text.color)
-                Spacer(minLength: 0)
-                Picker("Spotlight", selection: $model.spotlight) {
-                    Text("No one").tag(String?.none)
-                    ForEach(model.spotlightChoices, id: \.id) { choice in Text(choice.label).tag(Optional(choice.id)) }
-                }
-                .pickerStyle(.menu)
-                .tint(Tokens.Colour.text.color)
-                .accessibilityIdentifier("export.spotlight")
-            }
-            .frame(minHeight: Tokens.Size.touch)
-        } else {
-            CapsuleSegments(options: [
-                .init(value: ExportModel.ImageKind.step, title: "Step \(model.stepIndex + 1)", identifier: "export.image.step"),
-                .init(value: .lineup, title: "Lineup card", identifier: "export.image.lineup"),
-            ], selection: $model.imageKind)
-        }
+    /// Under the preview for an image (D-63): the step or the lineup card. Videos have nothing here since Spotlight was
+    /// dropped (D-66); glow rings on a player do that job per step.
+    private var extras: some View {
+        CapsuleSegments(options: [
+            .init(value: ExportModel.ImageKind.step, title: "Step \(model.stepIndex + 1)", identifier: "export.image.step"),
+            .init(value: .lineup, title: "Lineup card", identifier: "export.image.lineup"),
+        ], selection: $model.imageKind)
     }
 
     // MARK: Footer

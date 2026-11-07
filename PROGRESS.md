@@ -2,6 +2,29 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Broadcast restyle part 1: marks, dark pitch, Zone / Line / Glow (Sat 7 – Sun 8 Nov 2026)
+
+**Changed**
+- Format: optional per-step `marks` (zones, shape lines, glows: rings on players or a heat spot). Old files open unchanged; `schemaVersion` stays 1. Refuse and repair rules, an example and timing notes in `docs/FORMAT.md`. The example move's step 4 now has the mockup's marks.
+- Timeline: marks fade like arrows (D-46); a mark with the same id on the next step eases to its new shape instead; lines and rings follow their players.
+- Renderer (D-65/D-66/D-67): dark broadcast pitch; draw order pitch, marks, arrows, discs with a thin dark outline, then every number on top. Old green pitch tokens removed.
+- Draw tools Zone, Line and Glow: one undoable edit per mark, under D-69's size cap; VoiceOver labels ("Zone 1, left wing, step 4"); Remove row; zone move and corner handles.
+- Spotlight (D-40) removed: code, export setting, menu, tests.
+- At the accessibility text sizes the seven tools sit in one sideways-scrolling row (D-70; the pitch had shrunk to ~150 pt). The board-vs-export frame test allows 2/255 (D-71).
+- Code review (high): 6 found, 4 fixed: a side change wiped a whole shape line; VoiceOver couldn't build lines or rings; the zone preview showed boxes too small to keep; repeated per-token work each frame. Left: the heat tap area is slightly bigger than the glow; on iPad only the Pencil draws zones (for Chime to try).
+- Verifier: the AX5 pitch check measured the board area, not the pitch (fixed); one untyped expression risky for Xcode 26.6 (split and typed).
+
+**Checked**
+- Red on a scratch copy with stubs: 100 tests, 177 issues, every new behaviour failing; 12 of 12 mutations killed (scratch copy only).
+- Gate 3/3 (unit tests, iPad iOS 26.5 build, library-name check). UI scheme 7/7 (`BroadcastUITests` new; `DynamicTypeUITests` checks the pitch stays over 220 pt and a swipe reaches Glow).
+- Screenshots in `fidelity/shots/broadcast/` match the approved mockup's layout and copy.
+
+**Not verified**
+- Xcode 26.6 (CI) until the push. Finger drawing of zones and lines on the iPhone; Pencil on the iPad. VoiceOver custom actions (XCUITest can't trigger them).
+
+**Next**
+- Install on the iPhone and the borrowed iPad; push; CI. Then part 2: the tilted camera following the ball.
+
 ## Day 5 fix: Save to Photos crashed (Sat 7 Nov 2026)
 
 **Changed**

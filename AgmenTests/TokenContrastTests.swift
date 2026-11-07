@@ -12,7 +12,7 @@ struct TokenContrastTests {
 
     @Test func awayNumberIsReadableInsideTheRing() {
         // The ring's inside is a dark disc over the pitch; its number is drawn in one ink for every kit.
-        for stripe in [Tokens.Colour.pitchA, Tokens.Colour.pitchB] {
+        for stripe in [Tokens.Colour.bcPitchA, Tokens.Colour.bcPitchB] {
             let inside = Tokens.Colour.awayInner.over(stripe)
             #expect(Contrast.ratio(Tokens.Colour.awayInk, inside) >= 4.5, "away ink on \(stripe)")
         }
@@ -22,7 +22,7 @@ struct TokenContrastTests {
     func everyDiscAndRingStandsOutFromThePitch(colour: Side.Colour) {
         // A kit too close to the pitch gets a light outline; whichever edge shows must reach 3:1 on both stripes.
         let kit = Tokens.kit(colour), edge = kit.outline ?? kit.fill
-        for stripe in [Tokens.Colour.pitchA, Tokens.Colour.pitchB] {
+        for stripe in [Tokens.Colour.bcPitchA, Tokens.Colour.bcPitchB] {
             #expect(Contrast.ratio(edge, stripe) >= 3, "\(colour) on \(stripe)")
         }
     }
@@ -30,8 +30,28 @@ struct TokenContrastTests {
     @Test func outlinesOnlyWhereTheFillAloneWouldVanish() {
         for colour in Side.Colour.allCases {
             let kit = Tokens.kit(colour)
-            let plain = [Tokens.Colour.pitchA, Tokens.Colour.pitchB].map { Contrast.ratio(kit.fill, $0) }.min()!
+            let plain = [Tokens.Colour.bcPitchA, Tokens.Colour.bcPitchB].map { Contrast.ratio(kit.fill, $0) }.min()!
             #expect((kit.outline != nil) == (plain < 3), "\(colour): outline \(kit.outline != nil), fill contrast \(plain)")
+        }
+    }
+
+    /// D-67: on heat, a zone or the dark pitch, a disc's edge or its dark outline reaches 3:1 (WCAG 1.4.11), so every
+    /// player stays visible on every mark. Kit fills alone fall to ~1:1 on heat; the outline is what holds them.
+    @Test(arguments: Side.Colour.allCases)
+    func everyDiscHoldsOnEveryMark(colour: Side.Colour) {
+        let kit = Tokens.kit(colour), edge = kit.outline ?? kit.fill
+        let stripes = [Tokens.Colour.bcPitchA, Tokens.Colour.bcPitchB]
+        let backdrops: [(String, RGBA)] = [("heat", Tokens.Colour.heat), ("heat core", Tokens.Colour.heatCore)]
+            + stripes.map { ("zone", Tokens.Colour.zoneFill.over($0)) } + stripes.map { ("pitch", $0) }
+        for (name, backdrop) in backdrops {
+            let best = max(Contrast.ratio(edge, backdrop), Contrast.ratio(Tokens.Colour.discOutline, backdrop))
+            #expect(best >= 3, "\(colour) on \(name): \(best)")
+        }
+    }
+
+    @Test func theOutlineStandsOutFromHeat() {
+        for heat in [Tokens.Colour.heat, Tokens.Colour.heatCore] {
+            #expect(Contrast.ratio(Tokens.Colour.discOutline, heat) >= 3, "outline on \(heat)")
         }
     }
 

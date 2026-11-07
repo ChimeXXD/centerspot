@@ -75,7 +75,15 @@ final class DynamicTypeUITests: XCTestCase {
         A.element(app, "toolbar.draw").tap()
         XCTAssertTrue(A.element(app, "draw.done").waitForExistence(timeout: A.timeout))
         shoot("draw")
-        XCTAssertTrue(A.element(app, "draw.kind.press").isHittable, "every draw kind is reachable")
+        // D-70: one sideways row of tools, so the pitch keeps its room (it was ~150 pt wide with four rows).
+        // "board.pitch" is the whole board area; the pitch inside it keeps the example's 68:105 shape.
+        let area = A.element(app, "board.pitch").frame
+        XCTAssertGreaterThan(min(area.width, area.height * 68 / 105), 220, "the pitch stays big enough to draw on")
+        XCTAssertTrue(A.element(app, "draw.kind.run").isHittable, "the picked tool shows")
+        A.element(app, "draw.tools").swipeLeft()
+        XCTAssertTrue(A.element(app, "draw.kind.glow").isHittable, "a swipe reaches the last tool")
+        A.element(app, "draw.kind.glow").tap()
+        XCTAssertTrue(A.element(app, "draw.kind.glow").isSelected)
         A.element(app, "draw.cancel").tap()
         A.element(app, "toolbar.play").tap()
         XCTAssertTrue(A.element(app, "playback.toggle").waitForExistence(timeout: A.timeout))

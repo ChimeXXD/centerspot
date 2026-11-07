@@ -127,6 +127,11 @@ indirect enum FuzzJSON: Sendable, Equatable {
         return result
     }
 
+    /// Paths of the nodes under any object member keyed `key`, that member included.
+    func paths(under key: String) -> [[Step]] {
+        paths.filter { path in (1...max(path.count, 1)).contains { self.key(at: Array(path.prefix($0))) == key } }
+    }
+
     /// The object key that leads to the node at `path`, if its last step is a member ("x", "number", "title").
     func key(at path: [Step]) -> String? {
         guard let last = path.last, case .member(let i) = last,

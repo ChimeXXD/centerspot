@@ -16,25 +16,29 @@ extension BoardScreen {
         }
     }
 
-    /// Opens draw mode, with `kind` picked ("Draw run" picks Run) or the last kind used.
+    /// Opens draw mode, with `kind` picked ("Draw run" picks Run) or the last tool used.
     func startDrawing(_ kind: Arrow.Kind? = nil) {
-        if let kind { drawKind = kind }
+        if let kind { drawTool = DrawTool(kind) }
         drawEdits = 0
         dragPreview = nil
+        clearMarkState()
         withAnimation(Tokens.Motion.ease(Tokens.Motion.step)) {
             showsStepActions = false
             mode = .drawing
         }
     }
 
-    /// Done keeps the strokes; each one stays in the undo history.
+    /// Done keeps the strokes and marks, finishing a line being tapped out; each one stays in the undo history.
     func finishDrawing() {
+        finishLine()
+        clearMarkState()
         drawEdits = 0
         withAnimation(Tokens.Motion.ease(Tokens.Motion.step)) { mode = .editing }
     }
 
-    /// Cancel leaves without changes: it undoes every edit made since draw mode opened.
+    /// Cancel leaves without changes: it drops a line being tapped out and undoes every edit made since draw mode opened.
     func cancelDrawing() {
+        clearMarkState()
         for _ in 0..<drawEdits where undoManager?.canUndo == true { undoManager?.undo() }
         drawEdits = 0
         withAnimation(Tokens.Motion.ease(Tokens.Motion.step)) { mode = .editing }
@@ -42,9 +46,9 @@ extension BoardScreen {
 
     /// A finished stroke from `BoardCanvas`: what it does depends on the picked kind and where it started (D-59).
     func drawStroke(_ points: [Point], from tokenID: String?) {
-        let kind = drawKind
+        guard let kind = drawTool.arrowKind else { return }
         var outcome = StrokeEdits.Outcome()
-        let applied = applyEdit("Draw \(DrawPanel.noun(kind))") {
+        let applied = applyEdit("Draw \(DrawTool(kind).title.lowercased())") {
             outcome = StrokeEdits.draw(points, kind: kind, from: tokenID, step: current, in: &$0)
         }
         guard applied else { return }

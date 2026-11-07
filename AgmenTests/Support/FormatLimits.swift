@@ -27,6 +27,41 @@ enum FormatLimits {
         check(Set(tactic.phases.map(\.id)).count == tactic.phases.count, "unique phase ids")
         for phase in tactic.phases {
             broken += stepViolations(phase.steps, tokenIDs: Set(tokenIDs))
+            for step in phase.steps { broken += markViolations(step.marks, tokens: tactic.tokens) }
+        }
+        return broken
+    }
+
+    /// D-65's marks: ≤ 12, unique ids, zones inside the pitch and big enough, lines of 2…11 players of one side each
+    /// once, rings on players, heat on the pitch with a radius in range.
+    private static func markViolations(_ marks: Marks, tokens: [Token]) -> [String] {
+        var broken: [String] = []
+        func check(_ ok: Bool, _ rule: @autoclosure () -> String) {
+            if !ok { broken.append(rule()) }
+        }
+        let tolerance = Zone.tolerance
+        let sides = Dictionary(tokens.filter { $0.kind == .player }.map { ($0.id, $0.side) }, uniquingKeysWith: { a, _ in a })
+        check(marks.count <= Marks.maxCount, "≤ 12 marks (\(marks.count))")
+        check(Set(marks.ids).count == marks.ids.count, "unique mark ids")
+        for zone in marks.zones {
+            check(zone.x >= 0 && zone.y >= 0, "zone \(zone.id) starts on the pitch")
+            check(zone.x + zone.w <= 1 + tolerance && zone.y + zone.h <= 1 + tolerance, "zone \(zone.id) ends on the pitch")
+            check(zone.w >= Zone.minSize - tolerance && zone.h >= Zone.minSize - tolerance, "zone \(zone.id) ≥ 0.04 each side")
+        }
+        for line in marks.lines {
+            check((ShapeLine.minTokens...ShapeLine.maxTokens).contains(line.tokens.count), "line \(line.id) joins 2…11")
+            check(Set(line.tokens).count == line.tokens.count, "line \(line.id) names each player once")
+            check(line.tokens.allSatisfy { sides[$0] != nil }, "line \(line.id) joins players")
+            check(Set(line.tokens.map { sides[$0] ?? nil }).count == 1, "line \(line.id) is one side")
+        }
+        for glow in marks.glows {
+            switch glow.target {
+            case .token(let id):
+                check(sides[id] != nil, "glow \(glow.id) is on a player")
+            case .spot(let centre, let radius):
+                check((0...1).contains(centre.x) && (0...1).contains(centre.y), "heat \(glow.id) on the pitch")
+                check(Glow.radiusRange.contains(radius), "heat \(glow.id) radius 0.03…0.25")
+            }
         }
         return broken
     }

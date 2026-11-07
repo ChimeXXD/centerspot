@@ -30,6 +30,11 @@ struct RGBA: Sendable, Hashable, CustomStringConvertible {
              alpha: 1)
     }
 
+    /// The same colour at another opacity (a zone in a kit's colour takes the lime zone's alphas).
+    func opacity(_ alpha: Double) -> RGBA {
+        RGBA(red: red, green: green, blue: blue, alpha: alpha)
+    }
+
     var color: Color { Color(.sRGB, red: red, green: green, blue: blue, opacity: alpha) }
 
     var cgColor: CGColor { CGColor(srgbRed: red, green: green, blue: blue, alpha: alpha) }

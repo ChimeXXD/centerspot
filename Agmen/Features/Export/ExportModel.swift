@@ -50,7 +50,6 @@ final class ExportModel {
     var preset = Preset.vertical
     var showsTitle = true
     var showsNotes = true
-    var spotlight: String?
     var imageKind = ImageKind.step
     private(set) var phase = Phase.choosing
     private(set) var photos = PhotosState.idle
@@ -66,8 +65,7 @@ final class ExportModel {
     }
 
     var settings: VideoExportSettings {
-        VideoExportSettings(format: preset.video ?? .vertical, showsTitle: showsTitle, showsNotes: showsNotes,
-                            spotlight: spotlight)
+        VideoExportSettings(format: preset.video ?? .vertical, showsTitle: showsTitle, showsNotes: showsNotes)
     }
 
     var duration: Double { tactic.phases.first.map(Timeline.duration(of:)) ?? 0 }
@@ -79,13 +77,6 @@ final class ExportModel {
         let width = ImageExporter.pixelWidth(boardWidth: boardWidth)
         let layout = ExportLayout.make(.image(width: width), kind: tactic.pitch.kind, showsTitle: showsTitle, showsNote: showsNotes)
         return (width, Int(layout.canvas.height))
-    }
-
-    /// Players to spotlight (D-40): every player, ours first, as "3 · Ade" or "3 · Full-back".
-    var spotlightChoices: [(id: String, label: String)] {
-        let players = tactic.tokens.filter { $0.kind == .player }
-        let ordered = players.filter { $0.side == .home } + players.filter { $0.side != .home }
-        return ordered.map { ($0.id, BoardScreen.selectionLabel($0) + ($0.side == .away ? " (them)" : "")) }
     }
 
     /// Before export: "Up to 4 MB · 8 s · 1080 × 1920", or "PNG · 708 × 1259". The video figure is the encoder's

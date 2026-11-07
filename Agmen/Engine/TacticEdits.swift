@@ -19,7 +19,8 @@ enum TacticEdits {
 
     /// Inserts a copy of step `index` after it and returns the new step's index, or nil at the 40-step cap.
     /// The copy holds every token's resolved position. It takes the original's runs, so the move to the old next
-    /// step still plays from the copy; arrows and the note stay on the original.
+    /// step still plays from the copy; arrows and the note stay on the original. Marks are copied with their ids, so they
+    /// stay on through the new step and ease if it changes them (D-65).
     @discardableResult
     static func addStep(after index: Int, in tactic: inout Tactic, phase: Int = 0) -> Int? {
         guard isValid(step: index, phase: phase, in: tactic),
@@ -28,7 +29,8 @@ enum TacticEdits {
         let positions = Timeline.restingState(step: index, in: tactic, phaseIndex: phase).positions
         let taken = Set(tactic.phases.flatMap(\.steps).map(\.id))
         let id = (1...).lazy.map { "s\($0)" }.first { !taken.contains($0) }!
-        let copy = Step(id: id, duration: steps[index].duration, positions: positions, runs: steps[index].runs)
+        let copy = Step(id: id, duration: steps[index].duration, positions: positions, runs: steps[index].runs,
+                        marks: steps[index].marks)
         tactic.phases[phase].steps[index].runs = [:]
         tactic.phases[phase].steps.insert(copy, at: index + 1)
         dropRunsOnLastStep(in: &tactic, phase: phase)
@@ -97,7 +99,7 @@ enum TacticEdits {
         return token.id
     }
 
-    /// Removes a token with its positions and runs in every step.
+    /// Removes a token with its positions and runs in every step, and from every mark (a line too short is dropped).
     static func deleteToken(_ id: String, in tactic: inout Tactic) {
         tactic.tokens.removeAll { $0.id == id }
         for p in tactic.phases.indices {
@@ -106,6 +108,7 @@ enum TacticEdits {
                 tactic.phases[p].steps[s].runs[id] = nil
             }
         }
+        repairMarks(in: &tactic)
     }
 
     /// Trimmed and cut to 24 characters; an empty name is removed.
@@ -123,9 +126,20 @@ enum TacticEdits {
         update(id, in: &tactic) { $0.roleID = roleID }
     }
 
-    /// Only players have a side.
+    /// Only players have a side. A line keeps to one side, so a player who changes side leaves it.
     static func setSide(_ side: Side.ID, token id: String, in tactic: inout Tactic) {
-        update(id, in: &tactic) { if $0.kind == .player { $0.side = side } }
+        guard tactic.tokens.contains(where: { $0.id == id && $0.kind == .player && $0.side != side }) else { return }
+        update(id, in: &tactic) { $0.side = side }
+        // Take the player out of every line first: repair keeps the side of a line's first player, so a line led by
+        // this player would otherwise keep only them and be dropped whole.
+        for p in tactic.phases.indices {
+            for s in tactic.phases[p].steps.indices {
+                for l in tactic.phases[p].steps[s].marks.lines.indices {
+                    tactic.phases[p].steps[s].marks.lines[l].tokens.removeAll { $0 == id }
+                }
+            }
+        }
+        repairMarks(in: &tactic)
     }
 
     // MARK: Helpers
@@ -137,6 +151,15 @@ enum TacticEdits {
     private static func update(_ id: String, in tactic: inout Tactic, _ change: (inout Token) -> Void) {
         guard let i = tactic.tokens.firstIndex(where: { $0.id == id }) else { return }
         change(&tactic.tokens[i])
+    }
+
+    /// Marks as import would repair them (docs/FORMAT.md), so the saved file reopens unchanged.
+    private static func repairMarks(in tactic: inout Tactic) {
+        for p in tactic.phases.indices {
+            for s in tactic.phases[p].steps.indices {
+                tactic.phases[p].steps[s].marks = TacticFormat.repairedMarks(tactic.phases[p].steps[s].marks, tokens: tactic.tokens)
+            }
+        }
     }
 
     /// A run on the last step has no next step to end at (docs/FORMAT.md drops it on read), so edits drop it too.

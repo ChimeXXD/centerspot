@@ -11,27 +11,23 @@ final class ExportFrame {
 
     let tactic: Tactic
     let layout: ExportLayout
-    /// The player to spotlight (D-40), or nil.
-    let spotlight: String?
     private var texts: [String: CTFrame] = [:]
 
-    init(tactic: Tactic, canvas: ExportCanvas, showsTitle: Bool, showsNotes: Bool, spotlight: String? = nil) {
+    init(tactic: Tactic, canvas: ExportCanvas, showsTitle: Bool, showsNotes: Bool) {
         self.tactic = tactic
         self.layout = ExportLayout.make(canvas, kind: tactic.pitch.kind, showsTitle: showsTitle, showsNote: showsNotes)
-        self.spotlight = spotlight.flatMap { id in tactic.tokens.contains { $0.id == id } ? id : nil }
     }
 
     /// The move's length on the timeline (phase 0).
     var duration: Double { tactic.phases.first.map(Timeline.duration(of:)) ?? 0 }
 
-    /// The frame at timeline instant `t`, with the spotlight's trail up to `t`.
+    /// The frame at timeline instant `t`.
     func draw(at t: Double, in ctx: CGContext) {
-        let trail = spotlight.map { SpotlightTrail.points(of: $0, at: t, in: tactic) } ?? []
-        draw(state: Timeline.state(at: t, in: tactic), trail: trail, in: ctx)
+        draw(state: Timeline.state(at: t, in: tactic), in: ctx)
     }
 
     /// The frame for `state` in a y-down context whose units are the canvas's pixels.
-    func draw(state: BoardState, trail: [Point] = [], in ctx: CGContext) {
+    func draw(state: BoardState, in ctx: CGContext) {
         ctx.setFillColor(Tokens.Colour.bg.cgColor)
         ctx.fill(CGRect(origin: .zero, size: layout.canvas))
         if let box = layout.title { text(tactic.title, face: .title, colour: Tokens.Colour.text, in: box, ctx: ctx) }
@@ -40,15 +36,14 @@ final class ExportFrame {
            let note = steps[state.stepIndex].note, !note.isEmpty {
             text(note, face: .note, colour: Tokens.Colour.text, in: box, ctx: ctx)
         }
-        let options = BoardRenderer.Options(spotlight: spotlight.map { BoardRenderer.Spotlight(tokenID: $0, trail: trail) })
-        BoardRenderer.draw(state: state, tactic: tactic, in: ctx, rect: layout.board, options: options)
+        BoardRenderer.draw(state: state, tactic: tactic, in: ctx, rect: layout.board)
         text(Self.mark, face: .mark, colour: Tokens.Colour.muted, in: layout.mark, ctx: ctx, alignment: .right)
     }
 
     /// The frame as a new sRGB bitmap of the canvas size.
-    func image(state: BoardState, trail: [Point] = []) -> CGImage? {
+    func image(state: BoardState) -> CGImage? {
         guard let ctx = Self.bitmap(layout.canvas) else { return nil }
-        draw(state: state, trail: trail, in: ctx)
+        draw(state: state, in: ctx)
         return ctx.makeImage()
     }
 

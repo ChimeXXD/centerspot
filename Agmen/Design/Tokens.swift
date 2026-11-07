@@ -15,9 +15,21 @@ enum Tokens {
         static let accent = RGBA(0xC6FF3D)
         static let accentInk = RGBA(0x0B0F14)
         static let danger = RGBA(0xFF6B6B)
-        static let pitchA = RGBA(0x0F241B)
-        static let pitchB = RGBA(0x112A1F)
+        /// The formation picker's chalk diagrams.
         static let chalk = RGBA(0xFFFFFF, alpha: 0.55)
+        /// The broadcast pitch (D-65): near-black with faint stripes and thin light lines, everywhere the board is drawn.
+        static let bcPitchA = RGBA(0x0E1216)
+        static let bcPitchB = RGBA(0x13181D)
+        static let bcLine = RGBA(0xFFFFFF, alpha: 0.42)
+        /// Marks on the grass (D-65): a zone's see-through fill and edge (lime; other kits keep these alphas), heat's
+        /// colour and its hot centre, and how strongly rings tint the grass under a player.
+        static let zoneFill = RGBA(0xC6FF3D, alpha: 0.13)
+        static let zoneStroke = RGBA(0xC6FF3D, alpha: 0.72)
+        static let heat = RGBA(0xFF5A2E)
+        static let heatCore = RGBA(0xFFB547)
+        static let glowFillOpacity = 0.18
+        /// D-67: the thin dark outline round every disc, so it holds on heat, zones and the dark pitch.
+        static let discOutline = RGBA(0x0B0F14)
         static let awayInner = RGBA(0x0B0F14, alpha: 0.85)
         static let awayInk = RGBA(0xFFFFFF)
         static let ball = RGBA(0xFFFFFF)
@@ -100,8 +112,8 @@ enum Tokens {
         /// The playback scrubber: one bar per step, this thick, this far apart.
         static let scrubberBar: CGFloat = 6
         static let scrubberGap: CGFloat = 6
-        /// The draw mode's kind tiles.
-        static let kindTile: CGFloat = 64
+        /// The draw mode's tool tiles: two rows, arrows then marks (the mockup's --tile-h, D-65).
+        static let kindTile: CGFloat = 50
         /// Nav bar width kept clear of the board's title: the back button and Undo, Redo, Share with their gaps.
         static let navBarItems: CGFloat = 260
     }
@@ -112,6 +124,9 @@ enum Tokens {
         static let step: Double = 0.22
         static let sheet: Double = 0.32
         static let toast: Double = 0.2
+        /// The broadcast camera's tilt (D-65, next unit), and Reduce Motion's crossfade in its place.
+        static let camera: Double = 0.48
+        static let crossfade: Double = 0.3
         static func ease(_ duration: Double) -> Animation { .timingCurve(0.2, 0, 0, 1, duration: duration) }
     }
 }

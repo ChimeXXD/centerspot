@@ -30,7 +30,11 @@ struct BoardScreen: View {
     @State var clock = PlaybackClock(duration: 0, loops: true)
     /// Whether the move was playing when the scrubber was grabbed, so it plays on when let go.
     @State var scrub: (resumes: Bool, active: Bool) = (false, false)
-    @State var drawKind = Arrow.Kind.run
+    @State var drawTool = DrawTool.run
+    /// Draw mode's marks (D-65): the selected one, the line being tapped out, the box under the finger.
+    @State var selectedMark: String?
+    @State var lineDraft = LineDraft()
+    @State var zonePreview: Zone?
     /// Edits made since draw mode opened (strokes, and on iPad the finger's token moves), so Cancel can take them
     /// all back (the mockup's "without changes").
     @State var drawEdits = 0
@@ -85,7 +89,8 @@ struct BoardScreen: View {
             switch mode {
             case .editing: editingBar
             case .playing: playbackBar
-            case .drawing: DrawPanel(kind: $drawKind)
+            case .drawing:
+                DrawPanel(tool: $drawTool, selectedMark: selectedMarkLabel, onRemoveMark: removeSelectedMark)
             }
         }
         .background(Tokens.Colour.bg.color.ignoresSafeArea())
@@ -95,6 +100,7 @@ struct BoardScreen: View {
         .navigationBarBackButtonHidden(mode == .drawing)
         .toolbar { navigationItems }
         .onChange(of: tactic) { if mode == .playing { clock.setDuration(phaseDuration, at: Self.now) } }
+        .onChange(of: drawTool) { changeTool() }
         .task(id: clock) { await pauseAtTheEnd() }
         .alert("Rename tactic", isPresented: $renaming) {
             TextField("Title", text: $newTitle)
@@ -125,12 +131,16 @@ struct BoardScreen: View {
     }
 
     private func canvas(_ state: BoardState, crossfade: (state: BoardState, mix: Double)?) -> some View {
-        BoardCanvas(
+        let drawing = mode == .drawing
+        return BoardCanvas(
             tactic: tactic, state: state, selection: mode == .playing ? nil : selectedToken?.id,
             dimsUnselected: sheet?.isPlayer == true, crossfade: crossfade,
-            movesTokens: mode == .editing || (mode == .drawing && Self.pencilDraws),
-            strokeInput: strokeInput, strokeKind: drawKind, onStroke: drawStroke,
-            onTap: tapBoard, onDoubleTap: doubleTapBoard,
+            movesTokens: mode == .editing || (drawing && Self.pencilDraws),
+            strokeInput: strokeInput, strokeKind: drawTool.arrowKind ?? .run,
+            selectedMark: drawing ? selectedMark : nil, pendingLine: drawing ? lineDraft.tokens : [],
+            zonePreview: drawing ? zonePreview : nil, marking: boardMarking,
+            showsMarks: mode != .playing, markActions: drawing ? markActions : nil,
+            onStroke: drawStroke, onTap: tapBoard, onDoubleTap: doubleTapBoard,
             onDrag: { id, point in dragPreview = DragPreview(id: id, point: point) },
             onDragEnd: endDrag, onDragCancel: { dragPreview = nil }, onNudge: nudge
         )

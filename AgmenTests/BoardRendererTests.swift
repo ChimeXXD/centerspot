@@ -26,7 +26,10 @@ struct BoardRendererTests {
     }
 
     static func render(_ tactic: Tactic, step: Int = 0, options: BoardRenderer.Options = .init()) throws -> Frame {
-        let state = Timeline.restingState(step: step, in: tactic)
+        try render(tactic, state: Timeline.restingState(step: step, in: tactic), options: options)
+    }
+
+    static func render(_ tactic: Tactic, state: BoardState, options: BoardRenderer.Options = .init()) throws -> Frame {
         let image = try #require(BoardRenderer.image(state: state, tactic: tactic, size: size, scale: scale, options: options))
         let w = image.width, h = image.height
         var pixels = [UInt8](repeating: 0, count: w * h * 4)
@@ -57,8 +60,8 @@ struct BoardRendererTests {
         let frame = try Self.render(try Fixtures.tactic("overlap-left"))
         let bandB = frame.colour(at: frame.geometry.point(Point(x: 0.9, y: 0.42)))  // 6th band from the top
         let bandA = frame.colour(at: frame.geometry.point(Point(x: 0.9, y: 0.55)))  // 5th band
-        #expect(Self.close(bandB, Tokens.Colour.pitchB, within: 2), "got \(bandB)")
-        #expect(Self.close(bandA, Tokens.Colour.pitchA, within: 2), "got \(bandA)")
+        #expect(Self.close(bandB, Tokens.Colour.bcPitchB, within: 2), "got \(bandB)")
+        #expect(Self.close(bandA, Tokens.Colour.bcPitchA, within: 2), "got \(bandA)")
     }
 
     @Test func selectionIsAWhiteChalkRing() throws {

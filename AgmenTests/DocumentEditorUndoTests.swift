@@ -32,7 +32,19 @@ struct DocumentEditorUndoTests {
         ("Remove player", { TacticEdits.deleteToken("h3", in: &$0) }),
         ("Draw run", { StrokeEdits.draw([Point(x: 0.15, y: 0.25), Point(x: 0.1, y: 0.5)], kind: .run, from: "h3", step: 1, in: &$0) }),
         ("Draw pass", { StrokeEdits.draw([Point(x: 0.3, y: 0.4), Point(x: 0.6, y: 0.5)], kind: .pass, from: "h8", step: 4, in: &$0) }),
+        ("Draw zone", { _ = MarkEdits.addZone(from: Point(x: 0.6, y: 0.2), to: Point(x: 0.9, y: 0.5), step: 0, in: &$0) }),
+        ("Move zone", { MarkEdits.moveZone("z1", by: 0.1, 0, step: stepWith("z1", in: $0), in: &$0) }),
+        ("Resize zone", { MarkEdits.resizeZone("z1", corner: .topRight, to: Point(x: 0.5, y: 0.95), step: stepWith("z1", in: $0), in: &$0) }),
+        ("Draw line", { _ = MarkEdits.addLine(["h5", "h4", "h2"], step: 1, in: &$0) }),
+        ("Add glow", { _ = MarkEdits.addRings(on: "h9", step: 2, in: &$0) }),
+        ("Add heat", { _ = MarkEdits.addHeat(at: Point(x: 0.5, y: 0.8), step: 2, in: &$0) }),
+        ("Remove line", { MarkEdits.remove("l1", step: stepWith("l1", in: $0), in: &$0) }),
     ]
+
+    /// The step holding the hero's mark `id` wherever the edits before have moved it (-1 if none).
+    nonisolated private static func stepWith(_ id: String, in tactic: Tactic) -> Int {
+        tactic.phases.first?.steps.firstIndex { $0.marks.ids.contains(id) } ?? -1
+    }
 
     @Test(arguments: edits.indices)
     func eachEditUndoesAndRedoes(_ i: Int) throws {
@@ -104,4 +116,36 @@ struct DocumentEditorUndoTests {
         #expect(box.document.tactic.phases[0].steps.count == 4)
         #expect(refusals == 1)
     }
+
+    /// D-69 holds for the draw tools too: a mark that would pass the cap isn't added; removing one always works.
+    @Test func aMarkThatWouldOverflowTheFileIsRefused() throws {
+        let box = Box(try Fixtures.tactic("overlap-left"))
+        let undo = UndoManager()
+        undo.groupsByEvent = false
+        let size = try TacticFormat.encodedSize(box.document.tactic)
+        var refusals = 0
+        let editor = DocumentEditor(document: Binding(get: { box.document }, set: { box.document = $0 }),
+                                    undoManager: undo, byteCap: size + 10, onTooBig: { refusals += 1 })
+        let before = box.document.tactic
+        for (name, edit) in Self.markAdds {
+            undo.beginUndoGrouping()
+            #expect(!editor.apply(name, edit), "\(name)")
+            undo.endUndoGrouping()
+        }
+        #expect(box.document.tactic == before)
+        #expect(refusals == Self.markAdds.count)
+        #expect(undo.undoActionName.isEmpty)
+
+        undo.beginUndoGrouping()
+        #expect(editor.apply("Remove zone") { MarkEdits.remove("z1", step: 3, in: &$0) })
+        undo.endUndoGrouping()
+        #expect(try TestTactics.marks(3, of: box.document.tactic).zones.isEmpty)
+    }
+
+    nonisolated private static let markAdds: [(name: String, edit: @Sendable (inout Tactic) -> Void)] = [
+        ("Draw zone", { _ = MarkEdits.addZone(from: Point(x: 0.6, y: 0.2), to: Point(x: 0.9, y: 0.5), step: 0, in: &$0) }),
+        ("Draw line", { _ = MarkEdits.addLine(["h5", "h4", "h2"], step: 1, in: &$0) }),
+        ("Add glow", { _ = MarkEdits.addRings(on: "h9", step: 2, in: &$0) }),
+        ("Add heat", { _ = MarkEdits.addHeat(at: Point(x: 0.5, y: 0.8), step: 2, in: &$0) }),
+    ]
 }

@@ -1,12 +1,12 @@
 import CoreGraphics
 import Foundation
 
-/// The pitch: stripes, then chalk markings in full-pitch proportions on every kind, so what VoiceOver calls
-/// "edge of the box" (`Placement`) is where the box is drawn (SPEC §4, §8).
+/// The broadcast pitch (D-65): near-black stripes, then thin light markings in full-pitch proportions on every kind, so
+/// what VoiceOver calls "edge of the box" (`Placement`) is where the box is drawn (SPEC §4, §8).
 enum PitchDrawing {
     /// Stripes across the pitch, top to bottom.
     static let stripeCount = 10
-    /// Chalk line width at the mockup's 345 pt pitch; never under 1.4 pt at phone size (UI-BRIEF §1).
+    /// Line width at the mockup's 345 pt pitch; never under 1.4 pt at phone size (UI-BRIEF §1).
     static let lineWidth: CGFloat = 1.4
     /// The pitch's corner radius at 345 pt.
     static let cornerRadius: CGFloat = 6
@@ -18,11 +18,11 @@ enum PitchDrawing {
         ctx.addPath(CGPath(roundedRect: rect, cornerWidth: corner, cornerHeight: corner, transform: nil))
         ctx.clip()
 
-        ctx.setFillColor(Tokens.Colour.pitchA.cgColor)
+        ctx.setFillColor(Tokens.Colour.bcPitchA.cgColor)
         ctx.fill(rect)
         if pitch.style == .stripes {
             let h = rect.height / CGFloat(stripeCount)
-            ctx.setFillColor(Tokens.Colour.pitchB.cgColor)
+            ctx.setFillColor(Tokens.Colour.bcPitchB.cgColor)
             for i in stride(from: 1, to: stripeCount, by: 2) {
                 ctx.fill(CGRect(x: rect.minX, y: rect.minY + CGFloat(i) * h, width: rect.width, height: h))
             }
@@ -34,7 +34,7 @@ enum PitchDrawing {
     private static func drawMarkings(geometry g: BoardGeometry, in ctx: CGContext) {
         let w = lineWidth * g.scale
         let (sx, sy) = g.metreScale
-        let chalk = Tokens.Colour.chalk.cgColor
+        let chalk = Tokens.Colour.bcLine.cgColor
         let lines = CGMutablePath()
 
         lines.addRect(g.pitchRect.insetBy(dx: w / 2, dy: w / 2))

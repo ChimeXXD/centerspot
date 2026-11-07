@@ -17,9 +17,8 @@ extension TacticFormat {
               Set(tactic.phases.map(\.id)).count == tactic.phases.count
         else { throw .unreadable }
 
-        let tokenIDs = tactic.tokens.map(\.id)
         for index in tactic.phases.indices {
-            tactic.phases[index].steps = try validatedSteps(tactic.phases[index].steps, tokenIDs: tokenIDs)
+            tactic.phases[index].steps = try validatedSteps(tactic.phases[index].steps, tokens: tactic.tokens)
         }
         return tactic
     }
@@ -55,8 +54,9 @@ extension TacticFormat {
 
     private static func validatedSteps(
         _ input: [Step],
-        tokenIDs: [String]
+        tokens: [Token]
     ) throws(TacticFormatError) -> [Step] {
+        let tokenIDs = tokens.map(\.id)
         guard Phase.stepCountRange.contains(input.count),
               Set(input.map(\.id)).count == input.count
         else { throw .unreadable }
@@ -66,7 +66,8 @@ extension TacticFormat {
             guard step.duration.isFinite,
                   step.arrows.count <= Step.maxArrows,
                   step.arrows.allSatisfy({ Path.pointCountRange.contains($0.points.count) }),
-                  step.runs.values.allSatisfy({ Path.pointCountRange.contains($0.points.count) })
+                  step.runs.values.allSatisfy({ Path.pointCountRange.contains($0.points.count) }),
+                  marksWithinLimits(step.marks)
             else { throw .unreadable }
         }
 
@@ -75,6 +76,7 @@ extension TacticFormat {
         for index in steps.indices {
             steps[index].duration = steps[index].duration.clamped(to: Step.durationRange)
             steps[index].note = steps[index].note.map { String($0.prefix(Step.maxNoteLength)) }
+            steps[index].marks = repairedMarks(steps[index].marks, tokens: tokens)
 
             // Every token gets a position: its own, else the step before's, else the centre spot.
             // Keys that name no token are dropped.

@@ -17,19 +17,24 @@ enum Placement {
         if nearBoxWidth && y <= 16.5 + 6 { return "edge of own box" }
         if hypot(x - 34, y - 52.5) <= 9.15 { return "centre circle" }
 
-        let channel = switch point.x {
-        case ..<0.2: "left wing"
-        case ..<0.37: "left half-space"
-        case ...0.63: "centre"
-        case ...0.8: "right half-space"
-        default: "right wing"
-        }
+        let channel = channel(of: point.x)
         let third = switch point.y {
         case ..<(1.0 / 3): "defensive third"
         case ..<(2.0 / 3): "middle third"
         default: "final third"
         }
         return "\(channel), \(third)"
+    }
+
+    /// The channel across the pitch: "left wing", "left half-space", "centre", "right half-space" or "right wing".
+    static func channel(of x: Double) -> String {
+        switch x {
+        case ..<0.2: "left wing"
+        case ..<0.37: "left half-space"
+        case ...0.63: "centre"
+        case ...0.8: "right half-space"
+        default: "right wing"
+        }
     }
 
     /// "Number 9, striker, edge of the box, step 3 of 6". Away players start "Their number…" so sides are never

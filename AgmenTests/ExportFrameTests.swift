@@ -91,7 +91,9 @@ struct ExportFrameTests {
         }
     }
 
-    /// D-07: the board in a frame is `BoardRenderer`'s bitmap of the same state and size, pixel for pixel.
+    /// D-07: the board in a frame is `BoardRenderer`'s bitmap of the same state and size, pixel for pixel. Within 2/255:
+    /// Core Graphics rounds a circle's anti-aliased edge differently by up to 2/255 when the same drawing sits a whole
+    /// number of pixels further in (measured after D-67's outlines: 3 of 720,000 pixels at 2/255 on 16:9, at disc edges).
     @Test(arguments: canvases)
     func theBoardIsTheRenderersOwnDrawing(canvas: ExportCanvas) throws {
         let hero = try Fixtures.tactic("overlap-left")
@@ -101,7 +103,7 @@ struct ExportFrameTests {
         let board = frame.layout.board
         let crop = try #require(image.cropping(to: board))
         let own = try #require(BoardRenderer.image(state: state, tactic: hero, size: board.size))
-        let share = VideoReader.share(try VideoReader.bgra(crop), try VideoReader.bgra(own), within: 1)
+        let share = VideoReader.share(try VideoReader.bgra(crop), try VideoReader.bgra(own), within: 2)
         #expect(share == 1, "\(canvas): \(share)")
     }
 
@@ -132,8 +134,8 @@ struct ExportFrameTests {
     /// Frames are a pure function of t: drawn twice, they are the same bytes.
     @Test func framesAreTheSameEveryTime() throws {
         let hero = try Fixtures.tactic("overlap-left")
-        let frame = ExportFrame(tactic: hero, canvas: .vertical, showsTitle: true, showsNotes: true, spotlight: "h3")
-        let again = ExportFrame(tactic: hero, canvas: .vertical, showsTitle: true, showsNotes: true, spotlight: "h3")
+        let frame = ExportFrame(tactic: hero, canvas: .vertical, showsTitle: true, showsNotes: true)
+        let again = ExportFrame(tactic: hero, canvas: .vertical, showsTitle: true, showsNotes: true)
         for t in [0, 1.1, 3.3, 6.5] {
             let a = try VideoReader.bgra(try #require(frame.image(at: t)))
             let b = try VideoReader.bgra(try #require(again.image(at: t)))

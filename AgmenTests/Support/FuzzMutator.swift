@@ -13,11 +13,13 @@ struct FuzzMutator {
     let bytes: Data
     private let paths: [[FuzzJSON.Step]]
 
-    init(fixture: Data, seed: UInt64) throws {
+    /// - Parameter focus: only damage nodes under an object member with this key (e.g. "marks"); nil damages anywhere.
+    init(fixture: Data, seed: UInt64, focus: String? = nil) throws {
         rng = SeededGenerator(seed: seed)
-        tree = try FuzzJSON(data: fixture)
+        let parsed = try FuzzJSON(data: fixture)
+        tree = parsed
         bytes = fixture
-        paths = tree.paths
+        paths = focus.map { parsed.paths(under: $0) } ?? parsed.paths
     }
 
     /// Values that are the wrong type almost everywhere.

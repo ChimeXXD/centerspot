@@ -385,6 +385,36 @@
       "evidence": ""
     },
     {
+      "id": "BR-1",
+      "day": 6,
+      "priority": "must",
+      "title": "Broadcast restyle part 1: marks format, dark pitch, Zone/Line/Glow tools (D-65/D-66/D-67)",
+      "criteria": [
+        "zones, shape lines and glows saved per step; old files open unchanged; hostile marks refused or repaired",
+        "marks fade like arrows; the same mark eases between steps",
+        "dark pitch, marks under the discs, dark outline on every disc, every number on top",
+        "each mark is one undoable edit with a VoiceOver label; Spotlight removed",
+        "at AX sizes the tools scroll in one row and the pitch stays over 220 pt wide (D-70)"
+      ],
+      "verify": "MarksFormatTests; TimelineMarksTests; MarkEditsTests; BoardRendererTests+Broadcast; RendererParityTests; FuzzImportTests+Marks; BroadcastUITests; DynamicTypeUITests; on the iPhone",
+      "passes": false,
+      "evidence": "8 Nov 2026, partial: gate 3/3 (unit tests incl. MarksFormatTests, TimelineMarksTests, MarkEditsTests, BoardRendererTests+Broadcast, RendererParityTests, FuzzImportTests+Marks); UI scheme 7/7 incl. BroadcastUITests and DynamicTypeUITests (D-70); 12/12 mutations killed. Open: CI on Xcode 26.6; drawing marks on the iPhone and with the Pencil on the iPad."
+    },
+    {
+      "id": "BR-2",
+      "day": 6,
+      "priority": "must",
+      "title": "Broadcast restyle part 2: tilted camera following the ball (D-65)",
+      "criteria": [
+        "playback and export tilt and follow the ball on iPhone and iPad",
+        "editing stays flat",
+        "export time re-measured on the phone"
+      ],
+      "verify": "renderer projection tests; export tests; timed export on the iPhone 14 Pro",
+      "passes": false,
+      "evidence": ""
+    },
+    {
       "id": "D7-1",
       "day": 7,
       "priority": "must",

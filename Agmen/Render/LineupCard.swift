@@ -27,7 +27,7 @@ struct LineupCard {
         let discRadius: CGFloat
     }
 
-    /// Our side only, on step 1, without the ball or arrows: the team sheet, not the move.
+    /// Our side only, on step 1, without the ball, arrows or marks: the team sheet, not the move.
     let tactic: Tactic
     let rows: [Row]
     let nameSize: CGFloat
@@ -74,6 +74,7 @@ struct LineupCard {
 
         var state = Timeline.restingState(step: 0, in: tactic)
         state.arrows = []
+        state.marks = []
         let board = CGRect(x: Self.boardRect.minX, y: Self.boardRect.minY, width: Self.boardRect.width,
                            height: min(Self.boardRect.height, BoardGeometry.height(forWidth: Self.boardRect.width, kind: tactic.pitch.kind)))
         BoardRenderer.draw(state: state, tactic: tactic, in: ctx, rect: board)

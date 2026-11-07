@@ -102,6 +102,26 @@ struct RendererParityTests {
         #expect(result.passes, "t = \(t): \(result)")
     }
 
+    /// D-65: step 4's zone, line, rings and heat fading in, shown mid-move and fading out, through the one renderer.
+    @Test(arguments: [4.8, 5.5, 6.1])
+    func theHerosMarksMatch(t: Double) throws {
+        let hero = try Fixtures.tactic("overlap-left")
+        let state = Timeline.state(at: t, in: hero)
+        #expect(state.marks.count == 4, "step 4's marks are on screen at \(t)")
+        let result = try Self.compare(Self.screen(hero, state), Self.export(hero, state))
+        #expect(result.passes, "t = \(t): \(result)")
+    }
+
+    /// Not blind to marks: the export without step 4's heat fails against the screen with it.
+    @Test func aMissingMarkFails() throws {
+        let hero = try Fixtures.tactic("overlap-left")
+        let state = Timeline.state(at: 5.5, in: hero)
+        var noHeat = state
+        noHeat.marks.removeAll { $0.id == "g2" }
+        let result = try Self.compare(Self.screen(hero, state), Self.export(hero, noHeat))
+        #expect(!result.passes, "\(result)")
+    }
+
     /// The comparison is not blind: a different instant of the same move fails it.
     @Test func aDifferentInstantDoesNotMatch() throws {
         let hero = try Fixtures.tactic("overlap-left")

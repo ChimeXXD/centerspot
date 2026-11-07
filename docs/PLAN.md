@@ -100,10 +100,10 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [ ] Should: onboarding (D-58), after the broadcast restyle (D-65): mockup of the welcome pages and tip sequence (first draft 7 Nov, to redo in the new look), Chime approves, then build (welcome on first launch, TipKit tips on the example move: drag, step, Play, draw a run, export)
 
 ### Broadcast restyle and 3D camera (D-65, added 7 Nov; before Day 7)
-- [ ] Mockup: broadcast pitch, figures in playback/export, discs in editing, glow rings, zones, shape lines, heat glow, the tilted camera; Chime approves
-- [ ] Format: zones, shape lines and glows as additive v1 fields (FORMAT.md, import rules, fuzz cases, round trips)
-- [ ] Renderer: broadcast pitch, figures (home vs away by shape, not only colour), glow rings, zones, shape lines, heat glow; parity stays green
-- [ ] Draw tools for zones, shape lines and glow; undoable; VoiceOver words for each
+- [x] Mockup: broadcast pitch, glow rings, zones, shape lines, heat glow, the tilted camera; Chime approves (7 Nov: approved, tag `design-v2`; circles everywhere, no figures, D-66; numbers on top and a dark outline, D-67)
+- [x] Format: zones, shape lines and glows as additive v1 fields (FORMAT.md, import rules, fuzz cases, round trips) (7 Nov: per-step `marks`; `MarksFormatTests`, `FuzzImportTests+Marks`)
+- [x] Renderer: broadcast pitch, discs with a dark outline and numbers on top (D-66/D-67), glow rings, zones, shape lines, heat glow; parity stays green (7 Nov: `BoardRendererTests+Broadcast`, `RendererParityTests` with step 4's marks)
+- [x] Draw tools for zones, shape lines and glow; undoable; VoiceOver words for each (7 Nov: `MarkEditsTests`, `BroadcastUITests`; Spotlight removed; one scrolling row of tools at AX sizes, D-70)
 - [ ] Tilted camera in `BoardRenderer` (perspective projection, far-to-near figures) for playback and exports on iPhone and iPad; editing stays flat; export timing re-measured on the phone
 - [ ] Then the onboarding (D-58) in the new look
 

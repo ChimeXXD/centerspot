@@ -29,6 +29,11 @@ A `.tactic` file is UTF-8 JSON. UTType `dev.chime.agmen.tactic`, extension `.tac
           "positions": { "h3": { "x": 0.15, "y": 0.24 }, "ball": { "x": 0.5, "y": 0.5 } },
           "runs": { "h3": { "points": [ { "x": 0.15, "y": 0.24 }, { "x": 0.08, "y": 0.45 }, { "x": 0.1, "y": 0.66 } ] } },
           "arrows": [ { "kind": "pass", "points": [ { "x": 0.38, "y": 0.46 }, { "x": 0.1, "y": 0.66 } ] } ],
+          "marks": {
+            "zones": [ { "id": "z1", "x": 0.02, "y": 0.52, "w": 0.2, "h": 0.34, "colour": "lime" } ],
+            "lines": [ { "id": "l1", "tokens": ["a2", "a5", "a4"] } ],
+            "glows": [ { "id": "g1", "token": "h3" }, { "id": "g2", "x": 0.5, "y": 0.87, "r": 0.11 } ]
+          },
           "note": "3 overlaps as 11 cuts inside"
         }
       ]
@@ -61,12 +66,18 @@ Two outcomes (D-27): **refuse** means the whole file is rejected with a plain er
 | `steps[].positions` | Should list every token. A token missing from a step keeps its position from the step before; missing from step 1, it starts at the centre spot (0.5, 0.5). Keys that name no token are ignored. | Repair |
 | `steps[].runs` | 2…200 points, keyed by a token id. On read a run is **anchored**: its first point is set to the token's position in this step and its last point to the token's position in the next step, so playback never jumps (D-27). A run on the last step has nowhere to go and is dropped. | Over 200 points or fewer than 2: refuse. Unknown token: repair (drop) |
 | `steps[].arrows` | ≤ 30 per step, 2…200 points each; `kind`: `run`, `pass`, `dribble`, `press`. | Over the limits or unknown kind: refuse |
+| `steps[].marks` | Optional (D-65); older files have none and open unchanged, and `schemaVersion` stays `1`. `zones`, `lines` and `glows`, each optional (an empty list is left out on write). At most **12 marks per step** in all. Every mark has an `id`, unique within its step; the same id on the next step carries the mark on (see Timing notes). | Over 12: refuse. Missing `id`: refuse. A repeated id: repair (drop the later mark, after the repairs below) |
+| `marks.zones[]` | `x`, `y` is the corner nearest the left touchline and your own goal line, `w`, `h` the size, in pitch units (D-05); inside the pitch and at least 0.04 each side. A negative `w` or `h` runs the other way. `colour` is a palette key, default `lime`. | NaN, infinity or a missing number: refuse. Off the pitch: repair (cut to it). Under 0.04: repair (grown about its middle). Unknown or missing colour: repair (`lime`) |
+| `marks.lines[]` | `tokens`: player ids in the order the line joins them, at most 11; one side (the first known player's), each player once, at least 2. Drawn in that side's colour; the corners follow the players. | Over 11 ids: refuse. Unknown ids, non-players, the other side's players, repeats: repair (drop them). Fewer than 2 left: repair (drop the line) |
+| `marks.glows[]` | Rings under a player: `{ "id", "token" }`. Or heat on the grass: `{ "id", "x", "y", "r" }`, `r` a radius of 0.03…0.25 of the pitch width (default 0.11). `token` wins if both are given. | Neither a token nor `x` and `y`, or NaN or infinity: refuse. Unknown token or not a player: repair (drop). `x`, `y` off the pitch or `r` out of range: repair (clamp) |
 | `note` | ≤ 140 characters. | Repair (truncate) |
 | Unknown keys | Ignored on read, dropped on write. | Repair |
 
 ## Timing notes (D-45)
 
 The timeline measures a run's length in metres on the pitch (x scaled by pitch width, y by length), so a runner keeps a steady speed round a bend. Arrows fade in over the first 0.2 s of their step's hold and fade out over the last 0.2 s of the move to the next step; the last step's arrows stay.
+
+Marks (D-65) fade the same way as their step's arrows, with one exception: a mark whose `id` is also on the next step, as the same kind (a zone in the same colour, a line joining the same players, rings on the same player, or heat), carries on without fading, and a zone's box or a heat's spot and radius ease to the next step's with the players' move. A line's corners and a player's rings follow the players wherever the timeline puts them. In Agmen, a new step copies the marks of the step it is added after, with their ids.
 
 ## Links and QR (D-10, D-25; built after Day 7, D-36)
 

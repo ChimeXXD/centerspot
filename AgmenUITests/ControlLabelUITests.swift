@@ -102,10 +102,18 @@ final class ControlLabelUITests: XCTestCase {
         audit(app, "formation picker")
         A.element(app, "formation.close").tap()
 
-        // Draw mode.
+        // Draw mode, and its mark tools on step 4, which has a zone, a line, rings and heat (D-65).
+        A.element(app, "steps.chip.4").tap()
         A.element(app, "toolbar.draw").tap()
         XCTAssertTrue(A.element(app, "draw.done").waitForExistence(timeout: A.timeout))
         audit(app, "draw mode")
+        for tool in ["line", "glow", "zone"] {
+            A.element(app, "draw.kind.\(tool)").tap()
+            audit(app, "draw \(tool)")
+        }
+        A.element(app, "draw.zone.1").tap()
+        XCTAssertTrue(A.element(app, "draw.mark.remove").waitForExistence(timeout: A.timeout))
+        audit(app, "zone selected")
         A.element(app, "draw.cancel").tap()
 
         // Playback.
@@ -124,20 +132,18 @@ final class ControlLabelUITests: XCTestCase {
         XCTAssertTrue(A.element(app, "board.empty.pick").waitForExistence(timeout: A.timeout))
         audit(app, "empty board")
 
-        XCTAssertEqual(screens.count, 24, "screens checked: \(screens)")
+        XCTAssertEqual(screens.count, 27, "screens checked: \(screens)")
         XCTAssertTrue(problems.isEmpty, "\(problems.count) controls without a real label:\n" + problems.joined(separator: "\n"))
     }
 
-    /// The export sheet: choosing (video and image), the spotlight menu, rendering, done and the error state.
+    /// The export sheet: choosing (video and image), rendering, done and the error state. No Spotlight menu (D-66).
     @MainActor
     private func walkExport(_ app: XCUIApplication) throws {
         A.element(app, "toolbar.export").tap()
         let start = A.element(app, "export.start")
         XCTAssertTrue(start.waitForExistence(timeout: A.timeout))
         audit(app, "export")
-        A.element(app, "export.spotlight").tap()
-        audit(app, "spotlight menu")
-        A.dismissMenu(app, keeping: "No one")
+        XCTAssertFalse(A.element(app, "export.spotlight").exists, "Spotlight is dropped (D-66)")
         start.tap()
         XCTAssertTrue(A.element(app, "export.cancel").waitForExistence(timeout: A.timeout))
         audit(app, "export rendering")

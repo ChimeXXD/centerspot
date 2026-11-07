@@ -8,7 +8,7 @@ import Foundation
 enum Timeline {
     /// Seconds each step rests before its move.
     static let hold = 0.3
-    /// Arrows fade in over this long at the start of their step and fade out over this long as its move ends.
+    /// Arrows and marks fade in over this long at the start of their step and fade out over this long as its move ends.
     static let arrowFade = 0.2
 
     /// Σ (hold + step.duration) over all steps but the last, plus a final hold. 0 for no steps.
@@ -44,6 +44,8 @@ enum Timeline {
                     positions: positions,
                     arrows: opacity > 0 ? step.arrows.map { .init(arrow: $0, opacity: opacity) } : [],
                     stepIndex: index,
+                    marks: visibleMarks(of: steps, index: index, sinceStart: time - start, progress: progress,
+                                        untilEnd: end - time),
                     carry: carry
                 )
             }
