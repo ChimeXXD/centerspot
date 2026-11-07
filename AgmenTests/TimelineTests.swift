@@ -152,6 +152,34 @@ struct TimelineTests {
         #expect(Timeline.state(at: 1.6, in: tactic).arrows.map(\.arrow.kind) == [.press])
         #expect(Timeline.state(at: 1.6, in: tactic).arrows.map(\.opacity) == [1])
     }
+
+    /// A player who has the ball at both ends of a move and follows a curved run takes the ball along the run,
+    /// instead of the ball cutting a straight line and drifting off their feet.
+    @Test func aCarriedBallFollowsItsCarriersRun() throws {
+        var tactic = try Fixtures.tactic("overlap-left")
+        // Step 2: 11 already has the ball at both ends; give 11 a wide curved run between them.
+        let from = try #require(tactic.phases[0].steps[1].positions["h11"])
+        let to = try #require(tactic.phases[0].steps[2].positions["h11"])
+        tactic.phases[0].steps[1].runs["h11"] = Path(points: [from, Point(x: 0.12, y: 0.8), to])
+        let start = Timeline.hold + tactic.phases[0].steps[0].duration + Timeline.hold
+        let aspect = tactic.pitch.kind.size.length / tactic.pitch.kind.size.width
+        for i in 1..<10 {
+            let state = Timeline.state(at: start + tactic.phases[0].steps[1].duration * Double(i) / 10, in: tactic)
+            let ball = try #require(state.positions["ball"]), eleven = try #require(state.positions["h11"])
+            #expect(hypot(ball.x - eleven.x, (ball.y - eleven.y) * aspect) < Possession.reach,
+                    "at \(i)/10 the ball is off 11's feet")
+        }
+    }
+
+    @Test func aPassedBallStillTravelsOnItsOwn() throws {
+        let hero = try Fixtures.tactic("overlap-left")
+        // Step 1 is 8's pass to 11: the ball leaves 8, so it goes straight to 11's feet, not along with 8.
+        let start = Timeline.hold, d = hero.phases[0].steps[0].duration
+        let mid = Timeline.state(at: start + d / 2, in: hero)
+        let ball = try #require(mid.positions["ball"]), eight = try #require(mid.positions["h8"])
+        let aspect = hero.pitch.kind.size.length / hero.pitch.kind.size.width
+        #expect(hypot(ball.x - eight.x, (ball.y - eight.y) * aspect) > Possession.reach)
+    }
 }
 
 private func pt(_ x: Double, _ y: Double) -> Point { Point(x: x, y: y) }

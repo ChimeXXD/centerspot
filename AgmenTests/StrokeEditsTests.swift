@@ -81,6 +81,18 @@ struct StrokeEditsTests {
         try roundTrips(tactic)
     }
 
+    /// One rule for who has the ball (`Possession.carrier`): with two players in reach, only the nearer one passes it.
+    @Test func onlyTheNearerOfTwoPlayersInReachPassesTheBall() throws {
+        var tactic = try Self.small()
+        // h9 stands just inside reach of the ball, h4 right on it.
+        TacticEdits.moveToken("h9", to: Self.p(0.43, 0.21), step: 0, in: &tactic)
+        let before = tactic
+        let fromNine = [Self.p(0.43, 0.21), Self.p(0.5, 0.35), Self.p(0.6, 0.5)]
+        StrokeEdits.draw(fromNine, kind: .pass, from: "h9", step: 0, in: &tactic)
+        #expect(tactic.phases[0].steps.at(1).positions["ball"] == before.phases[0].steps.at(1).positions["ball"],
+                "4 has the ball, so 9's pass is only the arrow")
+    }
+
     /// Same for a dribble: without the ball at their feet the player moves alone, and the ball stays.
     @Test func aDribbleWithoutTheBallMovesOnlyThePlayer() throws {
         let before = try Self.small()
@@ -96,7 +108,8 @@ struct StrokeEditsTests {
 
     /// The engine's "has the ball" matches where the renderer draws the ball at a carrier's feet.
     @Test func possessionReachMatchesTheRenderer() {
-        #expect(StrokeEdits.possessionReach == Double(BoardGeometry.tokenRadiusRatio) * 1.2)
+        #expect(Possession.reach == Double(BoardGeometry.tokenRadiusRatio) * 1.2)
+        #expect(Double(BoardGeometry.carryNone) == 1.2, "a ball out of reach is drawn where it is")
     }
 
     @Test func aPassWithoutABallIsOnlyTheArrow() throws {

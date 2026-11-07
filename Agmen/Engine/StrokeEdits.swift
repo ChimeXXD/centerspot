@@ -17,10 +17,6 @@ enum StrokeEdits {
         var hitStepLimit = false
     }
 
-    /// A player within this distance of the ball (pitch widths, measured as it looks) has it at their feet: 1.2 disc
-    /// radii, where `BoardGeometry.drawnCentres` draws the ball at a carrier's feet, so what you see decides who passes.
-    static let possessionReach = 0.038 * 1.2
-
     /// Shorter strokes are taps, in pitch widths (about 7 pt on a 345 pt pitch).
     static let minimumLength = 0.02
 
@@ -85,7 +81,7 @@ enum StrokeEdits {
                        positions: [String: Point], aspect: Double) -> [String] {
         guard let token else { return [] }
         let ball = tactic.tokens.first { $0.kind == .ball }.map { [$0.id] } ?? []
-        let carried = ball.filter { has($0, token.id, positions: positions, aspect: aspect) }
+        let carried = ball.filter { has($0, token.id, in: tactic, positions: positions, aspect: aspect) }
         switch token.kind {
         case .player:
             switch kind {
@@ -98,10 +94,12 @@ enum StrokeEdits {
         }
     }
 
-    /// Whether `player` has `ball` at their feet (within `possessionReach`).
-    private static func has(_ ball: String, _ player: String, positions: [String: Point], aspect: Double) -> Bool {
-        guard let b = positions[ball], let p = positions[player] else { return false }
-        return hypot(b.x - p.x, (b.y - p.y) * aspect) < possessionReach
+    /// Whether `player` has `ball` at their feet: the nearest player in reach (`Possession.carrier`), the same rule
+    /// the timeline uses to carry the ball.
+    private static func has(_ ball: String, _ player: String, in tactic: Tactic, positions: [String: Point],
+                            aspect: Double) -> Bool {
+        guard let b = positions[ball] else { return false }
+        return Possession.carrier(ofBallAt: b, positions: positions, tokens: tactic.tokens, aspect: aspect) == player
     }
 
     /// Length in pitch widths, measured as it looks on the pitch.

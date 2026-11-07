@@ -2,6 +2,21 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Day 4 fix: the ball moves smoothly (Sat 7 Nov 2026)
+
+**Changed**
+- Chime's phone recording showed the ball jerking. Measured cause: the "at their feet" offset switched on and off at one distance, a 17.8 pt change in one frame as a pass left a player. Now the timeline eases a carry weight across each move with the same curve as the move (`BoardState.carry`), the editor uses the same rule at rest (`Possession.carryWeight`), and a drag works it out live.
+- A ball its carrier keeps from one step to the next rides along the carrier's run instead of cutting its own straight line.
+- One possession rule (`Possession`): the nearest player within 1.2 disc radii has the ball, for the timeline, drawing, and D-62's pass/dribble rule (a pass from the farther of two players in reach is only the arrow).
+- Code review (medium): 8 found, 5 fixed (resting state vs playback carry, all-or-nothing playback offset vs eased editor offset, stale carry during a drag, 1-point ball runs, the rule written twice); the nearer-player rule then fixed too.
+
+**Checked**
+- `theBallNeverJumpsBetweenFrames` (hero at 60 fps): worst per-frame change in the ball's motion 17.8 pt before, 0.35 pt after; turns red (12.6 pt) without the eased carry. `aCarriedBallFollowsItsCarriersRun` red before, and red again with the carry-along removed. `onlyTheNearerOfTwoPlayersInReachPassesTheBall` red before the fix.
+- Gate: all 3 checks pass; both UI tests pass (98 s). Installed on the iPhone 14 Pro.
+
+**Not verified**
+- How it looks on the phone (Chime to replay the move).
+
 ## Day 4: playback and drawn runs (Sat 7 Nov 2026)
 
 **Changed**

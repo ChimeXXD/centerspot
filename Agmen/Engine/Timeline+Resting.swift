@@ -14,6 +14,7 @@ extension Timeline {
             positions[token.id] = steps.reversed().lazy.compactMap { $0.positions[token.id] }.first ?? .centre
         }
         let arrows = tactic.phases[phaseIndex].steps[step].arrows.map { BoardState.VisibleArrow(arrow: $0, opacity: 1) }
-        return BoardState(positions: positions, arrows: arrows, stepIndex: step)
+        let carry = carryWeights(in: tactic, from: positions, to: positions, progress: nil)
+        return BoardState(positions: positions, arrows: arrows, stepIndex: step, carry: carry)
     }
 }

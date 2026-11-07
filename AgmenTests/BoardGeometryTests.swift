@@ -97,4 +97,41 @@ struct BoardGeometryTests {
         #expect(g.strokeStart(at: ball, positions: positions, tokens: hero.tokens) == "ball")
         #expect(g.strokeStart(at: g.point(six), positions: positions, tokens: hero.tokens) == "h6", "on 6 is still 6")
     }
+
+    /// Chime's recording, 7 Nov: the ball jumped as it left or reached a player, because the "at their feet" offset
+    /// switched on and off at one distance (17.6 pt in one frame at t = 3.95). Sampled at 60 fps across the hero,
+    /// the drawn ball's motion may change by at most 1 pt from one frame to the next: it speeds up and slows down,
+    /// it never leaps.
+    @Test func theBallNeverJumpsBetweenFrames() throws {
+        let hero = try Fixtures.tactic("overlap-left")
+        let g = BoardGeometry(kind: .full, fitting: CGRect(x: 0, y: 0, width: 345, height: 345 * 105 / 68))
+        let duration = Timeline.duration(of: hero.phases[0])
+        var points: [CGPoint] = []
+        for frame in 0...Int(duration * 60) {
+            let state = Timeline.state(at: Double(frame) / 60, in: hero)
+            points.append(try #require(g.drawnCentres(positions: state.positions, tokens: hero.tokens, carry: state.carry)["ball"]))
+        }
+        var worst = (change: 0.0, t: 0.0)
+        for i in 2..<points.count {
+            let v1 = CGPoint(x: points[i - 1].x - points[i - 2].x, y: points[i - 1].y - points[i - 2].y)
+            let v2 = CGPoint(x: points[i].x - points[i - 1].x, y: points[i].y - points[i - 1].y)
+            let change = hypot(v2.x - v1.x, v2.y - v1.y)
+            if change > worst.change { worst = (change, Double(i) / 60) }
+        }
+        #expect(worst.change <= 1, "the ball's motion changes by \(worst.change) pt in one frame at t = \(worst.t)")
+    }
+
+    /// A ball 1 disc radius from its carrier (between full and no carry) is drawn in the same place in the editor
+    /// (`restingState`, no carry) and in playback at the end of the hold, so pressing play never nudges it.
+    @Test func theBallIsDrawnTheSameAtRestAndInPlayback() throws {
+        var hero = try Fixtures.tactic("overlap-left")
+        let eight = try #require(hero.phases[0].steps[0].positions["h8"])
+        hero.phases[0].steps[0].positions["ball"] = Point(x: eight.x + Possession.discRadius, y: eight.y)
+        let g = BoardGeometry(kind: .full, fitting: CGRect(x: 0, y: 0, width: 345, height: 345 * 105 / 68))
+        let resting = Timeline.restingState(step: 0, in: hero)
+        let timed = Timeline.state(at: Timeline.hold, in: hero)
+        let editor = try #require(g.drawnCentres(positions: resting.positions, tokens: hero.tokens)["ball"])
+        let played = try #require(g.drawnCentres(positions: timed.positions, tokens: hero.tokens, carry: timed.carry)["ball"])
+        #expect(hypot(editor.x - played.x, editor.y - played.y) < 0.01)
+    }
 }

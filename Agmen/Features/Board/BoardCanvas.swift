@@ -131,7 +131,7 @@ struct BoardCanvas: View {
     /// An invisible 44 pt element per token, labelled in football words from `Placement` (SPEC §8). It passes
     /// touches through to the canvas; VoiceOver and UI tests use it.
     private func accessibilityLayer(_ geometry: BoardGeometry) -> some View {
-        let centres = geometry.drawnCentres(positions: state.positions, tokens: tactic.tokens)
+        let centres = geometry.drawnCentres(positions: state.positions, tokens: tactic.tokens, carry: state.carry)
         let roles = Presets.shared.roles
         return ForEach(BoardRenderer.drawingOrder(tactic.tokens)) { token in
             if let centre = centres[token.id], let point = state.positions[token.id] {

@@ -47,7 +47,10 @@ struct BoardScreen: View {
 
     private var boardState: BoardState {
         var state = Timeline.restingState(step: current, in: tactic)
-        if let dragPreview { state.positions[dragPreview.id] = dragPreview.point.clamped }
+        if let dragPreview {
+            state.positions[dragPreview.id] = dragPreview.point.clamped
+            state.carry = [:]  // stale once a token moves; the renderer works the same weight out from distance
+        }
         return state
     }
 

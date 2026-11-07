@@ -65,21 +65,33 @@ struct BoardGeometry: Sendable, Equatable {
     }
 
     /// Where each token is drawn. The ball sits at its carrier's feet (down and right of the disc, never over
-    /// the number) when a player stands within 1.2 radii of it.
-    func drawnCentres(positions: [String: Point], tokens: [Token]) -> [String: CGPoint] {
+    /// the number). During playback `carry` (from `Timeline`) eases that offset across each move, so a pass glides
+    /// off one player and onto the next (Chime's recording, 7 Nov: a 17.6 pt leap in one frame). While editing it
+    /// is empty and the offset eases with the nearest player's distance (`carryWeight`).
+    func drawnCentres(positions: [String: Point], tokens: [Token], carry: [String: Double] = [:]) -> [String: CGPoint] {
         let r = tokenRadius
         var centres: [String: CGPoint] = [:]
         for token in tokens { if let p = positions[token.id] { centres[token.id] = point(p) } }
         for token in tokens where token.kind == .ball {
             guard let c = centres[token.id] else { continue }
-            let carried = tokens.contains { other in
-                guard other.kind == .player, let o = centres[other.id] else { return false }
-                return hypot(o.x - c.x, o.y - c.y) < r * 1.2
-            }
-            if carried { centres[token.id] = CGPoint(x: c.x + r * 0.95, y: c.y + r * 0.95) }
+            let nearest = tokens.filter { $0.kind == .player }
+                .compactMap { centres[$0.id].map { hypot($0.x - c.x, $0.y - c.y) } }
+                .min()
+            guard let nearest else { continue }
+            let w = carry[token.id].map { CGFloat($0) } ?? Self.carryWeight(radii: nearest / r)
+            centres[token.id] = CGPoint(x: c.x + r * 0.95 * w, y: c.y + r * 0.95 * w)
         }
         return centres
     }
+
+    /// The carry offset's weight for a player `radii` disc radii from the ball (`Possession.carryWeight`): whole up
+    /// to `carryFull`, none from `carryNone` = `Possession.reach`, eased between, so a loose ball is drawn where it is.
+    static func carryWeight(radii: CGFloat) -> CGFloat {
+        CGFloat(Possession.carryWeight(radii: Double(radii)))
+    }
+
+    static let carryFull = CGFloat(Possession.fullCarryRadii)
+    static let carryNone = CGFloat(Possession.noCarryRadii)
 
     /// The token nearest `location` within `hitRadius`, or nil. Ties go to the token drawn on top (later in `tokens`,
     /// the ball last).
@@ -106,8 +118,10 @@ struct BoardGeometry: Sendable, Equatable {
                 .min { $0.1 < $1.1 }
         }
         let player = nearest(.player), ball = nearest(.ball)
-        // A carried ball is drawn off its position (at the carrier's feet); a loose one is drawn where it is.
-        if let ball, let p = positions[ball.id], centres[ball.id] == point(p),
+        // A ball out of every player's reach (`Possession`) is loose and starts its own stroke when it's nearer.
+        let aspect = Double(pitchRect.height / pitchRect.width)
+        if let ball, let p = positions[ball.id],
+           Possession.carrier(ofBallAt: p, positions: positions, tokens: tokens, aspect: aspect) == nil,
            ball.distance < player?.distance ?? .infinity {
             return ball.id
         }

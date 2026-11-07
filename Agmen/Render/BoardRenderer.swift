@@ -33,7 +33,7 @@ enum BoardRenderer {
         }
         PitchDrawing.draw(tactic.pitch, geometry: g, in: ctx)
 
-        let centres = g.drawnCentres(positions: state.positions, tokens: tactic.tokens)
+        let centres = g.drawnCentres(positions: state.positions, tokens: tactic.tokens, carry: state.carry)
         let tokenCentres = Array(centres.values)
         for visible in state.arrows {
             ArrowDrawing.draw(visible.arrow, opacity: CGFloat(visible.opacity), geometry: g, tokenCentres: tokenCentres, in: ctx)

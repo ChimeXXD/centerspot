@@ -14,4 +14,7 @@ struct BoardState: Sendable, Equatable {
     var arrows: [VisibleArrow]
     /// The step whose hold or move contains this instant.
     var stepIndex: Int
+    /// How far each ball sits at its carrier's feet (0…1), eased across a move so a pass glides off one player and
+    /// onto the next. Empty while editing: the renderer works it out from distance.
+    var carry: [String: Double] = [:]
 }
