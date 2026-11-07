@@ -89,7 +89,7 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [ ] `VideoExporter`: frames from `BoardRenderer` → `AVAssetWriter`, 1080×1920, 30 fps, H.264, cancellable with progress
 - [ ] Export sheet: preview, preset, size estimate, then the share sheet
 - [ ] PNG of the current step; 16:9 and 1:1 (Should); lineup card (Should)
-- [ ] Measure on the phone: time and size for 5 and 10 steps; log real numbers in PROGRESS.md
+- [ ] Measure on the phone: time and size for 5 and 10 steps; log real numbers in PROGRESS.md (spike baseline 7 Nov: 15 s clip in 2.5 s, 5.5 MB at 4 Mbps)
 
 ### Day 6: Share and harden
 - [ ] `TacticDocument` with the exported UTType; open from Files and AirDrop (7 Nov: the document now reads and writes through `TacticFormat`; `TacticDocumentTests` 6/6; on-device open from Files and AirDrop still to check)

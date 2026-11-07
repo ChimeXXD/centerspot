@@ -173,8 +173,8 @@
         "H.264 bitrate set explicitly"
       ],
       "verify": "manual, timed on the phone; numbers in PROGRESS.md",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "7 Nov 2026, Chime's iPhone 14 Pro (iOS 27.0.1), Debug build, -exportSpike (Agmen/Features/Debug/ExportSpike.swift): 240 frames 1080x1920 H.264 4 Mbps -> 2.25 s, 2.50 MB; 450 frames (15 s) 4 Mbps -> 2.50 s, 5.51 MB; 450 frames 3 Mbps -> 2.52 s, 4.62 MB. Simple frames (pitch, 23 discs with numbers), no arrows yet."
     },
     {
       "id": "D3-1",
