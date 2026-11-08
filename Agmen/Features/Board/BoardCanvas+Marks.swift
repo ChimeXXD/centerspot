@@ -130,8 +130,9 @@ extension BoardCanvas {
                 switch glow.target {
                 case .token(let id): (kind, frame) = ("glow", Self.bounds([centres[id]].compactMap { $0 }))
                 case let .spot(centre, radius):
-                    let c = g.point(centre), r = CGFloat(radius) * g.pitchRect.width
-                    (kind, frame) = ("glow", CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r))
+                    // The heat's oval, as drawn (`MarkDrawing.heatSquash`).
+                    let c = g.point(centre), r = CGFloat(radius) * g.pitchRect.width, ry = r * MarkDrawing.heatSquash
+                    (kind, frame) = ("glow", CGRect(x: c.x - r, y: c.y - ry, width: 2 * r, height: 2 * ry))
                 }
             }
             counts[kind, default: 0] += 1

@@ -11,8 +11,8 @@ enum MarkDrawing {
     static let ringWidth: CGFloat = 1.6
     /// The three rings under a player: radius in disc radii and opacity, innermost first. The tint fills the first.
     static let rings: [(radius: CGFloat, opacity: CGFloat)] = [(1.3, 0.95), (1.85, 0.6), (2.45, 0.3)]
-    /// Heat is an ellipse this much shorter than wide, like a glow seen on the grass.
-    static let heatSquash: CGFloat = 0.8
+    /// Heat is an ellipse this much shorter than wide, like a glow seen on the grass (taps use the same, `MarkHit`).
+    static let heatSquash = CGFloat(MarkHit.heatSquash)
     /// A selected zone's corner handles (draw mode only).
     static let handleRadius: CGFloat = 6
     static let handleStroke: CGFloat = 2

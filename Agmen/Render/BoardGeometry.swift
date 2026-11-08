@@ -75,8 +75,10 @@ struct BoardGeometry: Sendable, Equatable {
     /// the number). During playback `carry` (from `Timeline`) eases that offset across each move, so a pass glides
     /// off one player and onto the next (Chime's recording, 7 Nov: a 17.6 pt leap in one frame). While editing it
     /// is empty and the offset eases with the nearest player's distance (`carryWeight`).
+    /// Who has the ball is judged in the board's own disc size, so a card's bigger discs (`tokenScale`) only draw the
+    /// ball further out at the feet, never widen the reach.
     func drawnCentres(positions: [String: Point], tokens: [Token], carry: [String: Double] = [:]) -> [String: CGPoint] {
-        let r = tokenRadius
+        let r = tokenRadius, reachRadius = pitchRect.width * Self.tokenRadiusRatio
         var centres: [String: CGPoint] = [:]
         for token in tokens { if let p = positions[token.id] { centres[token.id] = point(p) } }
         for token in tokens where token.kind == .ball {
@@ -85,7 +87,7 @@ struct BoardGeometry: Sendable, Equatable {
                 .compactMap { centres[$0.id].map { hypot($0.x - c.x, $0.y - c.y) } }
                 .min()
             guard let nearest else { continue }
-            let w = carry[token.id].map { CGFloat($0) } ?? Self.carryWeight(radii: nearest / r)
+            let w = carry[token.id].map { CGFloat($0) } ?? Self.carryWeight(radii: nearest / reachRadius)
             centres[token.id] = CGPoint(x: c.x + r * 0.95 * w, y: c.y + r * 0.95 * w)
         }
         return centres

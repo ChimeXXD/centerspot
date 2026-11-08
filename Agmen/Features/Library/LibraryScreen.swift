@@ -10,8 +10,9 @@ struct LibraryScreen: View {
     @State private var renaming: TacticLibrary.Entry?
     @State private var newTitle = ""
     @State private var deleting: TacticLibrary.Entry?
-    /// The screen's width, which sets the grid. Until it is known, the phone's.
-    @State private var width: CGFloat = 393
+    /// The screen's width, which sets the grid. Until it is known the content stays hidden, so an iPad never shows a
+    /// first frame laid out for a phone.
+    @State private var width: CGFloat?
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.scenePhase) private var scenePhase
 
@@ -33,6 +34,7 @@ struct LibraryScreen: View {
             .padding(.horizontal, grid.margin)
             .padding(.top, Tokens.Space.s6)
             .padding(.bottom, Tokens.Space.s6)
+            .opacity(width == nil ? 0 : 1)
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
         .scrollBounceBehavior(.basedOnSize)
@@ -65,7 +67,7 @@ struct LibraryScreen: View {
     // MARK: Parts
 
     private var grid: LibraryGrid {
-        LibraryGrid(width: width, accessibilityText: dynamicTypeSize.isAccessibilitySize)
+        LibraryGrid(width: width ?? 0, accessibilityText: dynamicTypeSize.isAccessibilitySize)
     }
 
     /// The phone's title over a full-width New tactic; on a wide screen New tactic sits at the title's right (stacked

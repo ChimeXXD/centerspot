@@ -32,7 +32,8 @@ struct Formation: Codable, Sendable, Hashable, Identifiable {
 
     /// Moves the home players into this shape in one step. Names and numbers stay (D-14); a player's role follows
     /// the slot they land on. Players match slots by shirt number first, then in board order; slots left over get
-    /// new players, placed in every step; players left over keep their positions. The away side and the ball stay.
+    /// new players, placed in every step; players left over are removed, from every step and mark (D-83). The away
+    /// side and the ball stay.
     func apply(to tactic: Tactic, stepIndex: Int, phaseIndex: Int = 0) -> Tactic {
         guard tactic.phases.indices.contains(phaseIndex),
               tactic.phases[phaseIndex].steps.indices.contains(stepIndex) else { return tactic }
@@ -55,6 +56,9 @@ struct Formation: Codable, Sendable, Hashable, Identifiable {
             result.tokens[i].roleID = slot.roleID
             result.phases[phaseIndex].steps[stepIndex].positions[result.tokens[i].id] = slot.point
         }
+        let leftover = home.filter { i in !placed.contains { $0.token == i } }.map { result.tokens[$0].id }
+        if !leftover.isEmpty { Self.removeArrows(from: Set(leftover), in: &result) }
+        for id in leftover { TacticEdits.deleteToken(id, in: &result) }
 
         for slot in free where result.tokens.count < TacticFormat.maxTokens {
             let id = Self.unusedID(base: "h\(slot.number)", in: result.tokens)
@@ -64,6 +68,29 @@ struct Formation: Codable, Sendable, Hashable, Identifiable {
             }
         }
         return result
+    }
+
+    /// How many home players a switch to `formation` removes (D-83): those beyond its slots.
+    static func extraPlayers(in tactic: Tactic, for formation: Formation) -> Int {
+        let home = tactic.tokens.filter { $0.kind == .player && $0.side == .home }.count
+        return max(0, home - formation.slots.count)
+    }
+
+    /// Drops the arrows drawn from `ids` (D-83): those starting where one of them stands on that step and no other
+    /// player does (`Placement` names an arrow's owner the same way).
+    private static func removeArrows(from ids: Set<String>, in tactic: inout Tactic) {
+        let players = tactic.tokens.filter { $0.kind == .player }.map(\.id)
+        for p in tactic.phases.indices {
+            // Where each player stands on the step: its own position, else the last one before (as `Timeline` rests).
+            var standing: [String: Point] = [:]
+            for s in tactic.phases[p].steps.indices {
+                for id in players { if let at = tactic.phases[p].steps[s].positions[id] { standing[id] = at } }
+                let gone = Set(ids.compactMap { standing[$0] })
+                let owned = gone.subtracting(players.filter { !ids.contains($0) }.compactMap { standing[$0] })
+                guard !owned.isEmpty else { continue }
+                tactic.phases[p].steps[s].arrows.removeAll { arrow in arrow.points.first.map { owned.contains($0) } ?? false }
+            }
+        }
     }
 
     private static func unusedID(base: String, in tokens: [Token]) -> String {

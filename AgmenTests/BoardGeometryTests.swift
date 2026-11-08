@@ -134,4 +134,18 @@ struct BoardGeometryTests {
         let played = try #require(g.drawnCentres(positions: timed.positions, tokens: hero.tokens, carry: timed.carry)["ball"])
         #expect(hypot(editor.x - played.x, editor.y - played.y) < 0.01)
     }
+
+    /// Bigger discs (a library card's `tokenScale`) draw the ball further out at the carrier's feet, but don't widen
+    /// who has it: a ball 1.3 board disc radii from a player is loose on the board and on a card alike.
+    @Test func biggerDiscsDontWidenTheCarry() {
+        var g = BoardGeometry(pitchRect: CGRect(x: 0, y: 0, width: 300, height: 450))
+        let tokens = [Token(id: "p", kind: .player, side: .home), Token(id: "b", kind: .ball)]
+        let p = Point(x: 0.5, y: 0.5)
+        let ball = Point(x: 0.5 + 1.3 * BoardGeometry.tokenRadiusRatio, y: 0.5)
+        let flat = g.drawnCentres(positions: ["p": p, "b": ball], tokens: tokens)
+        g.tokenScale = 1.8
+        let card = g.drawnCentres(positions: ["p": p, "b": ball], tokens: tokens)
+        #expect(flat["b"] == g.point(ball), "loose on the board")
+        #expect(card["b"] == g.point(ball), "and loose on the card")
+    }
 }

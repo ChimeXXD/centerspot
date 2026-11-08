@@ -8,11 +8,14 @@ enum MarkHit {
         marks.zones.last { $0.contains(p) }?.id
     }
 
-    /// The heat whose glow covers `p`.
+    /// Heat is an oval this much shorter than wide, like a glow seen on the grass (`MarkDrawing` draws it so).
+    static let heatSquash = 0.8
+
+    /// The heat whose glow covers `p`: inside its oval, `radius` wide and `heatSquash` of that tall.
     static func heat(at p: Point, in marks: Marks, aspect: Double) -> String? {
         marks.glows.last { glow in
             guard case let .spot(centre, radius) = glow.target else { return false }
-            return distance(p, centre, aspect: aspect) <= radius
+            return hypot(p.x - centre.x, (p.y - centre.y) * aspect / heatSquash) <= radius
         }?.id
     }
 

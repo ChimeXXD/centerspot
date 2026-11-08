@@ -62,7 +62,12 @@ extension BoardScreen {
             }
             .padding(.horizontal, Tokens.Space.s1)
             .background(Tokens.Colour.surface2.color, in: Capsule())
-            navIcon("Share", symbol: "square.and.arrow.up", identifier: "nav.share") { show("Sharing comes on Day 6") }
+            ShareLink(item: SharedTactic(tactic: tactic), preview: SharePreview(tactic.title)) {
+                navIconImage("square.and.arrow.up")
+            }
+            .foregroundStyle(Tokens.Colour.text.color)
+            .accessibilityLabel("Share")
+            .accessibilityIdentifier("nav.share")
         case .playing:
             Button("Done", action: stopPlayback)
                 .font(Tokens.Typeface.headline)
@@ -85,14 +90,16 @@ extension BoardScreen {
 
     private func navIcon(_ title: String, symbol: String, identifier: String,
                          action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: symbol)
-                .font(Tokens.Typeface.barIcon)
-                .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
-                .contentShape(Rectangle())
-        }
-        .foregroundStyle(Tokens.Colour.text.color)
-        .accessibilityLabel(title)
-        .accessibilityIdentifier(identifier)
+        Button(action: action) { navIconImage(symbol) }
+            .foregroundStyle(Tokens.Colour.text.color)
+            .accessibilityLabel(title)
+            .accessibilityIdentifier(identifier)
+    }
+
+    private func navIconImage(_ symbol: String) -> some View {
+        Image(systemName: symbol)
+            .font(Tokens.Typeface.barIcon)
+            .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
+            .contentShape(Rectangle())
     }
 }

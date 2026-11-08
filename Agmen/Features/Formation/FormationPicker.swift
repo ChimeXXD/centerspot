@@ -1,10 +1,13 @@
 import SwiftUI
 
 /// The formation sheet (D-48, mockup "formation"): 11 / 7 / 5-a-side tabs, chalk dot diagrams with the chosen one
-/// outlined in lime, and "Use 4-3-3". On a board that already has players it asks first; names and numbers stay.
+/// outlined in lime, and "Use 4-3-3". On a board that already has players it asks first; names and numbers stay, and
+/// a smaller shape says how many players leave the board (D-83).
 struct FormationPicker: View {
     let editor: DocumentEditor
     let stepIndex: Int
+    /// Called after a shape removed players, with how many, so the board can offer Undo.
+    var onRemoved: (Int) -> Void = { _ in }
 
     @Environment(\.dismiss) private var dismiss
     @State private var size: Pitch.Kind = .full
@@ -57,7 +60,7 @@ struct FormationPicker: View {
             Button("Move") { if let formation { apply(formation) } }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Names and numbers stay.")
+            Text(confirmMessage)
         }
         .presentationDetents([.fraction(0.8), .large])
         .agmenSheet()
@@ -87,9 +90,22 @@ struct FormationPicker: View {
         .accessibilityIdentifier("formation.\(shape.id)")
     }
 
+    private var extras: Int { formation.map { Formation.extraPlayers(in: editor.tactic, for: $0) } ?? 0 }
+
+    private var confirmMessage: String {
+        switch extras {
+        case 0: "Names and numbers stay."
+        case 1: "Names and numbers stay. 1 player leaves the board."
+        default: "Names and numbers stay. \(extras) players leave the board."
+        }
+    }
+
     private func apply(_ formation: Formation) {
-        editor.apply("Change formation") { $0 = formation.apply(to: $0, stepIndex: stepIndex) }
+        let removed = Formation.extraPlayers(in: editor.tactic, for: formation)
+        let applied = editor.apply("Change formation") { $0 = formation.apply(to: $0, stepIndex: stepIndex) }
         dismiss()
+        // A refused edit (too big, D-69) removed no one: a toast's Undo would undo the edit before it.
+        if applied, removed > 0 { onRemoved(removed) }
     }
 }
 

@@ -20,9 +20,13 @@ struct BoardBending {
 /// across draw sessions but never stored in the file), the selected bent arrow, the dot under the finger, and whether
 /// the last stroke drew a straight arrow (for the hint).
 struct ArrowEditing: Equatable {
+    /// The selected bent arrow, kept by what it is rather than its place in the step's list: an undo that adds or
+    /// removes another arrow leaves it on the same one, and one that changes it drops it.
     struct Selected: Equatable {
         let step: Int
-        let index: Int
+        let arrow: Arrow
+
+        func index(in arrows: [Arrow]) -> Int? { arrows.firstIndex(of: arrow) }
     }
 
     var shape = ArrowShape.straight

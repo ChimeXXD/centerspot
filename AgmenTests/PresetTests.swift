@@ -136,14 +136,47 @@ struct PresetTests {
         #expect(reread.tokens.count == after.tokens.count)
     }
 
-    @Test func fiveASideSwitchesThePitchAndExtraPlayersStayPut() throws {
+    /// D-83: a smaller shape removes the home players left over, from every step; the other side and the ball stay.
+    @Test func fiveASideSwitchesThePitchAndRemovesTheExtraPlayers() throws {
         let hero = try Fixtures.tactic("overlap-left")
         let f = try #require(presets.formations.first { $0.pitch == .fiveASide })
         let after = f.apply(to: hero, stepIndex: 0)
         #expect(after.pitch.kind == .fiveASide)
-        let before = hero.phases[0].steps[0].positions, now = after.phases[0].steps[0].positions
-        let moved = hero.tokens.filter { $0.side == .home && before[$0.id] != now[$0.id] }
-        #expect(moved.count <= 5)
-        #expect(after.tokens.count == hero.tokens.count)
+        let home = { (t: Tactic) in t.tokens.filter { $0.kind == .player && $0.side == .home } }
+        #expect(home(after).count == f.slots.count)
+        #expect(after.tokens.filter { $0.side != .home } == hero.tokens.filter { $0.side != .home })
+        let gone = Set(home(hero).map(\.id)).subtracting(home(after).map(\.id))
+        #expect(gone.count == home(hero).count - f.slots.count)
+        for step in after.phases[0].steps {
+            #expect(gone.allSatisfy { step.positions[$0] == nil && step.runs[$0] == nil })
+        }
+        #expect(Formation.extraPlayers(in: hero, for: f) == gone.count)
+        // Still a valid file.
+        #expect(try TacticFormat.decode(TacticFormat.encode(after)).tokens.count == after.tokens.count)
+    }
+
+    /// A shape with as many slots as players removes no one.
+    @Test func aSameSizeShapeRemovesNoOne() throws {
+        let hero = try Fixtures.tactic("overlap-left")
+        let f = try #require(presets.formation("4-4-2"))
+        #expect(Formation.extraPlayers(in: hero, for: f) == 0)
+        #expect(f.apply(to: hero, stepIndex: 0).tokens.count == hero.tokens.count)
+    }
+
+    /// D-83: an arrow drawn from a removed player goes with them; one from a player who stays is kept.
+    @Test func arrowsFromRemovedPlayersGo() throws {
+        var hero = try Fixtures.tactic("overlap-left")
+        let f = try #require(presets.formations.first { $0.pitch == .fiveASide })
+        let kept = Set(f.apply(to: hero, stepIndex: 0).tokens.map(\.id))
+        let home = hero.tokens.filter { $0.kind == .player && $0.side == .home }
+        let leaving = try #require(home.first { !kept.contains($0.id) })
+        let staying = try #require(home.first { kept.contains($0.id) })
+        let last = hero.phases[0].steps.count - 1
+        let positions = hero.phases[0].steps[last].positions
+        let gone = Arrow(kind: .pass, points: [try #require(positions[leaving.id]), Point(x: 0.5, y: 0.5)])
+        let stays = Arrow(kind: .run, points: [try #require(positions[staying.id]), Point(x: 0.4, y: 0.6)])
+        hero.phases[0].steps[last].arrows = [gone, stays]
+        let after = f.apply(to: hero, stepIndex: 0)
+        #expect(after.phases[0].steps[last].arrows == [stays])
     }
 }

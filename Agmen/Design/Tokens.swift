@@ -121,8 +121,9 @@ enum Tokens {
         static let scrubberGap: CGFloat = 6
         /// The draw mode's tool tiles: two rows, arrows then marks (the mockup's --tile-h, D-65).
         static let kindTile: CGFloat = 50
-        /// Nav bar width kept clear of the board's title: the back button and Undo, Redo, Share with their gaps.
-        static let navBarItems: CGFloat = 260
+        /// Nav bar width kept clear of the board's title: the back button and Undo, Redo with their gaps (Share is in
+        /// the title's menu on the iPhone, D-83).
+        static let navBarItems: CGFloat = 208
     }
 
     /// UI motion only; playback motion is the Timeline (SPEC §3). Reduce Motion swaps these for crossfades.

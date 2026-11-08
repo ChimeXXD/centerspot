@@ -30,9 +30,16 @@ final class BoardScreenshotUITests: XCTestCase {
         let nine = element(app, "board.token.h9")
         XCTAssertTrue(nine.label.hasPrefix("Number 9, striker, "), nine.label)
         XCTAssertTrue(nine.label.hasSuffix("step 1 of 5"), nine.label)
-        XCTAssertTrue(element(app, "nav.share").exists, "Share sits in the nav bar (D-55)")
         XCTAssertTrue(element(app, "nav.redo").exists, "a long title doesn't fold Redo away")
         XCTAssertEqual(element(app, "nav.title").label, "Overlap down the left")
+        // Share is the first item in the title's menu on the iPhone (D-83).
+        XCTAssertFalse(element(app, "nav.share").exists, "Share left the nav bar")
+        element(app, "nav.title").tap()
+        XCTAssertTrue(app.buttons["Share"].waitForExistence(timeout: timeout))
+        XCTAssertTrue(app.buttons["Rename"].exists)
+        save("board-title-menu")
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6)).tap()  // outside the menu closes it
+        XCTAssertTrue(app.buttons["Share"].waitForNonExistence(timeout: timeout), "the menu closes")
         XCTAssertEqual(element(app, "board.formation-tag").label, "4-3-3")
         save("board")
 
@@ -65,6 +72,20 @@ final class BoardScreenshotUITests: XCTestCase {
         XCTAssertTrue(element(app, "formation.apply").waitForExistence(timeout: timeout))
         sleep(1)
         save("formation")
+
+        // D-83: a 7-a-side shape on 11 players removes the 4 left over, says so, and Undo brings them back.
+        element(app, "formation.size.seven").tap()
+        element(app, "formation.apply").tap()
+        XCTAssertTrue(app.staticTexts["Names and numbers stay. 4 players leave the board."].waitForExistence(timeout: timeout))
+        app.alerts.buttons["Move"].tap()
+        XCTAssertTrue(app.staticTexts["Removed 4 players"].waitForExistence(timeout: timeout))
+        save("formation-removed")
+        element(app, "toast.undo").tap()
+        XCTAssertTrue(element(app, "board.token.h9").waitForExistence(timeout: timeout), "Undo brings them back")
+        XCTAssertEqual(app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'board.token.h'")).count, 11)
+
+        element(app, "toolbar.formation").tap()
+        XCTAssertTrue(element(app, "formation.apply").waitForExistence(timeout: timeout))
         element(app, "formation.close").tap()
         goBack(app)
         XCTAssertTrue(example.waitForExistence(timeout: timeout), "back returns to the library")

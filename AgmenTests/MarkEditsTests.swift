@@ -218,6 +218,16 @@ struct MarkEditsTests {
 
     // MARK: Hitting and naming
 
+    /// Heat is drawn as an oval `MarkHit.heatSquash` as tall as it is wide, so a tap above it (inside the circle of
+    /// its radius, outside the oval) misses, and one beside it at the same distance hits.
+    @Test func heatIsTappedWhereItIsDrawn() {
+        let aspect = 105.0 / 68
+        let marks = Marks(glows: [Glow(id: "g1", target: .spot(Point(x: 0.5, y: 0.5), radius: 0.1))])
+        #expect(MarkHit.heat(at: Point(x: 0.59, y: 0.5), in: marks, aspect: aspect) == "g1", "beside, 0.09 wide")
+        #expect(MarkHit.heat(at: Point(x: 0.5, y: 0.5 + 0.09 / aspect), in: marks, aspect: aspect) == nil, "above, 0.09")
+        #expect(MarkHit.heat(at: Point(x: 0.5, y: 0.5 + 0.07 / aspect), in: marks, aspect: aspect) == "g1", "above, 0.07")
+    }
+
     @Test func tapsFindTheTopMark() {
         let marks = Marks(zones: [Zone(id: "z1", x: 0.1, y: 0.1, w: 0.5, h: 0.5), Zone(id: "z2", x: 0.3, y: 0.3, w: 0.5, h: 0.5)],
                           lines: [ShapeLine(id: "l1", tokens: ["h4", "h9"])],

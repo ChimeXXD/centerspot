@@ -73,11 +73,14 @@ extension BoardScreen {
                 .accessibilityIdentifier("nav.redo")
         }
         ToolbarItem(placement: .principal) {
-            titleMenu(maxWidth: max(width - Tokens.Size.navBarItems, Tokens.Size.touch * 2))
+            titleMenu(maxWidth: max(width - Tokens.Size.navBarItems, Tokens.Size.touch * 2), sharing: layout == .compact)
         }
-        ToolbarItem(placement: .topBarTrailing) {
-            Button("Share", systemImage: "square.and.arrow.up") { show("Sharing comes on Day 6") }
-                .accessibilityIdentifier("nav.share")
+        // Share moved into the title's menu on the iPhone only (D-83); iPad portrait keeps it in the bar.
+        if layout != .compact {
+            ToolbarItem(placement: .topBarTrailing) {
+                ShareLink(item: SharedTactic(tactic: tactic), preview: SharePreview(tactic.title))
+                    .accessibilityIdentifier("nav.share")
+            }
         }
     }
 
@@ -87,11 +90,18 @@ extension BoardScreen {
         layout == .regularLandscape ? nil : KeyboardShortcut("z", modifiers: modifiers)
     }
 
-    /// The title is our own menu (Rename, then the mockup's "more" options: the pitch). The system's editable title
-    /// sits leading at full width and folds Redo and Share into an overflow menu when the title is long; this one
-    /// truncates, so Share stays visible (D-55). The iPad column's nav row uses it too (D-73).
-    func titleMenu(maxWidth: CGFloat) -> some View {
+    /// The title is our own menu (Share on the iPhone, Rename, then the mockup's "more" options: the pitch). The
+    /// system's editable title sits leading at full width and folds Redo into an overflow menu when the title is long;
+    /// this one truncates (D-55). On the iPhone Share lives here, so the title has room (D-83); the iPad column's nav
+    /// row uses the menu too (D-73) and keeps its own Share button.
+    func titleMenu(maxWidth: CGFloat, sharing: Bool = false) -> some View {
         Menu {
+            if sharing {
+                ShareLink(item: SharedTactic(tactic: tactic), preview: SharePreview(tactic.title)) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityIdentifier("nav.share")
+            }
             Button("Rename", systemImage: "pencil") {
                 newTitle = tactic.title
                 renaming = true
@@ -111,7 +121,7 @@ extension BoardScreen {
             .frame(maxWidth: maxWidth)
         }
         .accessibilityLabel(tactic.title)
-        .accessibilityHint("Rename or change the pitch")
+        .accessibilityHint(sharing ? "Share, rename or change the pitch" : "Rename or change the pitch")
         .accessibilityIdentifier("nav.title")
     }
 

@@ -2,6 +2,22 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Fix everything (Sun 8 Nov 2026, night)
+
+**Changed**
+- D-83 (Chime's four choices): tips stay on any board; a smaller formation removes the home players left over (`Formation.apply`, `Formation.extraPlayers`), the confirm says how many leave and a toast offers Undo; Share moves into the title's menu on the iPhone (title room 260 → 208 pt) and is real now (`SharedTactic`, a `.tactic` file named after the title; it was a "Sharing comes on Day 6" toast), the iPad column's Share too; the library's 10 pt gap stays.
+- Bugs: the selected bent arrow is kept by value, so an undo never moves the selection to another arrow (`ArrowEditing.Selected`); a card's bigger discs no longer widen who carries the ball (`drawnCentres` judges reach in board disc radii); heat is tapped (and framed for VoiceOver) as the oval it is drawn; the iPad library stays hidden until its width is known (no phone-grid first frame); `-seedLibrary` skips titles already seeded.
+- Checked and left: the playback camera's per-frame fallback is unreachable (the track is built before playback); the export preview's track rebuild on a toggle is a few thousand sums per tap; `CGContext+Camera`'s branches stay so the flat board makes exactly its old calls; a tip's control rebuild happens only as the tip comes or goes, right after the user's own action; an empty board's held-back drag tip resolves once players exist (the formation sheet opens first).
+
+**Checked**
+- Red then green: `ArrowSelectionTests` (2), `PresetTests` (smaller shape removes extras, same size removes none), `SharedTacticTests`, `BoardGeometryTests.biggerDiscsDontWidenTheCarry`, `MarkEditsTests.heatIsTappedWhereItIsDrawn`.
+- UI on iPhone 18 Pro: BoardScreenshot (title menu Share; 7-a-side removes 4, toast, Undo back to 11), Broadcast, DrawShape, LibraryGrid. iPad Pro 13-inch: IPadLayout (landscape, portrait).
+- Code review (high): 8 found, 5 fixed (arrows drawn from removed players stayed; a size-capped refusal still showed the toast; iPad portrait lost its Share; the column's Share copied the icon styling; the reach radius divided by the scale). Left: share temp folders (iOS clears tmp), the library background's first frame, two identical arrows on one step. Tests re-run after: 56 unit, BoardScreenshot, IPadLayout.
+
+**Not verified**
+- Pencil + finger on the bend dot: needs the real Pencil (iPad check).
+- Sharing to AirDrop/WhatsApp from the board on the phone.
+
 ## Tip on 7, even safe zone (Sun 8 Nov 2026, night)
 
 **Changed**

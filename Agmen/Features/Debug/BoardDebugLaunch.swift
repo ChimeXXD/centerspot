@@ -37,10 +37,13 @@ enum BoardDebugLaunch {
         for n in 0..<min(count, 60) {
             var tactic = TacticDocument.blank()
             tactic.title = seedTitles[n % seedTitles.count] + (n < seedTitles.count ? "" : " \(n / seedTitles.count + 1)")
+            // Already seeded on an earlier launch (without `-resetLibrary`): leave it, rather than add "… 2".
+            let url = library.uniqueURL(for: tactic.title)
+            guard url.deletingPathExtension().lastPathComponent == TacticLibrary.fileStem(for: tactic.title) else { continue }
             tactic = formations[n % formations.count].apply(to: tactic, stepIndex: 0)
             tactic.tokens.append(Token(id: "ball", kind: .ball))
             tactic.phases[0].steps[0].positions["ball"] = Point(x: 0.5, y: 0.5)
-            _ = try? library.save(tactic, to: library.uniqueURL(for: tactic.title))
+            _ = try? library.save(tactic, to: url)
         }
     }
 

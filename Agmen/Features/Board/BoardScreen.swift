@@ -284,7 +284,9 @@ struct BoardScreen: View {
         case .player(let id):
             PlayerSheet(tokenID: id, editor: editor) { token in removeToken(token) }
         case .formation:
-            FormationPicker(editor: editor, stepIndex: current)
+            FormationPicker(editor: editor, stepIndex: current) { removed in
+                show(removed == 1 ? "Removed 1 player" : "Removed \(removed) players", offersUndo: true)
+            }
         case .note(let index):
             StepNoteSheet(editor: editor, stepIndex: index)
         case .export:

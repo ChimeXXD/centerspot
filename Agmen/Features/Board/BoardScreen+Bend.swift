@@ -14,12 +14,13 @@ extension BoardScreen {
 
     private var pitchAspect: Double { tactic.pitch.kind.size.length / tactic.pitch.kind.size.width }
 
-    /// The selected arrow on this step, while it is still there with a bend (an undo or a straightening drops it).
+    /// The selected arrow's place on this step, while it is still there with a bend (an undo that changes it or a
+    /// straightening drops it).
     var selectedArrow: Int? {
         guard mode == .drawing, drawTool.arrowKind != nil, let selected = arrowEdit.selected, selected.step == current,
-              steps.indices.contains(current), steps[current].arrows.indices.contains(selected.index),
-              steps[current].arrows[selected.index].points.count > 2 else { return nil }
-        return selected.index
+              steps.indices.contains(current), let index = selected.index(in: steps[current].arrows),
+              steps[current].arrows[index].points.count > 2 else { return nil }
+        return index
     }
 
     /// The tactic as the board shows it: with the bend under the finger while the dot is dragged.
@@ -65,7 +66,7 @@ extension BoardScreen {
         guard outcome.changed else { return }
         let arrows = steps.indices.contains(current) ? steps[current].arrows : []
         if !outcome.hitArrowLimit, let last = arrows.indices.last, arrows[last].points.count > 2 {
-            arrowEdit.selected = .init(step: current, index: last)
+            arrowEdit.selected = .init(step: current, arrow: arrows[last])
         } else {
             arrowEdit.selected = nil
         }
@@ -83,7 +84,7 @@ extension BoardScreen {
         guard steps.indices.contains(current), arrowEdit.preview == nil else { return }
         let reach = boardWidth > 0 ? Double(Tokens.Size.touch / 2 / boardWidth) : 0.04
         let index = ArrowHit.bendable(near: point, in: steps[current].arrows, aspect: pitchAspect, reach: reach)
-        arrowEdit.selected = index.map { .init(step: current, index: $0) }
+        arrowEdit.selected = index.map { .init(step: current, arrow: steps[current].arrows[$0]) }
     }
 
     private func dragBend(_ dot: Point, ended: Bool) {
@@ -109,6 +110,10 @@ extension BoardScreen {
     private func bend(_ index: Int, to dot: Point) {
         let kind = steps[current].arrows[index].kind.rawValue
         applyEdit("Bend \(kind)") { StrokeEdits.bend(arrow: index, to: dot, step: current, in: &$0) }
+        // The bent arrow is a new value: keep it selected (a bend onto the straight line leaves two points and drops it).
+        if steps.indices.contains(current), steps[current].arrows.indices.contains(index) {
+            arrowEdit.selected = .init(step: current, arrow: steps[current].arrows[index])
+        }
     }
 
     /// The row's Remove: the arrow goes (one undo step); the run it set out stays until redrawn.
