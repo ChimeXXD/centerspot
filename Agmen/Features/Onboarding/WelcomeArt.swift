@@ -83,8 +83,10 @@ struct WelcomeArt: View {
                                             broadcastSpan: reduceMotion ? track.span : nil)
         let steps = tactic.phases.first?.steps.count ?? 0
         return VStack(spacing: Tokens.Space.s3) {
+            // Scaled down to fit a 375 pt wide iPhone (SE, mini) instead of overflowing it.
             board(frame(at: t), options: options)
-                .frame(width: Self.broadcastSize.width, height: Self.broadcastSize.height)
+                .aspectRatio(Self.broadcastSize, contentMode: .fit)
+                .frame(maxWidth: Self.broadcastSize.width)
             HStack(spacing: 6) {
                 ForEach(0..<steps, id: \.self) { index in
                     segment(fill: tactic.phases.first.map { PlaybackTrack.fill(segment: index, at: t, in: $0) } ?? 0)
@@ -114,7 +116,7 @@ struct WelcomeArt: View {
             context.withCGContext { cg in
                 cg.scaleBy(x: size.width / clip.layout.canvas.width, y: size.height / clip.layout.canvas.height)
                 // Reduce Motion: each step at rest (the export itself never changes, rule 8; this is only a picture of it).
-                if reduceMotion { clip.draw(state: frame(at: t).base, in: cg) } else { clip.draw(at: t, in: cg) }
+                if reduceMotion { clip.drawStill(frame(at: t), in: cg) } else { clip.draw(at: t, in: cg) }
             }
         }
         .frame(width: size.width, height: size.height)

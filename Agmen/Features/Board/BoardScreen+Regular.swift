@@ -41,7 +41,7 @@ extension BoardScreen {
                 let strip = StepsStrip(
                     steps: steps, current: current, pulse: pulse, onSelect: selectStep,
                     onAdd: { addStep("Add step") }, onMove: moveStep,
-                    chipSize: CGSize(width: 56, height: 64), spacing: Tokens.Space.s2, inset: 0
+                    chipSize: CGSize(width: 56, height: 64), spacing: Tokens.Space.s2, inset: 0, showsTip: tipsOn
                 )
                 strip.frame(maxWidth: strip.contentWidth)
             }
@@ -80,7 +80,8 @@ extension BoardScreen {
         VStack(alignment: .leading, spacing: Tokens.Space.s5) {
             columnNavRow
             if mode != .playing, !tactic.tokens.isEmpty {
-                StepsList(steps: steps, current: current, showsStepActions: mode != .drawing, onSelect: selectStepFromList,
+                StepsList(steps: steps, current: current, showsStepActions: mode != .drawing, showsTip: tipsOn,
+                          onSelect: selectStepFromList,
                           onAdd: addStepFromList, onMove: moveStepFromList)
                     .layoutPriority(1)
             }
@@ -150,7 +151,7 @@ extension BoardScreen {
             onExport: {
                 Onboarding.shared.done(ExportTip())
                 sheet = .export
-            }, drawing: drawing,
+            }, drawing: drawing, showsTips: tipsOn,
             itemsWidth: layout == .compact ? .infinity : 700
         )
     }

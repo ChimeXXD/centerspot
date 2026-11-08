@@ -20,6 +20,7 @@ extension BoardScreen {
     func startDrawing(_ kind: Arrow.Kind? = nil) {
         if let kind { drawTool = DrawTool(kind) }
         drawEdits = 0
+        arrowEdit.strokesAtStart = strokeCount
         dragPreview = nil
         clearMarkState()
         withAnimation(Tokens.Motion.ease(Tokens.Motion.step)) {
@@ -30,12 +31,15 @@ extension BoardScreen {
 
     /// Done keeps the strokes and marks, finishing a line being tapped out; each one stays in the undo history.
     func finishDrawing() {
-        if drawEdits > 0 { Onboarding.shared.done(DrawTip()) }
+        if strokeCount > arrowEdit.strokesAtStart { Onboarding.shared.done(DrawTip()) }
         finishLine()
         clearMarkState()
         drawEdits = 0
         withAnimation(Tokens.Motion.ease(Tokens.Motion.step)) { mode = .editing }
     }
+
+    /// Every arrow and run on the move, all steps.
+    var strokeCount: Int { steps.reduce(0) { $0 + $1.arrows.count + $1.runs.count } }
 
     /// Cancel leaves without changes: it drops a line being tapped out and undoes every edit made since draw mode opened.
     func cancelDrawing() {

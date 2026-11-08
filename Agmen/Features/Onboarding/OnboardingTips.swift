@@ -44,6 +44,9 @@ final class Onboarding {
         TipGroup(.ordered) { DragTip(); StepTip(); PlayTip(); DrawTip(); ExportTip() }
     }
 
+    /// The step the "Every step is a moment" tip points at: step 2, or step 1 when there is only one (D-78).
+    nonisolated static func stepTipIndex(stepCount: Int) -> Int { min(1, stepCount - 1) }
+
     /// The tip due now, if it is of type `T` (each anchor asks for its own).
     func current<T: Tip>(_ type: T.Type) -> T? { tips.currentTip as? T }
 
@@ -54,11 +57,9 @@ final class Onboarding {
 
     /// Show tips again (D-78): every tip comes back, and the welcome shows from page 1.
     func showAgain() async {
-        await DragTip().resetEligibility()
-        await StepTip().resetEligibility()
-        await PlayTip().resetEligibility()
-        await DrawTip().resetEligibility()
-        await ExportTip().resetEligibility()
+        for tip in [DragTip(), StepTip(), PlayTip(), DrawTip(), ExportTip()] as [any Tip] {
+            await tip.resetEligibility()
+        }
         tips = Self.makeGroup()
         UserDefaults.standard.set(false, forKey: Self.welcomeSeenKey)
     }

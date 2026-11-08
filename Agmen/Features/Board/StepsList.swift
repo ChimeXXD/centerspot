@@ -8,6 +8,8 @@ struct StepsList: View {
     let current: Int
     /// Whether tapping the current row shows its actions (not in draw mode, where it does nothing).
     var showsStepActions = true
+    /// The step tip, only while editing with no sheet open (D-58).
+    var showsTip = true
     var onSelect: (Int) -> Void
     var onAdd: () -> Void
     var onMove: (_ from: Int, _ to: Int) -> Void
@@ -81,7 +83,8 @@ struct StepsList: View {
             .accessibilityHint(hint(isCurrent: index == current))
             .accessibilityAddTraits(index == current ? .isSelected : [])
             .accessibilityIdentifier("steps.row.\(index + 1)")
-            .agmenTip(index == min(1, steps.count - 1) ? Onboarding.shared.current(StepTip.self) : nil, arrowEdge: .trailing)
+            .agmenTip(showsTip && index == Onboarding.stepTipIndex(stepCount: steps.count)
+                      ? Onboarding.shared.current(StepTip.self) : nil, arrowEdge: .trailing)
     }
 
     private func hint(isCurrent: Bool) -> String {

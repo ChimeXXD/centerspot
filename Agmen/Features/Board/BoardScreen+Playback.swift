@@ -9,6 +9,9 @@ extension BoardScreen {
 
     var phaseDuration: Double { tactic.phases.first.map(Timeline.duration(of:)) ?? 0 }
 
+    /// Tips show only while editing with nothing over the board: not while playing, drawing or with a sheet open (D-58).
+    var tipsOn: Bool { mode == .editing && sheet == nil }
+
     /// The player the "Move a player" tip points at (D-78): 3 in the example, else the first player.
     var dragTipToken: String? {
         tactic.tokens.first { $0.id == "h3" && $0.kind == .player }?.id ?? tactic.tokens.first { $0.kind == .player }?.id

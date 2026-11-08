@@ -37,11 +37,27 @@ final class ExportFrame {
         draw(state: state, target: track?.target(at: rest), in: ctx)
     }
 
+    /// A picture of this export with Reduce Motion (the welcome's page 3, D-78): each step at rest crossfading into the
+    /// next, through the still broadcast view fitted to the whole move. Never used by the export itself (rule 8).
+    func drawStill(_ frame: PlaybackTrack.Frame, in ctx: CGContext) {
+        let options = BoardRenderer.Options(broadcast: track?.still, broadcastSpan: track?.span)
+        draw(state: frame.base, target: track?.still, in: ctx) { ctx, rect in
+            BoardRenderer.draw(state: frame.base, crossfadingTo: frame.next, mix: frame.mix, tactic: self.tactic, in: ctx,
+                               rect: rect, options: options)
+        }
+    }
+
     /// The flat board sits clear of the text; a broadcast board runs under it, so it goes first and the text on top.
-    private func draw(state: BoardState, target: Point?, in ctx: CGContext) {
+    /// `board` replaces the plain board drawing (the still picture's crossfade).
+    private func draw(state: BoardState, target: Point?, in ctx: CGContext,
+                      board: ((CGContext, CGRect) -> Void)? = nil) {
         ctx.setFillColor(Tokens.Colour.bg.cgColor)
         ctx.fill(CGRect(origin: .zero, size: layout.canvas))
-        if target != nil { BoardRenderer.draw(state: state, tactic: tactic, in: ctx, rect: layout.board, options: .init(broadcast: target)) }
+        if let board, target != nil {
+            board(ctx, layout.board)
+        } else if target != nil {
+            BoardRenderer.draw(state: state, tactic: tactic, in: ctx, rect: layout.board, options: .init(broadcast: target))
+        }
         if let box = layout.title { text(tactic.title, face: .title, colour: Tokens.Colour.text, in: box, ctx: ctx) }
         let steps = tactic.phases.first?.steps ?? []
         if let box = layout.note, steps.indices.contains(state.stepIndex),

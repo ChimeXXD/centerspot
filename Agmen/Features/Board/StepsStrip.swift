@@ -14,6 +14,8 @@ struct StepsStrip: View {
     var chipSize = Tokens.Size.stepChip
     var spacing = Tokens.Space.s2 + 2
     var inset = Tokens.Space.s5
+    /// The step tip, only while editing with no sheet open (D-58).
+    var showsTip = true
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -63,8 +65,8 @@ struct StepsStrip: View {
             .accessibilityHint(isCurrent ? "Double-tap for step actions" : "Double-tap to go to this step")
             .accessibilityAddTraits(isCurrent ? .isSelected : [])
             .accessibilityIdentifier("steps.chip.\(index + 1)")
-            // Step 2, or step 1 when there is only one (D-78).
-            .agmenTip(index == min(1, steps.count - 1) ? Onboarding.shared.current(StepTip.self) : nil, arrowEdge: .bottom)
+            .agmenTip(showsTip && index == Onboarding.stepTipIndex(stepCount: steps.count)
+                      ? Onboarding.shared.current(StepTip.self) : nil, arrowEdge: .bottom)
     }
 
     private func chipFace(_ index: Int, _ step: Step, on: Bool) -> some View {

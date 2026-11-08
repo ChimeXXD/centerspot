@@ -29,4 +29,6 @@ struct ArrowEditing: Equatable {
     var selected: Selected?
     var preview: Point?
     var drewStraight = false
+    /// Arrows and runs on the move when draw mode opened: the Draw tip is done only if Done keeps more (D-58).
+    var strokesAtStart = 0
 }

@@ -84,5 +84,17 @@ final class OnboardingUITests: XCTestCase {
         XCTAssertTrue(A.element(app, "launch.new").waitForExistence(timeout: A.timeout))
         // (The library's tagline is the welcome's first title, so check the welcome's own button is gone.)
         XCTAssertFalse(A.element(app, "onboarding.skip").exists)
+
+        // The tips really are back, in order, on the next board opened (verifier, 8 Nov).
+        A.card(app, "Overlap down the left, 5 steps").tap()
+        XCTAssertTrue(app.staticTexts["Move a player"].waitForExistence(timeout: A.timeout))
+        // No tip with a sheet open: the player sheet takes it away, and it comes back after.
+        A.element(app, "board.token.h3").doubleTap()
+        XCTAssertTrue(A.element(app, "inspector.name").waitForExistence(timeout: A.timeout))
+        XCTAssertTrue(app.staticTexts["Move a player"].waitForNonExistence(timeout: A.timeout), "no tip over a sheet")
+        A.element(app, "inspector.close").tap()
+        XCTAssertTrue(app.staticTexts["Move a player"].waitForExistence(timeout: A.timeout))
+        app.buttons["Close tip"].tap()
+        XCTAssertTrue(app.staticTexts["Every step is a moment"].waitForExistence(timeout: A.timeout))
     }
 }

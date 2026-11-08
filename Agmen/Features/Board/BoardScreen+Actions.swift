@@ -17,17 +17,17 @@ extension BoardScreen {
     }
 
     func endDrag(_ id: String, _ point: Point) {
-        let name = tactic.tokens.first { $0.id == id }.map(Self.moveActionName) ?? "Move"
-        applyEdit(name) { TacticEdits.moveToken(id, to: point, step: current, in: &$0) }
-        if tactic.tokens.first(where: { $0.id == id })?.kind == .player { Onboarding.shared.done(DragTip()) }
+        nudge(id, point)
         dragPreview = nil
         selection = id
         showsStepActions = false
     }
 
+    /// A drag's end or a VoiceOver nudge: either way a moved player finishes the "Move a player" tip (D-78).
     func nudge(_ id: String, _ point: Point) {
-        let name = tactic.tokens.first { $0.id == id }.map(Self.moveActionName) ?? "Move"
-        applyEdit(name) { TacticEdits.moveToken(id, to: point, step: current, in: &$0) }
+        let token = tactic.tokens.first { $0.id == id }
+        applyEdit(token.map(Self.moveActionName) ?? "Move") { TacticEdits.moveToken(id, to: point, step: current, in: &$0) }
+        if token?.kind == .player { Onboarding.shared.done(DragTip()) }
     }
 
     static func moveActionName(_ token: Token) -> String {
@@ -41,7 +41,8 @@ extension BoardScreen {
     // MARK: Steps
 
     func selectStep(_ index: Int) {
-        Onboarding.shared.done(StepTip())
+        // "Tap step 2" is done by going to another step; with one step, the tip points at it, so a tap counts.
+        if index != current || (tactic.phases.first?.steps.count ?? 0) <= 1 { Onboarding.shared.done(StepTip()) }
         if index == current {
             // The row under the pitch shows one thing at a time: the step's actions replace the selection.
             withAnimation(Tokens.Motion.ease(Tokens.Motion.select)) {

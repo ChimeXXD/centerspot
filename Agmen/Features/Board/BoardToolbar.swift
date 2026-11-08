@@ -10,6 +10,8 @@ struct BoardToolbar: View {
     var onExport: () -> Void
     /// iPad landscape keeps the toolbar in draw mode (D-73): Draw lit, the others disabled.
     var drawing = false
+    /// Play, Draw and Export carry their tips only while editing with no sheet open (D-58).
+    var showsTips = true
     /// On iPad the five items gather in the middle (the mockup's 72 pt gaps) instead of spreading across the screen.
     var itemsWidth = CGFloat.infinity
 
@@ -19,13 +21,13 @@ struct BoardToolbar: View {
                 .modifier(Off(drawing))
             addMenu.modifier(Off(drawing))
             playButton.modifier(Off(drawing))
-                .agmenTip(drawing ? nil : Onboarding.shared.current(PlayTip.self), arrowEdge: .bottom)
+                .agmenTip(showsTips ? Onboarding.shared.current(PlayTip.self) : nil, arrowEdge: .bottom)
             tool("Draw", symbol: "pencil", identifier: "toolbar.draw", lit: drawing, action: onDraw)
                 .accessibilityAddTraits(drawing ? .isSelected : [])
-                .agmenTip(drawing ? nil : Onboarding.shared.current(DrawTip.self), arrowEdge: .bottom)
+                .agmenTip(showsTips ? Onboarding.shared.current(DrawTip.self) : nil, arrowEdge: .bottom)
             tool("Export", symbol: "film", identifier: "toolbar.export", action: onExport)
                 .modifier(Off(drawing))
-                .agmenTip(drawing ? nil : Onboarding.shared.current(ExportTip.self), arrowEdge: .bottom)
+                .agmenTip(showsTips ? Onboarding.shared.current(ExportTip.self) : nil, arrowEdge: .bottom)
         }
         .frame(maxWidth: itemsWidth)
         .padding(.horizontal, Tokens.Space.s1 + 2)

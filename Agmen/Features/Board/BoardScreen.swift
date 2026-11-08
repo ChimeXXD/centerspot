@@ -188,7 +188,7 @@ struct BoardScreen: View {
         return BoardCanvas(
             tactic: tactic, state: state, selection: mode == .playing ? nil : selectedToken?.id,
             dimsUnselected: sheet?.isPlayer == true, crossfade: crossfade, broadcast: aim?.target, broadcastSpan: aim?.span,
-            dragTipToken: mode == .editing ? dragTipToken : nil,
+            dragTipToken: tipsOn ? dragTipToken : nil,
             movesTokens: mode == .editing || (drawing && Self.pencilDraws),
             strokeInput: strokeInput, strokeKind: drawTool.arrowKind ?? .run,
             selectedMark: drawing ? selectedMark : nil, pendingLine: drawing ? lineDraft.tokens : [],
@@ -208,7 +208,7 @@ struct BoardScreen: View {
 
         if !tactic.tokens.isEmpty {
             StepsStrip(steps: steps, current: current, pulse: pulse,
-                       onSelect: selectStep, onAdd: { addStep("Add step") }, onMove: moveStep)
+                       onSelect: selectStep, onAdd: { addStep("Add step") }, onMove: moveStep, showsTip: tipsOn)
                 .padding(.vertical, Tokens.Space.s1)
         }
 
