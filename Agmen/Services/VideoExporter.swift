@@ -109,7 +109,7 @@ enum VideoExporter {
 
         do {
             let frame = ExportFrame(tactic: tactic, canvas: settings.format.canvas, showsTitle: settings.showsTitle,
-                                    showsNotes: settings.showsNotes)
+                                    showsNotes: settings.showsNotes, camera: settings.camera)
             let duration = frame.duration
             let total = ExportClock.frameCount(duration: duration)
             for index in 0..<total {

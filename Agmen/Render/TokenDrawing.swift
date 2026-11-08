@@ -21,6 +21,10 @@ enum TokenDrawing {
         var lift = false
         /// The dark outline is at least this wide (library cards: 0.6 pt, D-74).
         var minimumOutline: CGFloat = 0
+        /// The broadcast camera (BR-2): the body is drawn as filled shapes worked out on the grass and projected through
+        /// it, so it lies flat. Projected paths are flattened into lines first, so the screen and the export fill the
+        /// same polygons and rasterise them alike (D-60, D-61).
+        var grass: BroadcastCamera?
     }
 
     /// The whole token, body then number: for one token on its own (the lineup card's list).
@@ -34,17 +38,28 @@ enum TokenDrawing {
         faded(style.opacity, in: ctx) {
             switch token.kind {
             case .ball:
-                if style.selected { selectionRing(at: c, radius: r * 0.42 + r * 0.6, width: r * 0.14, in: ctx) }
-                disc(at: c, radius: r * 0.42, fill: Tokens.Colour.ball.cgColor, in: ctx)
-                ring(at: c, radius: r * 0.42, width: max(r * 0.14, style.minimumOutline), colour: Tokens.Colour.bg.cgColor, in: ctx)
+                let g = style.grass
+                if style.selected { selectionRing(at: c, radius: r * 0.42 + r * 0.6, width: r * 0.14, grass: g, in: ctx) }
+                disc(at: c, radius: r * 0.42, fill: Tokens.Colour.ball.cgColor, grass: g, in: ctx)
+                ring(at: c, radius: r * 0.42, width: max(r * 0.14, style.minimumOutline), colour: Tokens.Colour.bg.cgColor,
+                     grass: g, in: ctx)
             case .cone, .marker:
-                if style.selected { selectionRing(at: c, radius: r * 1.1, width: r * 0.14, in: ctx) }
+                if style.selected { selectionRing(at: c, radius: r * 1.1, width: r * 0.14, grass: style.grass, in: ctx) }
                 let h = r * 0.95
                 let cone = CGMutablePath()
                 cone.move(to: CGPoint(x: c.x, y: c.y - h * 0.75))
                 cone.addLine(to: CGPoint(x: c.x + h * 0.6, y: c.y + h * 0.5))
                 cone.addLine(to: CGPoint(x: c.x - h * 0.6, y: c.y + h * 0.5))
                 cone.closeSubpath()
+                if let g = style.grass {
+                    ctx.addPath(g.project(cone))
+                    ctx.setFillColor(Tokens.Colour.dribble.cgColor)
+                    ctx.fillPath()
+                    ctx.addPath(g.project(cone.copy(strokingWithWidth: r * 0.12, lineCap: .butt, lineJoin: .round, miterLimit: 10)))
+                    ctx.setFillColor(Tokens.Colour.bg.cgColor)
+                    ctx.fillPath()
+                    break
+                }
                 ctx.addPath(cone)
                 ctx.setFillColor(Tokens.Colour.dribble.cgColor)
                 ctx.setStrokeColor(Tokens.Colour.bg.cgColor)
@@ -66,30 +81,33 @@ enum TokenDrawing {
 
     private static func player(_ token: Token, at c: CGPoint, kit: Tokens.Kit?, radius r: CGFloat, style: Style, in ctx: CGContext) {
         let kit = kit ?? Tokens.kit(token.side == .away ? .coral : .lime)
+        let g = style.grass
         if style.selected {
             if style.lift {
                 ctx.setShadow(offset: CGSize(width: 0, height: r * 0.25), blur: r * 0.6, color: RGBA(0x000000, alpha: 0.5).cgColor)
             }
-            selectionRing(at: c, radius: r * 1.45, width: r * 0.14, in: ctx)
+            selectionRing(at: c, radius: r * 1.45, width: r * 0.14, grass: g, in: ctx)
             ctx.setShadow(offset: .zero, blur: 0, color: nil)
         }
         // The outermost edge so far, for D-67's dark outline just beyond it.
         var edge: CGFloat
         if token.side == .away {
-            disc(at: c, radius: r * 0.9, fill: Tokens.Colour.awayInner.cgColor, in: ctx)
-            ring(at: c, radius: r * 0.9, width: r * 0.24, colour: kit.fill.cgColor, in: ctx)
+            disc(at: c, radius: r * 0.9, fill: Tokens.Colour.awayInner.cgColor, grass: g, in: ctx)
+            ring(at: c, radius: r * 0.9, width: r * 0.24, colour: kit.fill.cgColor, grass: g, in: ctx)
             edge = r * 1.02
             if let outline = kit.outline {
-                ring(at: c, radius: r * 1.06, width: r * 0.08, colour: outline.cgColor, in: ctx)
+                ring(at: c, radius: r * 1.06, width: r * 0.08, colour: outline.cgColor, grass: g, in: ctx)
                 edge = r * 1.1
             }
         } else {
-            disc(at: c, radius: r, fill: kit.fill.cgColor, in: ctx)
-            if let outline = kit.outline { ring(at: c, radius: r - r * 0.05, width: r * 0.1, colour: outline.cgColor, in: ctx) }
+            disc(at: c, radius: r, fill: kit.fill.cgColor, grass: g, in: ctx)
+            if let outline = kit.outline {
+                ring(at: c, radius: r - r * 0.05, width: r * 0.1, colour: outline.cgColor, grass: g, in: ctx)
+            }
             edge = r
         }
         let width = max(r * outlineWidth, style.minimumOutline)
-        ring(at: c, radius: edge + width / 2, width: width, colour: Tokens.Colour.discOutline.cgColor, in: ctx)
+        ring(at: c, radius: edge + width / 2, width: width, colour: Tokens.Colour.discOutline.cgColor, grass: g, in: ctx)
     }
 
     /// Runs `draw` at `opacity` as one layer, so overlapping parts of the token don't show through each other.
@@ -104,20 +122,37 @@ enum TokenDrawing {
         if opacity < 1 { ctx.endTransparencyLayer() }
     }
 
-    private static func disc(at c: CGPoint, radius r: CGFloat, fill: CGColor, in ctx: CGContext) {
+    private static func disc(at c: CGPoint, radius r: CGFloat, fill: CGColor, grass: BroadcastCamera? = nil,
+                             in ctx: CGContext) {
+        let box = CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r)
         ctx.setFillColor(fill)
-        ctx.fillEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r))
+        guard let grass else {
+            ctx.fillEllipse(in: box)
+            return
+        }
+        ctx.addPath(grass.project(CGPath(ellipseIn: box, transform: nil)))
+        ctx.fillPath()
     }
 
-    private static func ring(at c: CGPoint, radius r: CGFloat, width: CGFloat, colour: CGColor, in ctx: CGContext) {
-        ctx.setStrokeColor(colour)
-        ctx.setLineWidth(width)
-        ctx.strokeEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r))
+    private static func ring(at c: CGPoint, radius r: CGFloat, width: CGFloat, colour: CGColor,
+                             grass: BroadcastCamera? = nil, in ctx: CGContext) {
+        let box = CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r)
+        guard let grass else {
+            ctx.setStrokeColor(colour)
+            ctx.setLineWidth(width)
+            ctx.strokeEllipse(in: box)
+            return
+        }
+        ctx.addPath(grass.project(CGPath(ellipseIn: box, transform: nil)
+            .copy(strokingWithWidth: width, lineCap: .butt, lineJoin: .miter, miterLimit: 10)))
+        ctx.setFillColor(colour)
+        ctx.fillPath()
     }
 
     /// White chalk, so it shows on every kit, including the lime home side (UI-BRIEF §1).
-    private static func selectionRing(at c: CGPoint, radius: CGFloat, width: CGFloat, in ctx: CGContext) {
-        ring(at: c, radius: radius, width: width, colour: Tokens.Colour.text.cgColor, in: ctx)
+    private static func selectionRing(at c: CGPoint, radius: CGFloat, width: CGFloat, grass: BroadcastCamera? = nil,
+                                      in ctx: CGContext) {
+        ring(at: c, radius: radius, width: width, colour: Tokens.Colour.text.cgColor, grass: grass, in: ctx)
     }
 
     /// Centred on the disc, baseline at `y + 0.36 r` as in the mockup. Expects a y-down context.

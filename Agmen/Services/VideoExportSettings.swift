@@ -32,11 +32,14 @@ struct VideoExportSettings: Sendable, Equatable {
     var showsTitle: Bool
     /// The current step's note, handwritten (UI-BRIEF §4.6 "Step notes").
     var showsNotes: Bool
+    /// Flat, or the tilted broadcast camera following the ball (BR-2).
+    var camera: BoardCamera
 
-    init(format: VideoFormat = .vertical, showsTitle: Bool = true, showsNotes: Bool = true) {
+    init(format: VideoFormat = .vertical, showsTitle: Bool = true, showsNotes: Bool = true, camera: BoardCamera = .flat) {
         self.format = format
         self.showsTitle = showsTitle
         self.showsNotes = showsNotes
+        self.camera = camera
     }
 
     /// D-11: at most 8 MB (8,000,000 bytes) per 15 s at 1080 × 1920. Other sizes get the same bytes per pixel, so 1:1

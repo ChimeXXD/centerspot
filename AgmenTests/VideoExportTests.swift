@@ -31,9 +31,10 @@ struct VideoExportTests {
     /// CLAUDE.md rule 8: the exporter's configuration has no Reduce Motion input, so the setting can't change a video.
     /// Compile-level: the initialiser below names every input; a new stored property must also appear in the list.
     @Test func theSettingsHaveNoReduceMotionInput() {
-        let settings = VideoExportSettings(format: .vertical, showsTitle: true, showsNotes: true)
+        let settings = VideoExportSettings(format: .vertical, showsTitle: true, showsNotes: true, camera: .broadcast)
         let stored = Mirror(reflecting: settings).children.compactMap(\.label)
-        #expect(stored == ["format", "showsTitle", "showsNotes"])
+        // `camera` (BR-2) is the user's Flat or Broadcast pick; Reduce Motion never sets it (D-76).
+        #expect(stored == ["format", "showsTitle", "showsNotes", "camera"])
         #expect(!stored.contains { $0.lowercased().contains("motion") || $0.lowercased().contains("reduce") })
     }
 

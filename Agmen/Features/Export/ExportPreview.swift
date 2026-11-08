@@ -30,7 +30,8 @@ struct ExportPreview: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .frame(width: Self.box.width, height: Self.box.height)
         .accessibilityElement()
-        .accessibilityLabel("Preview, \(model.preset.title)")
+        .accessibilityLabel(model.preset.video != nil && model.camera == .broadcast
+                            ? "Preview, \(model.preset.title), broadcast camera" : "Preview, \(model.preset.title)")
         .accessibilityIdentifier("export.preview")
     }
 
@@ -101,10 +102,11 @@ private final class FrameCache {
     private var card: LineupCard?
 
     func frame(_ model: ExportModel, canvas: ExportCanvas) -> ExportFrame {
-        let key = "\(canvas)|\(model.showsTitle)|\(model.showsNotes)"
+        let camera = model.preset.video == nil ? BoardCamera.flat : model.camera
+        let key = "\(canvas)|\(model.showsTitle)|\(model.showsNotes)|\(camera)"
         if key == self.key, let cached { return cached }
         let made = ExportFrame(tactic: model.tactic, canvas: canvas, showsTitle: model.showsTitle,
-                               showsNotes: model.showsNotes)
+                               showsNotes: model.showsNotes, camera: camera)
         self.key = key
         cached = made
         return made

@@ -78,8 +78,13 @@ final class BroadcastUITests: XCTestCase {
         A.element(app, "toolbar.export").tap()
         XCTAssertTrue(A.element(app, "export.start").waitForExistence(timeout: A.timeout))
         XCTAssertFalse(A.element(app, "export.spotlight").exists)
+        // BR-2: the Camera row, on the remembered Broadcast; images stay flat, so it goes for Image.
+        XCTAssertTrue(A.element(app, "export.camera.broadcast").isSelected)
+        XCTAssertFalse(A.element(app, "export.camera.flat").isSelected)
         sleep(1)
         A.save("export--broadcast", in: self)
+        A.element(app, "export.preset.image").tap()
+        XCTAssertTrue(A.element(app, "export.camera.broadcast").waitForNonExistence(timeout: A.timeout))
     }
 
     /// Zone: tap selects step 4's zone (handles, "Zone 1 · step 4", Remove); Remove takes it off; a drag draws a new one.

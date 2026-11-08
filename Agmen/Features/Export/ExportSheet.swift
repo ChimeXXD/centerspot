@@ -28,7 +28,9 @@ struct ExportSheet: View {
                     side
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                if model.phase == .choosing, model.preset.video == nil { extras.padding(.top, Tokens.Space.s4) }
+                if model.phase == .choosing {
+                    if model.preset.video == nil { extras.padding(.top, Tokens.Space.s4) } else { cameraRow.padding(.top, Tokens.Space.s3) }
+                }
                 footer
                     .padding(.top, Tokens.Space.s5)
             }
@@ -116,6 +118,22 @@ struct ExportSheet: View {
             .init(value: ExportModel.ImageKind.step, title: "Step \(model.stepIndex + 1)", identifier: "export.image.step"),
             .init(value: .lineup, title: "Lineup card", identifier: "export.image.lineup"),
         ], selection: $model.imageKind)
+    }
+
+    /// Videos (mockup export--broadcast): "Camera" with Flat or Broadcast, the same remembered choice as Play's switch.
+    private var cameraRow: some View {
+        HStack(spacing: Tokens.Space.s4) {
+            Text("Camera")
+                .font(Tokens.Typeface.headline)
+                .foregroundStyle(Tokens.Colour.text.color)
+                .accessibilityIdentifier("export.camera-label")
+            Spacer(minLength: 0)
+            CapsuleSegments(options: [
+                .init(value: BoardCamera.flat, title: "Flat", identifier: "export.camera.flat"),
+                .init(value: .broadcast, title: "Broadcast", identifier: "export.camera.broadcast"),
+            ], selection: $model.camera)
+            .frame(maxWidth: 220)
+        }
     }
 
     // MARK: Footer

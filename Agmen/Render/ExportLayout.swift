@@ -29,7 +29,22 @@ struct ExportLayout: Sendable, Equatable {
     /// The pitch inside `board`, as `BoardRenderer` will draw it.
     func pitch(_ kind: Pitch.Kind) -> CGRect { BoardGeometry(kind: kind, fitting: board).pitchRect }
 
-    static func make(_ canvas: ExportCanvas, kind: Pitch.Kind, showsTitle: Bool, showsNote: Bool) -> ExportLayout {
+    /// - Parameter broadcast: the board is the broadcast camera's view (BR-2, the mockup's export frames): edge to edge
+    ///   under the text band on 9:16 and 1:1, the whole frame on 16:9, with the text and mark drawn over it. The text
+    ///   and mark keep their places.
+    static func make(_ canvas: ExportCanvas, kind: Pitch.Kind, showsTitle: Bool, showsNote: Bool,
+                     broadcast: Bool = false) -> ExportLayout {
+        var layout = make(canvas, kind: kind, showsTitle: showsTitle, showsNote: showsNote)
+        guard broadcast else { return layout }
+        if case .wide = canvas {
+            layout.board = CGRect(origin: .zero, size: layout.canvas)
+        } else {
+            layout.board = CGRect(x: 0, y: layout.board.minY, width: layout.canvas.width, height: layout.board.height)
+        }
+        return layout
+    }
+
+    private static func make(_ canvas: ExportCanvas, kind: Pitch.Kind, showsTitle: Bool, showsNote: Bool) -> ExportLayout {
         let aspect = CGFloat(kind.size.length / kind.size.width)
         switch canvas {
         case .vertical: return portrait(width: 1080, fixedHeight: true, aspect: aspect, title: showsTitle, note: showsNote)

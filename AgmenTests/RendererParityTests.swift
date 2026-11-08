@@ -38,8 +38,8 @@ struct RendererParityTests {
     }
 
     /// The board view as the screen lays it out, on the screen's background, rendered by SwiftUI.
-    static func screen(_ tactic: Tactic, _ state: BoardState) throws -> CGImage {
-        let view = BoardCanvas(tactic: tactic, state: state, selection: nil,
+    static func screen(_ tactic: Tactic, _ state: BoardState, broadcast: Point? = nil) throws -> CGImage {
+        let view = BoardCanvas(tactic: tactic, state: state, selection: nil, broadcast: broadcast,
                                onTap: { _ in }, onDoubleTap: { _ in }, onDrag: { _, _ in }, onDragEnd: { _, _ in },
                                onNudge: { _, _ in })
             .frame(width: size.width, height: size.height)
@@ -50,8 +50,9 @@ struct RendererParityTests {
         return try #require(renderer.cgImage)
     }
 
-    static func export(_ tactic: Tactic, _ state: BoardState) throws -> CGImage {
-        try #require(BoardRenderer.image(state: state, tactic: tactic, size: size, scale: scale))
+    static func export(_ tactic: Tactic, _ state: BoardState, broadcast: Point? = nil) throws -> CGImage {
+        try #require(BoardRenderer.image(state: state, tactic: tactic, size: size, scale: scale,
+                                         options: .init(broadcast: broadcast)))
     }
 
     /// Both images redrawn into the same sRGB RGBA8 buffer layout, then compared channel by channel.
@@ -110,6 +111,18 @@ struct RendererParityTests {
         #expect(state.marks.count == 4, "step 4's marks are on screen at \(t)")
         let result = try Self.compare(Self.screen(hero, state), Self.export(hero, state))
         #expect(result.passes, "t = \(t): \(result)")
+    }
+
+    /// BR-2: playback through the broadcast camera and the exported frame agree, at the same `t` and the camera's
+    /// target from `CameraTrack` (the screen and the video both come through `BoardRenderer`).
+    @Test(arguments: [0.9, 3.9, 5.5])
+    func theBroadcastCameraMatches(t: Double) throws {
+        let hero = try Fixtures.tactic("overlap-left")
+        let state = Timeline.state(at: t, in: hero), target = CameraTrack(tactic: hero).target(at: t)
+        let result = try Self.compare(Self.screen(hero, state, broadcast: target), Self.export(hero, state, broadcast: target))
+        #expect(result.passes, "t = \(t): \(result)")
+        let flat = try Self.compare(Self.screen(hero, state, broadcast: target), Self.export(hero, state))
+        #expect(!flat.passes, "not blind to the camera: \(flat)")
     }
 
     /// Not blind to marks: the export without step 4's heat fails against the screen with it.

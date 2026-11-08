@@ -51,6 +51,10 @@ final class ExportModel {
     var showsTitle = true
     var showsNotes = true
     var imageKind = ImageKind.step
+    /// Videos only; images stay flat. Shared with playback's switch and remembered (D-76).
+    var camera = BoardCamera(rawValue: UserDefaults.standard.string(forKey: BoardCamera.storageKey) ?? "") ?? .default {
+        didSet { UserDefaults.standard.set(camera.rawValue, forKey: BoardCamera.storageKey) }
+    }
     private(set) var phase = Phase.choosing
     private(set) var photos = PhotosState.idle
     /// The sheet closed while Photos was still saving: the file goes once the save is done, not mid-save.
@@ -65,7 +69,7 @@ final class ExportModel {
     }
 
     var settings: VideoExportSettings {
-        VideoExportSettings(format: preset.video ?? .vertical, showsTitle: showsTitle, showsNotes: showsNotes)
+        VideoExportSettings(format: preset.video ?? .vertical, showsTitle: showsTitle, showsNotes: showsNotes, camera: camera)
     }
 
     var duration: Double { tactic.phases.first.map(Timeline.duration(of:)) ?? 0 }

@@ -32,10 +32,9 @@ extension BoardRenderer {
             centres[token.id].map { (token, $0, kit(for: token, in: tactic), style(of: token, options)) }
         }
         for (token, c, kit, style) in tokens {
-            ctx.saveGState()
-            ctx.concatenate(camera.local(at: c))
-            TokenDrawing.drawBody(token, at: c, kit: kit, radius: g.tokenRadius, style: style, in: ctx)
-            ctx.restoreGState()
+            var flat = style
+            flat.grass = camera
+            TokenDrawing.drawBody(token, at: c, kit: kit, radius: g.tokenRadius, style: flat, in: ctx)
         }
         for (token, c, kit, style) in tokens {
             TokenDrawing.drawNumber(token, at: camera.project(c), kit: kit, radius: g.tokenRadius * camera.depthScale(at: c),

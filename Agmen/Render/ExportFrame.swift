@@ -11,11 +11,15 @@ final class ExportFrame {
 
     let tactic: Tactic
     let layout: ExportLayout
+    /// Where the broadcast camera looks (BR-2); nil for the flat board.
+    private let track: CameraTrack?
     private var texts: [String: CTFrame] = [:]
 
-    init(tactic: Tactic, canvas: ExportCanvas, showsTitle: Bool, showsNotes: Bool) {
+    init(tactic: Tactic, canvas: ExportCanvas, showsTitle: Bool, showsNotes: Bool, camera: BoardCamera = .flat) {
         self.tactic = tactic
-        self.layout = ExportLayout.make(canvas, kind: tactic.pitch.kind, showsTitle: showsTitle, showsNote: showsNotes)
+        self.layout = ExportLayout.make(canvas, kind: tactic.pitch.kind, showsTitle: showsTitle, showsNote: showsNotes,
+                                        broadcast: camera == .broadcast)
+        track = camera == .broadcast ? CameraTrack(tactic: tactic) : nil
     }
 
     /// The move's length on the timeline (phase 0).
@@ -23,20 +27,28 @@ final class ExportFrame {
 
     /// The frame at timeline instant `t`.
     func draw(at t: Double, in ctx: CGContext) {
-        draw(state: Timeline.state(at: t, in: tactic), in: ctx)
+        draw(state: Timeline.state(at: t, in: tactic), target: track?.target(at: t), in: ctx)
     }
 
-    /// The frame for `state` in a y-down context whose units are the canvas's pixels.
+    /// The frame for `state` in a y-down context whose units are the canvas's pixels. Through the broadcast camera it
+    /// looks where it does when that step is at rest.
     func draw(state: BoardState, in ctx: CGContext) {
+        let rest = tactic.phases.first.map { PlaybackTrack.restTimes(of: $0) }?.dropFirst(state.stepIndex).first ?? 0
+        draw(state: state, target: track?.target(at: rest), in: ctx)
+    }
+
+    /// The flat board sits clear of the text; a broadcast board runs under it, so it goes first and the text on top.
+    private func draw(state: BoardState, target: Point?, in ctx: CGContext) {
         ctx.setFillColor(Tokens.Colour.bg.cgColor)
         ctx.fill(CGRect(origin: .zero, size: layout.canvas))
+        if target != nil { BoardRenderer.draw(state: state, tactic: tactic, in: ctx, rect: layout.board, options: .init(broadcast: target)) }
         if let box = layout.title { text(tactic.title, face: .title, colour: Tokens.Colour.text, in: box, ctx: ctx) }
         let steps = tactic.phases.first?.steps ?? []
         if let box = layout.note, steps.indices.contains(state.stepIndex),
            let note = steps[state.stepIndex].note, !note.isEmpty {
             text(note, face: .note, colour: Tokens.Colour.text, in: box, ctx: ctx)
         }
-        BoardRenderer.draw(state: state, tactic: tactic, in: ctx, rect: layout.board)
+        if target == nil { BoardRenderer.draw(state: state, tactic: tactic, in: ctx, rect: layout.board) }
         text(Self.mark, face: .mark, colour: Tokens.Colour.muted, in: layout.mark, ctx: ctx, alignment: .right)
     }
 
