@@ -24,8 +24,9 @@ enum ArrowDrawing {
     /// - Parameters:
     ///   - tokenCentres: where tokens are drawn, so the arrow can stop short of one at its end.
     ///   - minimumScale: the smallest scale its sizes may take (library cards keep 0.55, D-74).
+    ///   - camera: the broadcast camera (BR-2): `g` is then its plane, and the arrow lies on the grass.
     static func draw(_ arrow: Arrow, opacity: CGFloat, geometry g: BoardGeometry, tokenCentres: [CGPoint],
-                     minimumScale: CGFloat = 0, in ctx: CGContext) {
+                     minimumScale: CGFloat = 0, in ctx: CGContext, camera: BroadcastCamera? = nil) {
         var points = arrow.points.map(g.point)
         guard points.count >= 2, opacity > 0 else { return }
         let k = max(g.scale, minimumScale), r = g.tokenRadius
@@ -38,7 +39,7 @@ enum ArrowDrawing {
         ctx.saveGState()
         defer { ctx.restoreGState() }
         ctx.setAlpha(opacity)
-        ctx.setStrokeColor(colour(for: arrow.kind).cgColor)
+        let ink = colour(for: arrow.kind).cgColor
         ctx.setLineWidth(lineWidth * k)
         ctx.setLineCap(.round)
         ctx.setLineJoin(.round)
@@ -51,7 +52,7 @@ enum ArrowDrawing {
                 let tip = CGPoint(x: end.x - cos(angle) * gap * CGFloat(i), y: end.y - sin(angle) * gap * CGFloat(i))
                 ctx.addPath(head(at: tip, angle: angle, length: 8 * k, spread: 0.75))
             }
-            ctx.strokePath()
+            ctx.strokePath(ink, camera: camera)
             return
         case .dribble:
             ctx.addPath(zigzag(points, scale: k))
@@ -62,10 +63,10 @@ enum ArrowDrawing {
         }
         ctx.saveGState()
         if arrow.kind == .pass { ctx.setLineDash(phase: 0, lengths: passDash.map { $0 * k }) }
-        ctx.strokePath()
+        ctx.strokePath(ink, camera: camera)
         ctx.restoreGState()
         ctx.addPath(head(at: end, angle: angle, length: headLength * k, spread: headAngle))
-        ctx.strokePath()
+        ctx.strokePath(ink, camera: camera)
     }
 
     /// If any token is drawn within 1.2 radii of the end, pull the end back along the line by up to 1.35 radii.

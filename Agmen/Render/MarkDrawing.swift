@@ -27,6 +27,8 @@ enum MarkDrawing {
         let centres: [String: CGPoint]
         /// The thinnest a mark's line may get (library cards keep 1.2 pt, D-74).
         var minimumLine: CGFloat = 0
+        /// The broadcast camera (BR-2): `geometry` is then its plane, and every mark lies on the grass through it.
+        var camera: BroadcastCamera?
 
         /// A line `width` points wide at the 345 pt pitch, scaled to this one.
         func width(_ width: CGFloat) -> CGFloat { max(width * geometry.scale, minimumLine) }
@@ -39,12 +41,12 @@ enum MarkDrawing {
         ctx.saveGState()
         defer { ctx.restoreGState() }
         ctx.addPath(CGPath(roundedRect: g.pitchRect, cornerWidth: corner, cornerHeight: corner, transform: nil))
-        ctx.clip()
+        ctx.clip(camera: scene.camera)
 
         for mark in marks { if case .zone(let zone) = mark.shape { draw(zone, opacity: mark.opacity, scene: scene, ctx: ctx) } }
         for mark in marks {
             if case .glow(let glow) = mark.shape, case let .spot(centre, radius) = glow.target {
-                heat(at: centre, radius: radius, opacity: mark.opacity, g: g, ctx: ctx)
+                heat(at: centre, radius: radius, opacity: mark.opacity, g: g, camera: scene.camera, ctx: ctx)
             }
         }
         for mark in marks { if case .line(let line) = mark.shape { draw(line.tokens, opacity: mark.opacity, scene: scene, ctx: ctx) } }
@@ -53,6 +55,8 @@ enum MarkDrawing {
                 rings(under: id, opacity: mark.opacity, scene: scene, ctx: ctx)
             }
         }
+        // Draw mode only: the editor never looks through the camera.
+        guard scene.camera == nil else { return }
         if !pendingLine.isEmpty { pending(pendingLine, scene: scene, ctx: ctx) }
         for mark in marks where mark.id == selected {
             if case .zone(let zone) = mark.shape { handles(zone, g: g, ctx: ctx) }
@@ -75,15 +79,15 @@ enum MarkDrawing {
         let kit = Tokens.kit(zone.colour).fill, box = rect(of: zone, g: scene.geometry)
         ctx.saveGState()
         ctx.setAlpha(CGFloat(opacity))
-        ctx.setFillColor(kit.opacity(Tokens.Colour.zoneFill.alpha).cgColor)
-        ctx.fill(box)
-        ctx.setStrokeColor(kit.opacity(Tokens.Colour.zoneStroke.alpha).cgColor)
+        ctx.fill(box, kit.opacity(Tokens.Colour.zoneFill.alpha).cgColor, camera: scene.camera)
         ctx.setLineWidth(scene.width(zoneLineWidth))
-        ctx.stroke(box)
+        ctx.stroke(box, kit.opacity(Tokens.Colour.zoneStroke.alpha).cgColor, camera: scene.camera)
         ctx.restoreGState()
     }
 
-    private static func heat(at centre: Point, radius: Double, opacity: Double, g: BoardGeometry, ctx: CGContext) {
+    /// Through the camera the glow is drawn in the projection's shape at its centre (a soft glow; close enough).
+    private static func heat(at centre: Point, radius: Double, opacity: Double, g: BoardGeometry, camera: BroadcastCamera?,
+                             ctx: CGContext) {
         let stops: [(RGBA, Double, CGFloat)] = [(Tokens.Colour.heatCore, 0.7, 0), (Tokens.Colour.heat, 0.55, 0.35), (Tokens.Colour.heat, 0, 1)]
         guard let space = CGColorSpace(name: CGColorSpace.sRGB),
               let gradient = CGGradient(colorsSpace: space, colors: stops.map { $0.0.opacity($0.1).cgColor } as CFArray,
@@ -92,6 +96,7 @@ enum MarkDrawing {
         let c = g.point(centre), rx = CGFloat(radius) * g.pitchRect.width
         ctx.saveGState()
         ctx.setAlpha(CGFloat(opacity))
+        if let camera { ctx.concatenate(camera.local(at: c)) }
         ctx.translateBy(x: c.x, y: c.y)
         ctx.scaleBy(x: 1, y: heatSquash)
         ctx.drawRadialGradient(gradient, startCenter: .zero, startRadius: 0, endCenter: .zero, endRadius: rx, options: [])
@@ -103,12 +108,11 @@ enum MarkDrawing {
         guard corners.count >= ShapeLine.minTokens, let first = tokens.first, let kit = kitColour(of: first, in: scene.tactic) else { return }
         ctx.saveGState()
         ctx.setAlpha(CGFloat(opacity) * lineOpacity)
-        ctx.setStrokeColor(kit.cgColor)
         ctx.setLineWidth(scene.width(lineWidth))
         ctx.setLineCap(.round)
         ctx.setLineJoin(.round)
         ctx.addLines(between: corners)
-        ctx.strokePath()
+        ctx.strokePath(kit.cgColor, camera: scene.camera)
         ctx.restoreGState()
     }
 
@@ -118,13 +122,13 @@ enum MarkDrawing {
         ctx.saveGState()
         ctx.setAlpha(CGFloat(opacity))
         let tint = r * rings[0].radius
-        ctx.setFillColor(kit.opacity(Tokens.Colour.glowFillOpacity).cgColor)
-        ctx.fillEllipse(in: CGRect(x: c.x - tint, y: c.y - tint, width: 2 * tint, height: 2 * tint))
+        ctx.fillEllipse(in: CGRect(x: c.x - tint, y: c.y - tint, width: 2 * tint, height: 2 * tint),
+                        kit.opacity(Tokens.Colour.glowFillOpacity).cgColor, camera: scene.camera)
         ctx.setLineWidth(scene.width(ringWidth))
         for ring in rings {
             let rr = r * ring.radius
-            ctx.setStrokeColor(kit.opacity(Double(ring.opacity)).cgColor)
-            ctx.strokeEllipse(in: CGRect(x: c.x - rr, y: c.y - rr, width: 2 * rr, height: 2 * rr))
+            ctx.strokeEllipse(in: CGRect(x: c.x - rr, y: c.y - rr, width: 2 * rr, height: 2 * rr),
+                              kit.opacity(Double(ring.opacity)).cgColor, camera: scene.camera)
         }
         ctx.restoreGState()
     }

@@ -11,28 +11,30 @@ enum PitchDrawing {
     /// The pitch's corner radius at 345 pt.
     static let cornerRadius: CGFloat = 6
 
-    /// - Parameter minimumLine: the thinnest a marking may get (library cards keep 0.75 pt, D-74).
-    static func draw(_ pitch: Pitch, geometry g: BoardGeometry, minimumLine: CGFloat = 0, in ctx: CGContext) {
+    /// - Parameters:
+    ///   - minimumLine: the thinnest a marking may get (library cards keep 0.75 pt, D-74).
+    ///   - camera: the broadcast camera (BR-2): `g` is then its plane, and the pitch is drawn through it.
+    static func draw(_ pitch: Pitch, geometry g: BoardGeometry, minimumLine: CGFloat = 0, in ctx: CGContext,
+                     camera: BroadcastCamera? = nil) {
         let rect = g.pitchRect
         let corner = cornerRadius * g.scale
         ctx.saveGState()
         ctx.addPath(CGPath(roundedRect: rect, cornerWidth: corner, cornerHeight: corner, transform: nil))
-        ctx.clip()
+        ctx.clip(camera: camera)
 
-        ctx.setFillColor(Tokens.Colour.bcPitchA.cgColor)
-        ctx.fill(rect)
+        ctx.fill(rect, Tokens.Colour.bcPitchA.cgColor, camera: camera)
         if pitch.style == .stripes {
             let h = rect.height / CGFloat(stripeCount)
-            ctx.setFillColor(Tokens.Colour.bcPitchB.cgColor)
             for i in stride(from: 1, to: stripeCount, by: 2) {
-                ctx.fill(CGRect(x: rect.minX, y: rect.minY + CGFloat(i) * h, width: rect.width, height: h))
+                ctx.fill(CGRect(x: rect.minX, y: rect.minY + CGFloat(i) * h, width: rect.width, height: h),
+                         Tokens.Colour.bcPitchB.cgColor, camera: camera)
             }
         }
-        drawMarkings(geometry: g, width: max(lineWidth * g.scale, minimumLine), in: ctx)
+        drawMarkings(geometry: g, width: max(lineWidth * g.scale, minimumLine), in: ctx, camera: camera)
         ctx.restoreGState()
     }
 
-    private static func drawMarkings(geometry g: BoardGeometry, width w: CGFloat, in ctx: CGContext) {
+    private static func drawMarkings(geometry g: BoardGeometry, width w: CGFloat, in ctx: CGContext, camera: BroadcastCamera?) {
         let (sx, sy) = g.metreScale
         let chalk = Tokens.Colour.bcLine.cgColor
         let lines = CGMutablePath()
@@ -63,17 +65,15 @@ enum PitchDrawing {
             lines.addPath(arc)
         }
 
-        ctx.setStrokeColor(chalk)
         ctx.setLineWidth(w)
         ctx.setLineCap(.round)
         ctx.setLineJoin(.round)
         ctx.addPath(lines)
-        ctx.strokePath()
+        ctx.strokePath(chalk, camera: camera)
 
-        ctx.setFillColor(chalk)
         for spot in spots {
             let r = 1.4 * w
-            ctx.fillEllipse(in: CGRect(x: spot.x - r, y: spot.y - r, width: 2 * r, height: 2 * r))
+            ctx.fillEllipse(in: CGRect(x: spot.x - r, y: spot.y - r, width: 2 * r, height: 2 * r), chalk, camera: camera)
         }
     }
 

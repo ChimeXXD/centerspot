@@ -19,9 +19,12 @@ enum BoardRenderer {
         var pendingLine: [String] = []
         /// A library card (D-74): the pitch turned sideways, bigger discs, numbers only when legible.
         var card: CardStyle?
+        /// Playback and export through the tilted broadcast camera (D-66, BR-2), looking at this point on the pitch
+        /// (`CameraTrack`). Nil draws the flat board.
+        var broadcast: Point?
 
         init(selection: String? = nil, dimsUnselected: Bool = false, showsLift: Bool = false, fillsBackground: Bool = false,
-             selectedMark: String? = nil, pendingLine: [String] = [], card: CardStyle? = nil) {
+             selectedMark: String? = nil, pendingLine: [String] = [], card: CardStyle? = nil, broadcast: Point? = nil) {
             self.selection = selection
             self.dimsUnselected = dimsUnselected
             self.showsLift = showsLift
@@ -29,6 +32,7 @@ enum BoardRenderer {
             self.selectedMark = selectedMark
             self.pendingLine = pendingLine
             self.card = card
+            self.broadcast = broadcast
         }
     }
 
@@ -39,6 +43,10 @@ enum BoardRenderer {
     /// A library card (`options.card`, D-74) turns the grass, marks and arrows a quarter clockwise; the discs are then
     /// drawn where the turn puts them, so numbers stay upright and the ball stays at its carrier's lower right.
     static func draw(state: BoardState, tactic: Tactic, in ctx: CGContext, rect: CGRect, options: Options = .init()) {
+        if let target = options.broadcast, options.card == nil {
+            drawBroadcast(state: state, tactic: tactic, in: ctx, rect: rect, target: target, options: options)
+            return
+        }
         let card = options.card
         let g = card?.geometry(kind: tactic.pitch.kind, in: rect) ?? BoardGeometry(kind: tactic.pitch.kind, fitting: rect)
         let turn = card?.sideways == true ? CardStyle.sidewaysTransform(into: rect) : .identity
@@ -91,7 +99,7 @@ enum BoardRenderer {
         return result
     }
 
-    private static func style(of token: Token, _ options: Options) -> TokenDrawing.Style {
+    static func style(of token: Token, _ options: Options) -> TokenDrawing.Style {
         let selected = options.selection == token.id
         var style = TokenDrawing.Style()
         style.selected = selected
