@@ -712,7 +712,7 @@
         "focused",
         "invalid"
       ],
-      "effect": "edit number (number pad, 0\u201399)",
+      "effect": "edit number (number pad, 0–99)",
       "duration_ms": 0,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -816,7 +816,7 @@
         "default",
         "pressed"
       ],
-      "effect": "step duration 0.3\u20135 s in 0.1 s steps",
+      "effect": "step duration 0.3–5 s in 0.1 s steps",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -947,7 +947,7 @@
         "default",
         "selected"
       ],
-      "effect": "playback speed 0.5\u00d7",
+      "effect": "playback speed 0.5×",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -960,7 +960,7 @@
         "default",
         "selected"
       ],
-      "effect": "playback speed 1\u00d7",
+      "effect": "playback speed 1×",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1064,7 +1064,7 @@
         "default",
         "selected"
       ],
-      "effect": "preset 1080 \u00d7 1920",
+      "effect": "preset 1080 × 1920",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1077,7 +1077,7 @@
         "default",
         "selected"
       ],
-      "effect": "preset 1080 \u00d7 1080",
+      "effect": "preset 1080 × 1080",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1090,7 +1090,7 @@
         "default",
         "selected"
       ],
-      "effect": "preset 1920 \u00d7 1080",
+      "effect": "preset 1920 × 1080",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1365,11 +1365,11 @@
         "playing",
         "paused (page off screen)"
       ],
-      "effect": "decorative, VoiceOver reads only \"A pitch with the move playing: a run and a pass\". The real board plays the whole overlap (steps 1 to 5, 6.2 s at 1x, Timeline-driven, arrows fade in and out per FORMAT.md) with a progress bar under it, holds 1.5 s on the last step and loops. Hidden at accessibility text sizes",
+      "effect": "decorative, VoiceOver reads only \"The move playing in the tilted Broadcast camera\". The real board through the broadcast camera (BoardRenderer Options.broadcast, CameraTrack.target(at: t)) plays the whole overlap (steps 1 to 5, Timeline-driven) with a progress bar under it, holds 1.5 s on the last step and loops. Hidden at accessibility text sizes (D-78)",
       "duration_ms": 6200,
       "easing": "linear (Timeline easing per step)",
       "delay_ms": 300,
-      "reduced_motion": "no movement: step-through, each step still for 2 s with 300 ms crossfades; the bar jumps per step"
+      "reduced_motion": "no movement and no panning: the still Broadcast view fitted to the whole move (CameraTrack.span), each step still for 2 s with 300 ms crossfades; the bar jumps per step"
     },
     {
       "element": "onboarding.art.3",
@@ -1378,7 +1378,7 @@
         "playing",
         "paused (page off screen)"
       ],
-      "effect": "decorative, VoiceOver reads only \"A vertical video of the move, with its title at the top\". The same playback as page 2 inside a 9:16 frame drawn like the export (title band in Nunito, step notes in Kalam crossfading per step in 220 ms, \"Agmen\" corner mark), loops after a 1.5 s hold. Hidden at accessibility text sizes",
+      "effect": "decorative, VoiceOver reads only \"A vertical video of the move in the Broadcast camera, with its title at the top\". The 9:16 export frame drawn by ExportFrame with camera .broadcast (title band, step notes in Kalam, \"Agmen\" mark), playing and looping after a 1.5 s hold. Hidden at accessibility text sizes (D-78)",
       "duration_ms": 6200,
       "easing": "linear (Timeline easing per step)",
       "delay_ms": 300,
@@ -1449,7 +1449,7 @@
         "completed",
         "closed"
       ],
-      "effect": "TipKit popover, one TipGroup(.ordered) for all five. A closed or completed tip is invalidated and never shows again (TipKit datastore, survives relaunch); tips never show while playing, drawing or with a sheet open. Anchor: toolbar.play, above it, arrow down. Completed (invalidate .actionPerformed) when Play is pressed; the next tip becomes eligible. The tip never covers its control.",
+      "effect": "TipKit popover, one TipGroup(.ordered) for all five. A closed or completed tip is invalidated and never shows again (TipKit datastore, survives relaunch); tips never show while playing, drawing or with a sheet open. Message names the camera switch (\"Pick Flat or Broadcast at the top\", D-78), which only exists in playback. Anchor: toolbar.play, above it, arrow down. Completed (invalidate .actionPerformed) when Play is pressed; the next tip becomes eligible. The tip never covers its control.",
       "duration_ms": 200,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 400,
@@ -1668,7 +1668,7 @@
         "selected",
         "dragging"
       ],
-      "effect": "tap selects the zone (handles + the 'Zone 1 \u00b7 step 4' row with Remove); drag inside a selected zone moves it, clamped to the pitch (0\u20261)",
+      "effect": "tap selects the zone (handles + the 'Zone 1 · step 4' row with Remove); drag inside a selected zone moves it, clamped to the pitch (0…1)",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1681,7 +1681,7 @@
         "default",
         "dragging"
       ],
-      "effect": "resizes the zone from its top-left corner; the opposite corner stays put; minimum 4% each side; clamped to 0\u20261",
+      "effect": "resizes the zone from its top-left corner; the opposite corner stays put; minimum 4% each side; clamped to 0…1",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1694,7 +1694,7 @@
         "default",
         "dragging"
       ],
-      "effect": "resizes the zone from its top-right corner; the opposite corner stays put; minimum 4% each side; clamped to 0\u20261",
+      "effect": "resizes the zone from its top-right corner; the opposite corner stays put; minimum 4% each side; clamped to 0…1",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1707,7 +1707,7 @@
         "default",
         "dragging"
       ],
-      "effect": "resizes the zone from its bottom-left corner; the opposite corner stays put; minimum 4% each side; clamped to 0\u20261",
+      "effect": "resizes the zone from its bottom-left corner; the opposite corner stays put; minimum 4% each side; clamped to 0…1",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1720,7 +1720,7 @@
         "default",
         "dragging"
       ],
-      "effect": "resizes the zone from its bottom-right corner; the opposite corner stays put; minimum 4% each side; clamped to 0\u20261",
+      "effect": "resizes the zone from its bottom-right corner; the opposite corner stays put; minimum 4% each side; clamped to 0…1",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1813,7 +1813,7 @@
         "default",
         "pressed"
       ],
-      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF \u00a74.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF §4.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1826,7 +1826,7 @@
         "default",
         "pressed"
       ],
-      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF \u00a74.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF §4.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1839,7 +1839,7 @@
         "default",
         "pressed"
       ],
-      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF \u00a74.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF §4.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1852,7 +1852,7 @@
         "default",
         "pressed"
       ],
-      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF \u00a74.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete (UI-BRIEF §4.1); the card draws step 1 at rest with BoardRenderer on the dark pitch, discs and marks",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -1893,7 +1893,7 @@
         "default",
         "dragging"
       ],
-      "effect": "D-72: moves the curve's middle point (the line always passes through the dot); ends stay put; dropping it on the straight line makes the arrow straight; clamped to 0\u20261; one undo step per drag",
+      "effect": "D-72: moves the curve's middle point (the line always passes through the dot); ends stay put; dropping it on the straight line makes the arrow straight; clamped to 0…1; one undo step per drag",
       "duration_ms": 150,
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
@@ -2132,6 +2132,33 @@
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
       "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.more",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "menu open"
+      ],
+      "effect": "opens the library's More menu (SwiftUI Menu) with one item, Show tips again (D-78). VoiceOver: \"More\"",
+      "duration_ms": 200,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "system menu, fade only"
+    },
+    {
+      "element": "library.menu.tips",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "resets the five tips (Tips.resetDatastore or each tip's status back to available) and sets welcomeSeen = false, then shows the welcome from page 1; Start opens the example move with tip.drag (D-78)",
+      "duration_ms": 320,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "crossfade only"
     }
   ]
 }
