@@ -75,11 +75,16 @@ struct LibraryScreen: View {
             HStack(alignment: .bottom, spacing: Tokens.Space.s5) {
                 LaunchTitle()
                 Spacer(minLength: 0)
+                moreMenu
                 newTactic.frame(width: Self.wideNewTacticWidth)
             }
             .padding(.bottom, Tokens.Space.s2)
         } else {
-            LaunchTitle()
+            HStack(alignment: .top, spacing: Tokens.Space.s2) {
+                LaunchTitle()
+                Spacer(minLength: 0)
+                moreMenu
+            }
             newTactic
         }
     }
@@ -89,6 +94,24 @@ struct LibraryScreen: View {
 
     /// The mockup's New tactic beside the title on a wide screen.
     static let wideNewTacticWidth: CGFloat = 240
+
+    /// More (mockup `library--menu`, D-78): Show tips again replays the welcome and brings every tip back.
+    private var moreMenu: some View {
+        Menu {
+            Button("Show tips again", systemImage: "lightbulb") {
+                Task { await Onboarding.shared.showAgain() }
+            }
+            .accessibilityIdentifier("library.menu.tips")
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(Tokens.Typeface.title.weight(.semibold))
+                .foregroundStyle(Tokens.Colour.text.color)
+                .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel("More")
+        .accessibilityIdentifier("library.more")
+    }
 
     private var newTactic: some View {
         Button {

@@ -1,8 +1,23 @@
 #if DEBUG
 import Foundation
+import TipKit
 
 /// Debug-only launch arguments for simulator screenshots and UI tests (Day 3 fidelity check, D-56).
 enum BoardDebugLaunch {
+    /// Before TipKit is configured. `-onboarding YES` starts the onboarding over (the welcome, then every tip);
+    /// `-skipOnboarding YES`, which `-resetLibrary YES` implies, marks the welcome seen and hides the tips, so UI tests
+    /// land on the library with nothing over the controls (D-78).
+    static func onboardingIfAsked() {
+        let defaults = UserDefaults.standard
+        if defaults.bool(forKey: "onboarding") {
+            defaults.set(false, forKey: Onboarding.welcomeSeenKey)
+            try? Tips.resetDatastore()
+        } else if defaults.bool(forKey: "skipOnboarding") || defaults.bool(forKey: "resetLibrary") {
+            defaults.set(true, forKey: Onboarding.welcomeSeenKey)
+            Tips.hideAllTipsForTesting()
+        }
+    }
+
     /// With `-resetLibrary YES`, the library starts empty and the first launch happens again (the example is added).
     static func resetLibraryIfAsked(_ library: TacticLibrary) {
         guard UserDefaults.standard.bool(forKey: "resetLibrary") else { return }
@@ -40,15 +55,8 @@ enum BoardDebugLaunch {
 
     /// With `-openExample YES`, the app opens straight onto the hero move (D-29), adding it if it was deleted.
     @MainActor static func openExampleIfAsked(_ store: LibraryStore) {
-        guard UserDefaults.standard.bool(forKey: "openExample"),
-              let exampleURL = store.library.exampleURL,
-              let example = try? store.library.load(exampleURL)
-        else { return }
-        if let entry = store.entries.first(where: { $0.tactic.id == example.id }) {
-            store.open(entry.url)
-        } else {
-            store.importAndOpen(exampleURL)
-        }
+        guard UserDefaults.standard.bool(forKey: "openExample") else { return }
+        store.openExample()
     }
 }
 #endif

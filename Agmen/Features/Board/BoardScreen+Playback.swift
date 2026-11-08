@@ -9,6 +9,11 @@ extension BoardScreen {
 
     var phaseDuration: Double { tactic.phases.first.map(Timeline.duration(of:)) ?? 0 }
 
+    /// The player the "Move a player" tip points at (D-78): 3 in the example, else the first player.
+    var dragTipToken: String? {
+        tactic.tokens.first { $0.id == "h3" && $0.kind == .player }?.id ?? tactic.tokens.first { $0.kind == .player }?.id
+    }
+
     /// Playing through the broadcast camera: the board fills its space instead of hugging the flat pitch.
     var showsBroadcast: Bool { mode == .playing && camera == .broadcast }
 
@@ -49,6 +54,7 @@ extension BoardScreen {
         next.play(at: now)
         clock = next
         cameraTrack = CameraTrack(tactic: tactic)
+        Onboarding.shared.done(PlayTip())
         scrub = (false, false)  // a scrub cut off without an end (the bar left mid-drag) must not carry over
         toast = nil  // its Undo would edit the tactic mid-playback
         dragPreview = nil

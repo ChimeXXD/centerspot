@@ -19,10 +19,13 @@ struct BoardToolbar: View {
                 .modifier(Off(drawing))
             addMenu.modifier(Off(drawing))
             playButton.modifier(Off(drawing))
+                .agmenTip(drawing ? nil : Onboarding.shared.current(PlayTip.self), arrowEdge: .bottom)
             tool("Draw", symbol: "pencil", identifier: "toolbar.draw", lit: drawing, action: onDraw)
                 .accessibilityAddTraits(drawing ? .isSelected : [])
+                .agmenTip(drawing ? nil : Onboarding.shared.current(DrawTip.self), arrowEdge: .bottom)
             tool("Export", symbol: "film", identifier: "toolbar.export", action: onExport)
                 .modifier(Off(drawing))
+                .agmenTip(drawing ? nil : Onboarding.shared.current(ExportTip.self), arrowEdge: .bottom)
         }
         .frame(maxWidth: itemsWidth)
         .padding(.horizontal, Tokens.Space.s1 + 2)

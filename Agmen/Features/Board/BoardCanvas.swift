@@ -14,6 +14,8 @@ struct BoardCanvas: View {
     var broadcast: Point?
     /// Reduce Motion: the still broadcast view fits this whole area (D-76).
     var broadcastSpan: CameraTrack.Span?
+    /// The token the "Move a player" tip points at while editing (D-78), or nil.
+    var dragTipToken: String?
     /// Dragging, double-tap and VoiceOver nudges move tokens; off while playing and while a finger draws.
     var movesTokens = true
     /// Which touches draw a stroke (SPEC §6), and the kind it draws, for the live line's colour.
@@ -221,5 +223,6 @@ struct BoardCanvas: View {
             }
             .accessibilityAction(named: "Move left") { if movesTokens { onNudge(token.id, Nudge.left.applied(to: point)) } }
             .accessibilityAction(named: "Move right") { if movesTokens { onNudge(token.id, Nudge.right.applied(to: point)) } }
+            .agmenTip(token.id == dragTipToken ? Onboarding.shared.current(DragTip.self) : nil, arrowEdge: .top)
     }
 }

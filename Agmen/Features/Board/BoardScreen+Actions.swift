@@ -19,6 +19,7 @@ extension BoardScreen {
     func endDrag(_ id: String, _ point: Point) {
         let name = tactic.tokens.first { $0.id == id }.map(Self.moveActionName) ?? "Move"
         applyEdit(name) { TacticEdits.moveToken(id, to: point, step: current, in: &$0) }
+        if tactic.tokens.first(where: { $0.id == id })?.kind == .player { Onboarding.shared.done(DragTip()) }
         dragPreview = nil
         selection = id
         showsStepActions = false
@@ -40,6 +41,7 @@ extension BoardScreen {
     // MARK: Steps
 
     func selectStep(_ index: Int) {
+        Onboarding.shared.done(StepTip())
         if index == current {
             // The row under the pitch shows one thing at a time: the step's actions replace the selection.
             withAnimation(Tokens.Motion.ease(Tokens.Motion.select)) {

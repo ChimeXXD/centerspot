@@ -81,6 +81,7 @@ struct StepsList: View {
             .accessibilityHint(hint(isCurrent: index == current))
             .accessibilityAddTraits(index == current ? .isSelected : [])
             .accessibilityIdentifier("steps.row.\(index + 1)")
+            .agmenTip(index == min(1, steps.count - 1) ? Onboarding.shared.current(StepTip.self) : nil, arrowEdge: .trailing)
     }
 
     private func hint(isCurrent: Bool) -> String {

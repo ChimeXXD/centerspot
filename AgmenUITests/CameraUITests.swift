@@ -41,7 +41,7 @@ final class CameraUITests: XCTestCase {
         XCTAssertTrue(A.element(app, "playback.camera.broadcast").isSelected, "remembered within the session")
         A.element(app, "playback.camera.flat").tap()
         app.terminate()
-        app.launchArguments = []
+        app.launchArguments = ["-skipOnboarding", "YES"]
         app.launch()
         openExample(app)
         play(app)

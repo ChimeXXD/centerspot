@@ -2,6 +2,22 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Onboarding in the broadcast look (Sun 8 Nov 2026, evening)
+
+**Changed**
+- Design (D-78, D-79): Chime picked "show off Broadcast", "same 5 tips, Play names Broadcast", "Show tips again in the library menu"; frames in `mockup/screens-onboarding.js`, approved, tag `design-v3`.
+- Welcome (`Features/Onboarding`): three pages over the library on first launch (`WelcomeCover`, `welcomeSeen`); the pictures are the real example move from `BoardRenderer` (page 1 flat with step chips, page 2 Broadcast with the scrubber's segments, page 3 the 9:16 `ExportFrame` in Broadcast), looping, paused off screen; Reduce Motion rests each step with crossfades and the still camera; at AX sizes the pictures step aside and the words scroll. Skip → library; Start → the example move (`LibraryStore.openExample`).
+- Tips (TipKit, no package): five ordered tips (`TipGroup(.ordered)`) anchored to 3 (or the first player), step 2 (chip or iPad row), Play, Draw, Export; done by doing it (drag a player, tap a step, Play, Done with a stroke, open Export) or × (`AgmenTipStyle`); taps pass through to the screen while a tip shows (`tipBackgroundInteraction(.enabled)`), so Play plays on the first tap.
+- Library: More (…) → Show tips again (`resetEligibility` on each tip, welcome from page 1).
+- Debug: `-onboarding YES` starts it over; `-skipOnboarding YES` (implied by `-resetLibrary YES`) marks it seen and hides tips for UI tests.
+
+**Checked**
+- `OnboardingUITests`: all three pages, Start, each tip in order (drag done by dragging 3, step closed with ×, Play by playing, no tip while playing, Draw closed, Export by opening it), Show tips again, Skip. Screenshots in `fidelity/shots/onboarding/` match the approved frames (page 3 is the real export frame, so its step note sits in the title band).
+- Design check: the onboarding frames pass (the 4 iPad frames are measured at phone width by the kit, as before).
+
+**Not verified**
+- On the phone; the full gate and UI suite (running at the time of writing).
+
 ## Broadcast part 2: the tilted camera (Sun 8 Nov 2026, afternoon)
 
 **Changed**

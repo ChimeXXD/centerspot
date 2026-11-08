@@ -188,6 +188,7 @@ struct BoardScreen: View {
         return BoardCanvas(
             tactic: tactic, state: state, selection: mode == .playing ? nil : selectedToken?.id,
             dimsUnselected: sheet?.isPlayer == true, crossfade: crossfade, broadcast: aim?.target, broadcastSpan: aim?.span,
+            dragTipToken: mode == .editing ? dragTipToken : nil,
             movesTokens: mode == .editing || (drawing && Self.pencilDraws),
             strokeInput: strokeInput, strokeKind: drawTool.arrowKind ?? .run,
             selectedMark: drawing ? selectedMark : nil, pendingLine: drawing ? lineDraft.tokens : [],

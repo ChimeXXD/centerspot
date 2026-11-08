@@ -30,6 +30,7 @@ extension BoardScreen {
 
     /// Done keeps the strokes and marks, finishing a line being tapped out; each one stays in the undo history.
     func finishDrawing() {
+        if drawEdits > 0 { Onboarding.shared.done(DrawTip()) }
         finishLine()
         clearMarkState()
         drawEdits = 0

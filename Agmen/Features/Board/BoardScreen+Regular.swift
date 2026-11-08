@@ -147,7 +147,10 @@ extension BoardScreen {
             hasBall: tactic.tokens.contains { $0.kind == .ball },
             onFormation: { sheet = .formation }, onAdd: addToken,
             onPlay: startPlayback, onDraw: { if mode == .drawing { finishDrawing() } else { startDrawing() } },
-            onExport: { sheet = .export }, drawing: drawing,
+            onExport: {
+                Onboarding.shared.done(ExportTip())
+                sheet = .export
+            }, drawing: drawing,
             itemsWidth: layout == .compact ? .infinity : 700
         )
     }

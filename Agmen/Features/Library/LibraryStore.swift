@@ -43,6 +43,17 @@ final class LibraryStore {
         if let url = perform({ try library.create() }) { open(url, isNew: true) }
     }
 
+    /// The example move (D-29): opened from its card, or added again first if it was deleted. Start on the last
+    /// welcome page lands here (D-58).
+    func openExample() {
+        guard let url = library.exampleURL, let example = try? library.load(url) else { return }
+        if let entry = entries.first(where: { $0.tactic.id == example.id }) {
+            open(entry.url)
+        } else {
+            importAndOpen(url)
+        }
+    }
+
     func open(_ url: URL, isNew: Bool = false) {
         do {
             path.append(OpenTactic(url: url, tactic: try library.load(url), isNew: isNew))

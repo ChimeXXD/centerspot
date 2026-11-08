@@ -9,6 +9,10 @@ struct AgmenApp: App {
         VideoExporter.removeLeftovers()
         let library = TacticLibrary.documents
         #if DEBUG
+        BoardDebugLaunch.onboardingIfAsked()
+        #endif
+        Onboarding.configure()
+        #if DEBUG
         BoardDebugLaunch.resetLibraryIfAsked(library)
         BoardDebugLaunch.seedLibraryIfAsked(library)
         // D5-1: time real exports on the device (`-exportBench`); prints AGMEN-EXPORT lines.
@@ -34,6 +38,7 @@ struct AgmenApp: App {
                     }
             }
             .tint(Tokens.Colour.text.color)
+            .modifier(WelcomeCover(store: store))
             // A .tactic from AirDrop, WhatsApp or Files: checked, copied in, opened (D-56, CLAUDE.md rule 4).
             .onOpenURL { store.importAndOpen($0) }
             .alert(store.alert ?? "", isPresented: alertShown) {

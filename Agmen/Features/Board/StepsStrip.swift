@@ -63,6 +63,8 @@ struct StepsStrip: View {
             .accessibilityHint(isCurrent ? "Double-tap for step actions" : "Double-tap to go to this step")
             .accessibilityAddTraits(isCurrent ? .isSelected : [])
             .accessibilityIdentifier("steps.chip.\(index + 1)")
+            // Step 2, or step 1 when there is only one (D-78).
+            .agmenTip(index == min(1, steps.count - 1) ? Onboarding.shared.current(StepTip.self) : nil, arrowEdge: .bottom)
     }
 
     private func chipFace(_ index: Int, _ step: Step, on: Bool) -> some View {
