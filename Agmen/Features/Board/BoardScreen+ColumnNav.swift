@@ -41,7 +41,7 @@ extension BoardScreen {
         case .editing:
             navIcon("Back", symbol: "chevron.backward", identifier: "nav.back") { dismiss() }
         case .playing:
-            EmptyView()
+            CameraSwitch(camera: $camera)
         case .drawing:
             navIcon("Cancel drawing", symbol: "xmark", identifier: "draw.cancel", action: cancelDrawing)
         }

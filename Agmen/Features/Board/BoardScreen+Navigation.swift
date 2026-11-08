@@ -13,6 +13,11 @@ extension BoardScreen {
 
     /// Playback leaves the edit history alone; Done returns to the step it stopped on.
     @ToolbarContentBuilder private var playingItems: some ToolbarContent {
+        // Its own dark track, as in the mockup, not the toolbar's glass (which washed the picked segment out).
+        ToolbarItem(placement: .topBarLeading) {
+            CameraSwitch(camera: $camera)
+        }
+        .sharedBackgroundVisibility(.hidden)
         ToolbarItem(placement: .principal) {
             Text(tactic.title)
                 .font(Tokens.Typeface.headline)

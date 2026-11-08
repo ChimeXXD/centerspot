@@ -10,7 +10,8 @@ extension BoardScreen {
     var fittedPitch: some View {
         GeometryReader { proxy in
             let fit = BoardGeometry(kind: tactic.pitch.kind, fitting: CGRect(origin: .zero, size: proxy.size)).pitchRect
-            pitchStack(fit.size)
+            // The broadcast camera takes the whole space (BR-2); the flat pitch hugs its own shape.
+            pitchStack(showsBroadcast ? proxy.size : fit.size)
                 .frame(width: proxy.size.width, height: proxy.size.height)
         }
     }

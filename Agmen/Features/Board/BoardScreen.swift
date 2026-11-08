@@ -28,6 +28,10 @@ struct BoardScreen: View {
     @State var mode = BoardMode.editing
     /// Loop starts on, as in the mockup's playback frame; later sessions keep the last choice.
     @State var clock = PlaybackClock(duration: 0, loops: true)
+    /// Flat or Broadcast (D-76): one remembered choice for Play and Export.
+    @AppStorage(BoardCamera.storageKey) var camera = BoardCamera.default
+    /// Where the broadcast camera looks, built from the tactic when playback starts or the tactic changes (BR-2).
+    @State var cameraTrack: CameraTrack?
     /// Whether the move was playing when the scrubber was grabbed, so it plays on when let go.
     @State var scrub: (resumes: Bool, active: Bool) = (false, false)
     @State var drawTool = DrawTool.run
@@ -83,10 +87,14 @@ struct BoardScreen: View {
             }
             .navigationTitle(tactic.title)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(mode == .drawing)
+            .navigationBarBackButtonHidden(mode != .editing)
             .toolbar { navigationItems }
             .toolbar(layout == .regularLandscape ? .hidden : .automatic, for: .navigationBar)
-            .onChange(of: tactic) { if mode == .playing { clock.setDuration(phaseDuration, at: Self.now) } }
+            .onChange(of: tactic) {
+                guard mode == .playing else { return }
+                clock.setDuration(phaseDuration, at: Self.now)
+                cameraTrack = CameraTrack(tactic: tactic)
+            }
             .onChange(of: drawTool) { changeTool() }
             .task(id: clock) { await pauseAtTheEnd() }
             .alert("Rename tactic", isPresented: $renaming) {
@@ -154,7 +162,8 @@ struct BoardScreen: View {
         if let size {
             measured.frame(width: size.width, height: size.height)
         } else {
-            measured.padding(.horizontal, Tokens.Space.s5)
+            // The broadcast camera fills the screen's width, as in the mockup; the flat pitch keeps its margins.
+            measured.padding(.horizontal, showsBroadcast ? 0 : Tokens.Space.s5)
         }
     }
 
@@ -164,19 +173,21 @@ struct BoardScreen: View {
     @ViewBuilder private var board: some View {
         if mode == .playing {
             TimelineView(.animation(minimumInterval: nil, paused: !clock.isPlaying)) { _ in
-                let frame = PlaybackTrack.frame(at: clock.t(at: Self.now), in: tactic, reduceMotion: reduceMotion)
-                canvas(frame.base, crossfade: frame.next.map { ($0, frame.mix) })
+                let t = clock.t(at: Self.now)
+                let frame = PlaybackTrack.frame(at: t, in: tactic, reduceMotion: reduceMotion)
+                canvas(frame.base, crossfade: frame.next.map { ($0, frame.mix) }, broadcast: broadcastTarget(at: t))
             }
         } else {
-            canvas(boardState, crossfade: nil)
+            canvas(boardState, crossfade: nil, broadcast: nil)
         }
     }
 
-    private func canvas(_ state: BoardState, crossfade: (state: BoardState, mix: Double)?) -> some View {
+    private func canvas(_ state: BoardState, crossfade: (state: BoardState, mix: Double)?,
+                        broadcast: Point?) -> some View {
         let drawing = mode == .drawing
         return BoardCanvas(
             tactic: tactic, state: state, selection: mode == .playing ? nil : selectedToken?.id,
-            dimsUnselected: sheet?.isPlayer == true, crossfade: crossfade,
+            dimsUnselected: sheet?.isPlayer == true, crossfade: crossfade, broadcast: broadcast,
             movesTokens: mode == .editing || (drawing && Self.pencilDraws),
             strokeInput: strokeInput, strokeKind: drawTool.arrowKind ?? .run,
             selectedMark: drawing ? selectedMark : nil, pendingLine: drawing ? lineDraft.tokens : [],

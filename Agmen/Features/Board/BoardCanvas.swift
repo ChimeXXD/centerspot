@@ -10,6 +10,8 @@ struct BoardCanvas: View {
     var dimsUnselected = false
     /// Reduce Motion playback: the next resting step laid over `state` at this opacity (`PlaybackTrack.frame`).
     var crossfade: (state: BoardState, mix: Double)?
+    /// Playback through the broadcast camera (BR-2): the point it looks at. Nil is the flat board.
+    var broadcast: Point?
     /// Dragging, double-tap and VoiceOver nudges move tokens; off while playing and while a finger draws.
     var movesTokens = true
     /// Which touches draw a stroke (SPEC §6), and the kind it draws, for the live line's colour.
@@ -85,7 +87,7 @@ struct BoardCanvas: View {
 
                 // Marks under the players, as drawn: a player on a zone or line is found by touch first.
                 if showsMarks { markLayer(geometry) }
-                accessibilityLayer(geometry)
+                accessibilityLayer(geometry, view: rect)
                 bendElement(geometry)
             }
         }
@@ -104,7 +106,7 @@ struct BoardCanvas: View {
 
     private var options: BoardRenderer.Options {
         .init(selection: strokeStart ?? selection, dimsUnselected: dimsUnselected, showsLift: true,
-              selectedMark: selectedMark, pendingLine: pendingLine)
+              selectedMark: selectedMark, pendingLine: pendingLine, broadcast: broadcast)
     }
 
     private func capture(_ phase: StrokeCapture.Phase, _ location: CGPoint, _ geometry: BoardGeometry) {
@@ -167,8 +169,11 @@ struct BoardCanvas: View {
 
     /// An invisible 44 pt element per token, labelled in football words from `Placement` (SPEC §8). It passes
     /// touches through to the canvas; VoiceOver and UI tests use it.
-    private func accessibilityLayer(_ geometry: BoardGeometry) -> some View {
-        let centres = geometry.drawnCentres(positions: state.positions, tokens: tactic.tokens, carry: state.carry)
+    /// Through the broadcast camera each element sits where the camera draws its disc.
+    private func accessibilityLayer(_ geometry: BoardGeometry, view: CGRect) -> some View {
+        let camera = broadcast.map { BroadcastCamera(view: view, kind: tactic.pitch.kind, target: $0) }
+        let flat = (camera?.plane ?? geometry).drawnCentres(positions: state.positions, tokens: tactic.tokens, carry: state.carry)
+        let centres = camera.map { camera in flat.mapValues(camera.project) } ?? flat
         let roles = Presets.shared.roles
         return ForEach(BoardRenderer.drawingOrder(tactic.tokens)) { token in
             if let centre = centres[token.id], let point = state.positions[token.id] {

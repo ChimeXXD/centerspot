@@ -9,6 +9,17 @@ extension BoardScreen {
 
     var phaseDuration: Double { tactic.phases.first.map(Timeline.duration(of:)) ?? 0 }
 
+    /// Playing through the broadcast camera: the board fills its space instead of hugging the flat pitch.
+    var showsBroadcast: Bool { mode == .playing && camera == .broadcast }
+
+    /// Where the broadcast camera looks at `t` (BR-2), or nil for the flat board. Reduce Motion holds one view of the
+    /// whole move, so nothing pans (D-76, rule 8).
+    func broadcastTarget(at t: Double) -> Point? {
+        guard showsBroadcast else { return nil }
+        let track = cameraTrack ?? CameraTrack(tactic: tactic)
+        return reduceMotion ? track.still : track.target(at: t)
+    }
+
     @ViewBuilder var playbackBar: some View {
         if let phase = tactic.phases.first {
             TimelineView(.animation(minimumInterval: nil, paused: !clock.isPlaying)) { _ in
@@ -37,6 +48,7 @@ extension BoardScreen {
         next.setSpeed(clock.speed, at: now)
         next.play(at: now)
         clock = next
+        cameraTrack = CameraTrack(tactic: tactic)
         scrub = (false, false)  // a scrub cut off without an end (the bar left mid-drag) must not carry over
         toast = nil  // its Undo would edit the tactic mid-playback
         dragPreview = nil

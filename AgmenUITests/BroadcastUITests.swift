@@ -43,8 +43,11 @@ final class BroadcastUITests: XCTestCase {
         A.element(app, "playback.scrubber").coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5)).tap()
         XCTAssertTrue(A.element(app, "playback.note").label.hasPrefix("Step 4 of 5"), A.element(app, "playback.note").label)
         XCTAssertFalse(A.element(app, "board.zone.1").exists, "marks aren't separate elements while playing")
+        // The flat camera's frame; the broadcast camera's is CameraUITests' (D-76: back to Broadcast after).
+        A.element(app, "playback.camera.flat").tap()
         sleep(1)
         A.save("playback--broadcast", in: self)
+        A.element(app, "playback.camera.broadcast").tap()
         A.element(app, "playback.done").tap()
         XCTAssertTrue(A.element(app, "steps.chip.4").waitForExistence(timeout: A.timeout))
         A.element(app, "steps.chip.4").tap()
