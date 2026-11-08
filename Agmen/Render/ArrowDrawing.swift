@@ -27,7 +27,9 @@ enum ArrowDrawing {
         guard points.count >= 2, opacity > 0 else { return }
         let k = g.scale, r = g.tokenRadius
         shortenEnd(&points, radius: r, tokenCentres: tokenCentres)
-        let end = points[points.count - 1], before = points[points.count - 2]
+        let end = points[points.count - 1]
+        // The head points along the last stretch that goes somewhere: a clamped curve can end in repeated points.
+        let before = points.dropLast().last { hypot(end.x - $0.x, end.y - $0.y) > 0.5 } ?? points[points.count - 2]
         let angle = atan2(end.y - before.y, end.x - before.x)
 
         ctx.saveGState()
@@ -63,15 +65,31 @@ enum ArrowDrawing {
         ctx.strokePath()
     }
 
-    /// If any token is drawn within 1.2 radii of the end, pull the end back along the last segment by up to 1.35 radii.
+    /// If any token is drawn within 1.2 radii of the end, pull the end back along the line by up to 1.35 radii.
     private static func shortenEnd(_ points: inout [CGPoint], radius r: CGFloat, tokenCentres: [CGPoint]) {
-        let last = points[points.count - 1], prev = points[points.count - 2]
+        let last = points[points.count - 1]
         guard tokenCentres.contains(where: { hypot($0.x - last.x, $0.y - last.y) < r * 1.2 }) else { return }
-        let length = hypot(last.x - prev.x, last.y - prev.y)
-        guard length > 0 else { return }
-        let cut = min(r * 1.35, length / 2)
-        points[points.count - 1] = CGPoint(x: last.x - (last.x - prev.x) / length * cut,
-                                           y: last.y - (last.y - prev.y) / length * cut)
+        points = trimmedEnd(points, by: r * 1.35)
+    }
+
+    /// `points` with `cut` taken off the end by arc length (never more than half the line), so a finely sampled
+    /// curve (D-72) still stops short of a disc and not just its last tiny segment.
+    static func trimmedEnd(_ points: [CGPoint], by cut: CGFloat) -> [CGPoint] {
+        let lengths = zip(points, points.dropFirst()).map { hypot($1.x - $0.x, $1.y - $0.y) }
+        var remaining = min(cut, lengths.reduce(0, +) / 2)
+        var result = points
+        while remaining > 0, result.count >= 2 {
+            let b = result[result.count - 1], a = result[result.count - 2]
+            let length = hypot(b.x - a.x, b.y - a.y)
+            if length > remaining {
+                result[result.count - 1] = CGPoint(x: b.x - (b.x - a.x) / length * remaining,
+                                                   y: b.y - (b.y - a.y) / length * remaining)
+                return result
+            }
+            result.removeLast()
+            remaining -= length
+        }
+        return result
     }
 
     private static func head(at tip: CGPoint, angle: CGFloat, length h: CGFloat, spread: CGFloat) -> CGPath {
@@ -82,21 +100,28 @@ enum ArrowDrawing {
         return path
     }
 
-    /// A zigzag about each segment, flat at the end so the head sits on the line.
+    /// A zigzag along the whole line, flat at the end so the head sits on it. Its teeth are spaced by arc length, not
+    /// per segment, so a curve sampled in short segments (D-72) still waves to both sides; on a two-point line it is
+    /// the same zigzag as before.
     static func zigzag(_ points: [CGPoint], scale k: CGFloat) -> CGPath {
         let path = CGMutablePath()
         path.move(to: points[0])
-        for i in 1..<points.count {
-            let a = points[i - 1], b = points[i]
-            let length = hypot(b.x - a.x, b.y - a.y)
-            guard length > 0 else { continue }
-            let n = max(2, Int((length / (zigzagStep * k)).rounded()))
-            let nx = -(b.y - a.y) / length, ny = (b.x - a.x) / length
-            for j in 1...n {
-                let t = CGFloat(j) / CGFloat(n)
-                let amp = j == n ? 0 : (j % 2 == 1 ? zigzagAmplitude : -zigzagAmplitude) * k
-                path.addLine(to: CGPoint(x: a.x + (b.x - a.x) * t + nx * amp, y: a.y + (b.y - a.y) * t + ny * amp))
+        let lengths = zip(points, points.dropFirst()).map { hypot($1.x - $0.x, $1.y - $0.y) }
+        let total = lengths.reduce(0, +)
+        guard total > 0 else { return path }
+        let n = max(2, Int((total / (zigzagStep * k)).rounded()))
+        var segment = 0, start: CGFloat = 0  // the segment the next tooth falls on, and the arc length where it starts
+        for j in 1...n {
+            let at = total * CGFloat(j) / CGFloat(n)
+            while segment < lengths.count - 1, start + lengths[segment] < at || lengths[segment] == 0 {
+                start += lengths[segment]
+                segment += 1
             }
+            let a = points[segment], b = points[segment + 1], length = lengths[segment]
+            let t = length > 0 ? min(1, (at - start) / length) : 1
+            let nx = length > 0 ? -(b.y - a.y) / length : 0, ny = length > 0 ? (b.x - a.x) / length : 0
+            let amp = j == n ? 0 : (j % 2 == 1 ? zigzagAmplitude : -zigzagAmplitude) * k
+            path.addLine(to: CGPoint(x: a.x + (b.x - a.x) * t + nx * amp, y: a.y + (b.y - a.y) * t + ny * amp))
         }
         return path
     }

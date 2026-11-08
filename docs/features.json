@@ -415,6 +415,48 @@
       "evidence": ""
     },
     {
+      "id": "IP-1",
+      "day": 6,
+      "priority": "must",
+      "title": "iPad big-screen board (D-73) with the step list (D-75)",
+      "criteria": [
+        "landscape: pitch full height, column with steps list, player row, draw tools",
+        "portrait: pitch as big as the height allows, centred",
+        "iPhone unchanged"
+      ],
+      "verify": "IPadLayoutUITests; BoardLayoutTests; iPhone UI tests; on the borrowed iPad",
+      "passes": false,
+      "evidence": "8 Nov 2026, partial: IPadLayoutUITests 2/2 (pitch 882 pt tall in landscape), BoardLayoutTests 4/4, iPhone UI 8/8, gate 3/3. Open: Chime on the real iPad."
+    },
+    {
+      "id": "DS-1",
+      "day": 6,
+      "priority": "must",
+      "title": "Straight / Curved arrows (D-72)",
+      "criteria": [
+        "Straight joins the stroke's ends",
+        "Curved is one smooth bend fitted to the stroke",
+        "a middle dot nudges the bend",
+        "switch in the Draw panel; dribble waves along either shape"
+      ],
+      "verify": "ShapedPathTests; StrokeShapeTests; ArrowDrawingTests; UI test for the switch; on the iPhone and iPad",
+      "passes": false,
+      "evidence": "8 Nov 2026, engine only: ShapedPathTests 12, StrokeShapeTests 12, ArrowDrawingTests 2 pass; 19/19 mutations killed. Open: the switch and the bend dot UI."
+    },
+    {
+      "id": "LC-1",
+      "day": 6,
+      "priority": "must",
+      "title": "Small wide library cards (D-74)",
+      "criteria": [
+        "sideways pitch, name, step count",
+        "3 a row on iPhone, 5-6 on iPad"
+      ],
+      "verify": "UI test and screenshots vs mockup/screens-nov8.js",
+      "passes": false,
+      "evidence": ""
+    },
+    {
       "id": "D7-1",
       "day": 7,
       "priority": "must",

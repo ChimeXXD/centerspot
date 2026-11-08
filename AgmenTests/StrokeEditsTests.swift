@@ -25,7 +25,7 @@ struct StrokeEditsTests {
     @Test func aRunMovesThePlayerAlongTheStroke() throws {
         let before = try Self.small()
         var tactic = before
-        let outcome = StrokeEdits.draw(Self.stroke, kind: .run, from: "h4", step: 0, in: &tactic)
+        let outcome = StrokeEdits.draw(Self.stroke, kind: .run, shape: .curved, from: "h4", step: 0, in: &tactic)
         #expect(outcome == .init(changed: true))
         let steps = tactic.phases[0].steps
         let run = try #require(steps.at(0).runs["h4"])

@@ -10,13 +10,23 @@ struct StepsStrip: View {
     var onSelect: (Int) -> Void
     var onAdd: () -> Void
     var onMove: (_ from: Int, _ to: Int) -> Void
+    /// The iPad portrait row uses bigger chips, closer together, and no side inset of its own (D-73).
+    var chipSize = Tokens.Size.stepChip
+    var spacing = Tokens.Space.s2 + 2
+    var inset = Tokens.Space.s5
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// How wide the strip's content is, + included, so a row can give it just that (and scroll beyond).
+    var contentWidth: CGFloat {
+        let chips = CGFloat(steps.count + 1)
+        return chips * chipSize.width + (chips - 1) * spacing + 2 * inset
+    }
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal) {
-                HStack(spacing: Tokens.Space.s2 + 2) {
+                HStack(spacing: spacing) {
                     ForEach(Array(steps.enumerated()), id: \.element.id) { index, step in
                         chip(index, step)
                             .id(step.id)
@@ -29,7 +39,7 @@ struct StepsStrip: View {
                     }
                     addChip
                 }
-                .padding(.horizontal, Tokens.Space.s5)
+                .padding(.horizontal, inset)
             }
             .scrollIndicators(.hidden)
             .onChange(of: current) { _, new in
@@ -65,7 +75,7 @@ struct StepsStrip: View {
         }
         .foregroundStyle(on ? Tokens.Colour.accentInk.color : Tokens.Colour.text.color)
         .padding(.horizontal, Tokens.Space.s1)
-        .frame(minWidth: Tokens.Size.stepChip.width, minHeight: Tokens.Size.stepChip.height)
+        .frame(minWidth: chipSize.width, minHeight: chipSize.height)
         .background(on ? Tokens.Colour.accent.color : Tokens.Colour.surface2.color,
                     in: RoundedRectangle(cornerRadius: Tokens.Radius.item))
     }
@@ -75,7 +85,7 @@ struct StepsStrip: View {
             Image(systemName: "plus")
                 .font(Tokens.Typeface.title.weight(.semibold))
                 .foregroundStyle(Tokens.Colour.text.color)
-                .frame(minWidth: Tokens.Size.stepChip.width, minHeight: Tokens.Size.stepChip.height)
+                .frame(minWidth: chipSize.width, minHeight: chipSize.height)
                 .overlay {
                     RoundedRectangle(cornerRadius: Tokens.Radius.item)
                         .strokeBorder(Tokens.Colour.muted.color, style: StrokeStyle(lineWidth: 1.5, dash: [4, 4]))

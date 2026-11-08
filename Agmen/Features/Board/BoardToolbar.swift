@@ -8,15 +8,23 @@ struct BoardToolbar: View {
     var onPlay: () -> Void
     var onDraw: () -> Void
     var onExport: () -> Void
+    /// iPad landscape keeps the toolbar in draw mode (D-73): Draw lit, the others disabled.
+    var drawing = false
+    /// On iPad the five items gather in the middle (the mockup's 72 pt gaps) instead of spreading across the screen.
+    var itemsWidth = CGFloat.infinity
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             tool("Formation", symbol: "circle.grid.2x1", identifier: "toolbar.formation", action: onFormation)
-            addMenu
-            playButton
-            tool("Draw", symbol: "pencil", identifier: "toolbar.draw", action: onDraw)
+                .modifier(Off(drawing))
+            addMenu.modifier(Off(drawing))
+            playButton.modifier(Off(drawing))
+            tool("Draw", symbol: "pencil", identifier: "toolbar.draw", lit: drawing, action: onDraw)
+                .accessibilityAddTraits(drawing ? .isSelected : [])
             tool("Export", symbol: "film", identifier: "toolbar.export", action: onExport)
+                .modifier(Off(drawing))
         }
+        .frame(maxWidth: itemsWidth)
         .padding(.horizontal, Tokens.Space.s1 + 2)
         .padding(.top, Tokens.Space.s2)
         .frame(height: Tokens.Size.toolbarHeight, alignment: .top)
@@ -27,7 +35,7 @@ struct BoardToolbar: View {
         .dynamicTypeSize(...DynamicTypeSize.large)
     }
 
-    private func label(_ title: String, symbol: String) -> some View {
+    private func label(_ title: String, symbol: String, lit: Bool = false) -> some View {
         VStack(spacing: Tokens.Space.s1) {
             Image(systemName: symbol)
                 .font(Tokens.Typeface.title.weight(.regular))
@@ -35,13 +43,14 @@ struct BoardToolbar: View {
             Text(title)
                 .font(Tokens.Typeface.caption)
         }
-        .foregroundStyle(Tokens.Colour.muted.color)
+        .foregroundStyle(lit ? Tokens.Colour.accent.color : Tokens.Colour.muted.color)
         .frame(maxWidth: .infinity, minHeight: 60)
         .contentShape(Rectangle())
     }
 
-    private func tool(_ title: String, symbol: String, identifier: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) { label(title, symbol: symbol) }
+    private func tool(_ title: String, symbol: String, identifier: String, lit: Bool = false,
+                      action: @escaping () -> Void) -> some View {
+        Button(action: action) { label(title, symbol: symbol, lit: lit) }
             .buttonStyle(.plain)
             .accessibilityShowsLargeContentViewer { Label(title, systemImage: symbol) }
             .accessibilityLabel(title)
@@ -84,5 +93,15 @@ struct BoardToolbar: View {
         .accessibilityShowsLargeContentViewer { Label("Play", systemImage: "play.fill") }
         .accessibilityLabel("Play")
         .accessibilityIdentifier("toolbar.play")
+    }
+}
+
+/// A toolbar item that can't be used right now: disabled and faded, as in the mockup's draw frame.
+private struct Off: ViewModifier {
+    let isOff: Bool
+    init(_ isOff: Bool) { self.isOff = isOff }
+
+    func body(content: Content) -> some View {
+        content.disabled(isOff).opacity(isOff ? 0.4 : 1)
     }
 }

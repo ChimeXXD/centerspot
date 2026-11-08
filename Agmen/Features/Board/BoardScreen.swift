@@ -39,6 +39,10 @@ struct BoardScreen: View {
     /// all back (the mockup's "without changes").
     @State var drawEdits = 0
     @Environment(\.accessibilityReduceMotion) var reduceMotion
+    @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.dismiss) var dismiss
+    /// The screen's whole height (nav bar included, so hiding it can't flip the layout) and width (D-73).
+    @State var container = CGSize.zero
 
     struct DragPreview: Equatable {
         let id: String
@@ -54,6 +58,7 @@ struct BoardScreen: View {
     /// The step on screen, kept in range when an undo removes steps.
     var current: Int { min(stepIndex, max(steps.count - 1, 0)) }
     var selectedToken: Token? { tactic.tokens.first { $0.id == selection } }
+    var layout: BoardLayout { BoardLayout(sizeClass: sizeClass, size: container) }
 
     private var boardState: BoardState {
         var state = Timeline.restingState(step: current, in: tactic)
@@ -65,26 +70,50 @@ struct BoardScreen: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack(alignment: .bottom) {
-                board
-                    .onGeometryChange(for: CGFloat.self) { [kind = tactic.pitch.kind] proxy in
-                        BoardGeometry(kind: kind, fitting: CGRect(origin: .zero, size: proxy.size)).pitchRect.width
-                    } action: { boardWidth = $0 }
-                    .padding(.horizontal, Tokens.Space.s5)
-                if tactic.tokens.isEmpty, mode == .editing { emptyState }
-                if let toast {
-                    BoardToastView(toast: toast) { undoFromToast(toast) }
-                        .padding(.horizontal, Tokens.Space.s4)
-                        .padding(.bottom, Tokens.Space.s2)
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
-                        .task(id: toast.id) {
-                            try? await Task.sleep(for: BoardToast.lifetime)
-                            withAnimation(Tokens.Motion.ease(Tokens.Motion.toast)) { self.toast = nil }
-                        }
-                }
+        layoutBody
+            .background(Tokens.Colour.bg.color.ignoresSafeArea())
+            .onGeometryChange(for: CGSize.self) { proxy in
+                CGSize(width: proxy.size.width,
+                       height: proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom)
+            } action: { size in
+                width = size.width
+                container = size
             }
-            .padding(.top, Tokens.Space.s2)
+            .navigationTitle(tactic.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(mode == .drawing)
+            .toolbar { navigationItems }
+            .toolbar(layout == .regularLandscape ? .hidden : .automatic, for: .navigationBar)
+            .onChange(of: tactic) { if mode == .playing { clock.setDuration(phaseDuration, at: Self.now) } }
+            .onChange(of: drawTool) { changeTool() }
+            .task(id: clock) { await pauseAtTheEnd() }
+            .alert("Rename tactic", isPresented: $renaming) {
+                TextField("Title", text: $newTitle)
+                Button("Cancel", role: .cancel) {}
+                Button("Rename") { rename(to: newTitle) }
+                    .accessibilityIdentifier("rename.save")
+            }
+            .sheet(item: $sheet) { sheet in sheetContent(sheet) }
+            .onReceive(undoChanges) { _ in refreshUndo() }
+            .onAppear {
+                refreshUndo()
+                if tactic.tokens.isEmpty { sheet = .formation }
+            }
+    }
+
+    /// iPhone and narrow windows keep the compact board; a regular-width screen uses the big-screen layouts (D-73).
+    @ViewBuilder private var layoutBody: some View {
+        switch layout {
+        case .compact: compactBody
+        case .regularPortrait: regularPortrait
+        case .regularLandscape: regularLandscape
+        }
+    }
+
+    private var compactBody: some View {
+        VStack(spacing: 0) {
+            pitchStack(nil)
+                .padding(.top, Tokens.Space.s2)
 
             switch mode {
             case .editing: editingBar
@@ -93,26 +122,36 @@ struct BoardScreen: View {
                 DrawPanel(tool: $drawTool, selectedMark: selectedMarkLabel, onRemoveMark: removeSelectedMark)
             }
         }
-        .background(Tokens.Colour.bg.color.ignoresSafeArea())
-        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
-        .navigationTitle(tactic.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(mode == .drawing)
-        .toolbar { navigationItems }
-        .onChange(of: tactic) { if mode == .playing { clock.setDuration(phaseDuration, at: Self.now) } }
-        .onChange(of: drawTool) { changeTool() }
-        .task(id: clock) { await pauseAtTheEnd() }
-        .alert("Rename tactic", isPresented: $renaming) {
-            TextField("Title", text: $newTitle)
-            Button("Cancel", role: .cancel) {}
-            Button("Rename") { rename(to: newTitle) }
-                .accessibilityIdentifier("rename.save")
+    }
+
+    /// The pitch with the empty state and the toast over it. `size` frames the board to hug the pitch (iPad);
+    /// nil keeps the iPhone's inset board.
+    func pitchStack(_ size: CGSize?) -> some View {
+        ZStack(alignment: .bottom) {
+            sizedBoard(size)
+            if tactic.tokens.isEmpty, mode == .editing { emptyState }
+            if let toast {
+                BoardToastView(toast: toast) { undoFromToast(toast) }
+                    .padding(.horizontal, Tokens.Space.s4)
+                    .padding(.bottom, Tokens.Space.s2)
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    .task(id: toast.id) {
+                        try? await Task.sleep(for: BoardToast.lifetime)
+                        withAnimation(Tokens.Motion.ease(Tokens.Motion.toast)) { self.toast = nil }
+                    }
+            }
         }
-        .sheet(item: $sheet) { sheet in sheetContent(sheet) }
-        .onReceive(undoChanges) { _ in refreshUndo() }
-        .onAppear {
-            refreshUndo()
-            if tactic.tokens.isEmpty { sheet = .formation }
+    }
+
+    @ViewBuilder private func sizedBoard(_ size: CGSize?) -> some View {
+        let measured = board
+            .onGeometryChange(for: CGFloat.self) { [kind = tactic.pitch.kind] proxy in
+                BoardGeometry(kind: kind, fitting: CGRect(origin: .zero, size: proxy.size)).pitchRect.width
+            } action: { boardWidth = $0 }
+        if let size {
+            measured.frame(width: size.width, height: size.height)
+        } else {
+            measured.padding(.horizontal, Tokens.Space.s5)
         }
     }
 
@@ -147,7 +186,7 @@ struct BoardScreen: View {
     }
 
     @ViewBuilder private var editingBar: some View {
-        contextRow
+        contextRow(prominent: false)
             .padding(.horizontal, Tokens.Space.s5)
             .padding(.vertical, Tokens.Space.s1)
             .animation(Tokens.Motion.ease(Tokens.Motion.select), value: contextKey)
@@ -158,12 +197,7 @@ struct BoardScreen: View {
                 .padding(.vertical, Tokens.Space.s1)
         }
 
-        BoardToolbar(
-            hasBall: tactic.tokens.contains { $0.kind == .ball },
-            onFormation: { sheet = .formation }, onAdd: addToken,
-            onPlay: startPlayback, onDraw: { startDrawing() },
-            onExport: { sheet = .export }
-        )
+        bottomToolbar(drawing: false)
     }
 
     private var emptyState: some View {
@@ -181,25 +215,25 @@ struct BoardScreen: View {
         .frame(maxHeight: .infinity)
     }
 
-    @ViewBuilder private var contextRow: some View {
+    @ViewBuilder func contextRow(prominent: Bool) -> some View {
         if showsStepActions, steps.indices.contains(current) {
             BoardContextRow(
                 mode: .step(number: current + 1, duration: steps[current].duration, canDelete: steps.count > 1),
                 onDuration: setDuration, onDuplicate: { addStep("Duplicate step") },
-                onNote: { sheet = .note(current) }, onDeleteStep: deleteStep
+                onNote: { sheet = .note(current) }, onDeleteStep: deleteStep, prominent: prominent
             )
         } else if let token = selectedToken {
             BoardContextRow(
                 mode: .token(label: Self.selectionLabel(token), isPlayer: token.kind == .player),
                 onEdit: { openPlayer(token.id) }, onDrawRun: { startDrawing(.run) },
-                onRemove: { removeToken(token) }
+                onRemove: { removeToken(token) }, prominent: prominent
             )
         } else {
-            BoardContextRow(mode: .summary(tag: formationTag, step: stepSummary))
+            BoardContextRow(mode: .summary(tag: formationTag, step: stepSummary), prominent: prominent)
         }
     }
 
-    private var contextKey: String { "\(showsStepActions)-\(selection ?? "")" }
+    var contextKey: String { "\(showsStepActions)-\(selection ?? "")" }
 
     private var formationTag: String {
         let players = tactic.tokens.filter { $0.kind == .player }.count

@@ -54,9 +54,10 @@ extension BoardScreen {
         }
     }
 
+    /// Through `applyEdit`, so a step added from the iPad column in draw mode (D-75) is one Cancel takes back.
     func addStep(_ actionName: String) {
         var added: Int?
-        guard editor.apply(actionName, { added = TacticEdits.addStep(after: current, in: &$0) }) else { return }
+        guard applyEdit(actionName, { added = TacticEdits.addStep(after: current, in: &$0) }) else { return }
         guard let added else {
             show("A move can have up to \(Phase.stepCountRange.upperBound) steps.")
             return
@@ -81,10 +82,10 @@ extension BoardScreen {
         show("Deleted step \(index + 1)", offersUndo: true, returnsTo: index)
     }
 
-    /// Keeps the same step on screen when another chip moves past it.
+    /// Keeps the same step on screen when another chip moves past it. Counted in draw mode, like `addStep`.
     func moveStep(_ from: Int, _ to: Int) {
         let index = current
-        editor.apply("Move step") { TacticEdits.moveStep(from: from, to: to, in: &$0) }
+        applyEdit("Move step") { TacticEdits.moveStep(from: from, to: to, in: &$0) }
         if from == index { stepIndex = to }
         else if from < index, to >= index { stepIndex = index - 1 }
         else if from > index, to <= index { stepIndex = index + 1 }

@@ -17,6 +17,8 @@ struct BoardContextRow: View {
     var onDuplicate: () -> Void = {}
     var onNote: () -> Void = {}
     var onDeleteStep: () -> Void = {}
+    /// The iPad column's card (D-73): the label in the headline style and text colour, as in the mockup's row card.
+    var prominent = false
 
     /// Durations offered for a step (SPEC §2: 0.3…5 s).
     static let durations: [Double] = [0.3, 0.5, 0.8, 1, 1.2, 1.4, 1.6, 2, 2.5, 3, 4, 5]
@@ -72,8 +74,8 @@ struct BoardContextRow: View {
 
     private func rowLabel(_ text: String, identifier: String) -> some View {
         Text(text)
-            .font(Tokens.Typeface.caption)
-            .foregroundStyle(Tokens.Colour.muted.color)
+            .font(prominent ? Tokens.Typeface.headline : Tokens.Typeface.caption)
+            .foregroundStyle(prominent ? Tokens.Colour.text.color : Tokens.Colour.muted.color)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityIdentifier(identifier)
     }

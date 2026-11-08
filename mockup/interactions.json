@@ -1857,6 +1857,281 @@
       "easing": "cubic-bezier(0.2, 0, 0, 1)",
       "delay_ms": 0,
       "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "draw.shape.straight",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "D-72: arrows drawn next join where the stroke starts and ends (a two-point path). Default. Shown only while Run, Pass, Dribble or Press is picked; remembered between drawings",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no slide; the selection swaps"
+    },
+    {
+      "element": "draw.shape.curved",
+      "trigger": "tap",
+      "states": [
+        "default",
+        "pressed",
+        "selected"
+      ],
+      "effect": "D-72: arrows drawn next are one smooth bend fitted to the stroke (same side, about the same depth), stored as sampled path points; the new arrow shows its middle dot (draw.bend.handle)",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no slide; the selection swaps"
+    },
+    {
+      "element": "draw.bend.handle",
+      "trigger": "drag",
+      "states": [
+        "default",
+        "dragging"
+      ],
+      "effect": "D-72: moves the curve's middle point (the line always passes through the dot); ends stay put; dropping it on the straight line makes the arrow straight; clamped to 0\u20261; one undo step per drag",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale"
+    },
+    {
+      "element": "library.card.5",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.6",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.7",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.8",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.9",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.10",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.11",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.12",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.13",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.14",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.15",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.16",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.17",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.18",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.19",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.20",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.21",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
+    },
+    {
+      "element": "library.card.22",
+      "trigger": "tap; long-press",
+      "states": [
+        "default",
+        "pressed"
+      ],
+      "effect": "open the tactic; press and hold shows Rename, Duplicate, Share, Delete; D-74: the card draws step 1 at rest with BoardRenderer on the dark pitch turned sideways (attacking right), numbers upright and only when they come out at 7 pt or more",
+      "duration_ms": 150,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "delay_ms": 0,
+      "reduced_motion": "no scale; crossfade only"
     }
   ]
 }

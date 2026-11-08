@@ -66,37 +66,41 @@ extension BoardScreen {
                 .disabled(!canRedo)
                 .accessibilityIdentifier("nav.redo")
         }
-        // The title is our own menu (Rename, then the mockup's "more" options: the pitch). The system's editable
-        // title sits leading at full width and folds Redo and Share into an overflow menu when the title is long;
-        // this one truncates, so Share stays visible (D-55).
         ToolbarItem(placement: .principal) {
-            Menu {
-                Button("Rename", systemImage: "pencil") {
-                    newTitle = tactic.title
-                    renaming = true
-                }
-                pitchMenu
-            } label: {
-                HStack(spacing: Tokens.Space.s1) {
-                    Text(tactic.title)
-                        .font(Tokens.Typeface.headline)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                    Image(systemName: "chevron.down")
-                        .font(Tokens.Typeface.caption.weight(.heavy))
-                        .foregroundStyle(Tokens.Colour.muted.color)
-                }
-                .foregroundStyle(Tokens.Colour.text.color)
-                .frame(maxWidth: max(width - Tokens.Size.navBarItems, Tokens.Size.touch * 2))
-            }
-            .accessibilityLabel(tactic.title)
-            .accessibilityHint("Rename or change the pitch")
-            .accessibilityIdentifier("nav.title")
+            titleMenu(maxWidth: max(width - Tokens.Size.navBarItems, Tokens.Size.touch * 2))
         }
         ToolbarItem(placement: .topBarTrailing) {
             Button("Share", systemImage: "square.and.arrow.up") { show("Sharing comes on Day 6") }
                 .accessibilityIdentifier("nav.share")
         }
+    }
+
+    /// The title is our own menu (Rename, then the mockup's "more" options: the pitch). The system's editable title
+    /// sits leading at full width and folds Redo and Share into an overflow menu when the title is long; this one
+    /// truncates, so Share stays visible (D-55). The iPad column's nav row uses it too (D-73).
+    func titleMenu(maxWidth: CGFloat) -> some View {
+        Menu {
+            Button("Rename", systemImage: "pencil") {
+                newTitle = tactic.title
+                renaming = true
+            }
+            pitchMenu
+        } label: {
+            HStack(spacing: Tokens.Space.s1) {
+                Text(tactic.title)
+                    .font(Tokens.Typeface.headline)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                Image(systemName: "chevron.down")
+                    .font(Tokens.Typeface.caption.weight(.heavy))
+                    .foregroundStyle(Tokens.Colour.muted.color)
+            }
+            .foregroundStyle(Tokens.Colour.text.color)
+            .frame(maxWidth: maxWidth)
+        }
+        .accessibilityLabel(tactic.title)
+        .accessibilityHint("Rename or change the pitch")
+        .accessibilityIdentifier("nav.title")
     }
 
     @ViewBuilder private var pitchMenu: some View {

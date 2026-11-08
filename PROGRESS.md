@@ -2,6 +2,24 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## iPad big-screen board and arrow shapes (engine) (Sun 8 Nov 2026)
+
+**Changed**
+- Chime's iPad feedback (D-72..D-75), mockup frames approved (`mockup/screens-nov8.js`).
+- iPad layout (D-73/D-75): landscape puts the upright pitch full height on the left and a column on the right (nav row, every step as a list with its note, the selected player or mark, draw tools in Draw mode); portrait centres the pitch as big as the height allows with chips and actions in one row. Chosen from the window size, not the device. iPhone unchanged (17 of 18 screenshots pixel-identical; the 18th is the export preview, which plays on a clock).
+- Arrow shapes, engine only (D-72): `ShapedPath` makes Straight (the stroke's two ends) or Curved (one quadratic bend through the stroke's deepest point, 25 points; under 8% of the length comes out straight); `StrokeEdits.bend` moves the middle dot. Renderer: the dribble wave is spaced along the whole line and arrow ends trim along the whole line. Until the switch is built, every drawn arrow is straight (Chime's default).
+- Code review (high): 10 found, 3 fixed (Cancel in iPad Draw mode undid the wrong edits after a step was added from the list; bending one arrow could bend another player's run; blank lines). Left for the switch step: the bend dot's 25-point guess for old freehand paths. To check on the iPad: a one-frame layout flash on open, ⌘Z possibly registered twice.
+
+**Checked**
+- Red: `IPadLayoutUITests.testLandscape` "718.0 is less than 800.0" before the layout; D-72 tests failed on stubs; a curved dribble waved on one side only before the renderer fix. 19/19 mutations killed (scratch copy).
+- Gate 3/3 (390 unit tests). iPhone UI tests 8/8 on iPhone 18 Pro; `IPadLayoutUITests` 2/2 on the iPad Pro 13-inch simulator. Installed on Chime's borrowed iPad.
+
+**Not verified**
+- On the real iPad: rotation mid-edit, Pencil in the column layout, Split View. Xcode 26.6 until CI. No separate verifier pass yet (run after the commit to save Chime's iPad time).
+
+**Next**
+- Straight / Curved switch and the bend dot (D-72 UI), then small library cards (D-74).
+
 ## Broadcast restyle part 1: marks, dark pitch, Zone / Line / Glow (Sat 7 – Sun 8 Nov 2026)
 
 **Changed**

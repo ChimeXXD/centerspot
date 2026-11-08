@@ -92,7 +92,7 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [x] Measure on the phone: time and size for 5 and 10 steps; log real numbers in PROGRESS.md (spike baseline 7 Nov: 15 s clip in 2.5 s, 5.5 MB at 4 Mbps) (7 Nov, iPhone 14 Pro Debug: hero 1.9 s 1.1 MB; 10 steps 2.6 s 2.2 MB)
 
 ### Day 6: Share and harden
-- [ ] `TacticDocument` with the exported UTType; open from Files and AirDrop (7 Nov: the document now reads and writes through `TacticFormat`; `TacticDocumentTests` 6/6; on-device open from Files and AirDrop still to check)
+- [ ] `TacticDocument` with the exported UTType; open from Files and AirDrop (7 Nov: the document now reads and writes through `TacticFormat`; `TacticDocumentTests` 6/6. 8 Nov: Chime AirDropped a `.tactic` from the iPhone to the iPad and it opened; Files still to check)
 - [x] Fuzz the importer with malformed, huge and hostile files (7 Nov: `FuzzImportTests`, 6,437 seeded cases; 4 bugs fixed, D-68)
 - [x] VoiceOver pass; Dynamic Type in sheets (7 Nov: `ControlLabelUITests` with Apple's accessibility audit; `DynamicTypeUITests` AX5, 5 screens fixed; on-device VoiceOver still to try)
 - [ ] CI green; beta build on Chime's iPhone
@@ -100,6 +100,7 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [ ] Should: onboarding (D-58), after the broadcast restyle (D-65): mockup of the welcome pages and tip sequence (first draft 7 Nov, to redo in the new look), Chime approves, then build (welcome on first launch, TipKit tips on the example move: drag, step, Play, draw a run, export)
 
 ### Broadcast restyle and 3D camera (D-65, added 7 Nov; before Day 7)
+- [ ] Chime's iPad feedback (8 Nov): Straight / Curved arrows (D-72), big-screen iPad board (D-73), small wide library cards (D-74); mockup frames, Chime approves, then build (8 Nov: frames approved, `mockup/screens-nov8.js`; steps listed in the iPad column, D-75; iPad first while the borrowed iPad is here)
 - [x] Mockup: broadcast pitch, glow rings, zones, shape lines, heat glow, the tilted camera; Chime approves (7 Nov: approved, tag `design-v2`; circles everywhere, no figures, D-66; numbers on top and a dark outline, D-67)
 - [x] Format: zones, shape lines and glows as additive v1 fields (FORMAT.md, import rules, fuzz cases, round trips) (7 Nov: per-step `marks`; `MarksFormatTests`, `FuzzImportTests+Marks`)
 - [x] Renderer: broadcast pitch, discs with a dark outline and numbers on top (D-66/D-67), glow rings, zones, shape lines, heat glow; parity stays green (7 Nov: `BoardRendererTests+Broadcast`, `RendererParityTests` with step 4's marks)

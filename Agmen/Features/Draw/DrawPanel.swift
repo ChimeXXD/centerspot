@@ -11,12 +11,32 @@ struct DrawPanel: View {
     var selectedMark: String?
     var onRemoveMark: () -> Void = {}
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    /// The column's tiles are taller (the mockup's 64 pt).
+    static let columnTile: CGFloat = 64
 
     private func columns(_ count: Int) -> [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: Tokens.Space.s1 + 2), count: count)
     }
 
-    var body: some View {
+    /// iPad landscape (D-73): the mark row and the tools are cards in the right column, the hint under them.
+    var inColumn = false
+
+    @ViewBuilder var body: some View {
+        if inColumn { columnBody } else { underPitch }
+    }
+
+    private var columnBody: some View {
+        VStack(spacing: Tokens.Space.s5) {
+            if let selectedMark { markRow(selectedMark) }
+            tools
+                .padding(.horizontal, Tokens.Space.s3 + 2)
+                .padding(.vertical, Tokens.Space.s3)
+                .background(Tokens.Colour.surface.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.sheet))
+            if !dynamicTypeSize.isAccessibilitySize { hint }
+        }
+    }
+
+    private var underPitch: some View {
         VStack(spacing: 0) {
             if let selectedMark {
                 markRow(selectedMark)
@@ -44,8 +64,8 @@ struct DrawPanel: View {
     private func markRow(_ label: String) -> some View {
         HStack(spacing: Tokens.Space.s2) {
             Text(label)
-                .font(Tokens.Typeface.caption)
-                .foregroundStyle(Tokens.Colour.muted.color)
+                .font(inColumn ? Tokens.Typeface.headline : Tokens.Typeface.caption)
+                .foregroundStyle(inColumn ? Tokens.Colour.text.color : Tokens.Colour.muted.color)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityIdentifier("draw.mark.label")
             Button("Remove", action: onRemoveMark)
@@ -53,11 +73,22 @@ struct DrawPanel: View {
                 .accessibilityIdentifier("draw.mark.remove")
         }
         .lineLimit(1)
-        .padding(.horizontal, Tokens.Space.s5)
-        .padding(.vertical, Tokens.Space.s2)
+        .modifier(MarkRowFrame(inColumn: inColumn))
     }
 
     private var panel: some View {
+        tools
+            .padding(.horizontal, Tokens.Space.s3)
+            .padding(.vertical, Tokens.Space.s2 + 2)
+            .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.panel))
+            .shadow(color: .black.opacity(0.5), radius: 15, y: 8)
+            .padding(.horizontal, Tokens.Space.s4)
+            .padding(.top, dynamicTypeSize.isAccessibilitySize ? Tokens.Space.s3 : 0)
+            .padding(.bottom, Tokens.Space.s2)
+    }
+
+    /// The picked tool's help line and the tiles, shared by the panel under the pitch and the column's card.
+    private var tools: some View {
         VStack(alignment: .leading, spacing: Tokens.Space.s2) {
             Text(tool.help)
                 .font(Tokens.Typeface.caption)
@@ -72,13 +103,6 @@ struct DrawPanel: View {
                 row(DrawTool.marks)
             }
         }
-        .padding(.horizontal, Tokens.Space.s3)
-        .padding(.vertical, Tokens.Space.s2 + 2)
-        .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.panel))
-        .shadow(color: .black.opacity(0.5), radius: 15, y: 8)
-        .padding(.horizontal, Tokens.Space.s4)
-        .padding(.top, dynamicTypeSize.isAccessibilitySize ? Tokens.Space.s3 : 0)
-        .padding(.bottom, Tokens.Space.s2)
     }
 
     private func row(_ tools: [DrawTool]) -> some View {
@@ -117,7 +141,7 @@ struct DrawPanel: View {
                     .fixedSize(horizontal: fitsName, vertical: false)
             }
             .padding(.horizontal, fitsName ? Tokens.Space.s3 : 0)
-            .frame(maxWidth: fitsName ? nil : .infinity, minHeight: Tokens.Size.kindTile)
+            .frame(maxWidth: fitsName ? nil : .infinity, minHeight: inColumn ? Self.columnTile : Tokens.Size.kindTile)
             .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
             .overlay {
                 RoundedRectangle(cornerRadius: Tokens.Radius.tile)
@@ -130,5 +154,25 @@ struct DrawPanel: View {
         .accessibilityHint(option.help)
         .accessibilityAddTraits(on ? .isSelected : [])
         .accessibilityIdentifier("draw.kind.\(option.rawValue)")
+    }
+}
+
+/// The mark row's frame: a strip under the pitch, or a card in the iPad column (the mockup's row card).
+private struct MarkRowFrame: ViewModifier {
+    let inColumn: Bool
+
+    @ViewBuilder func body(content: Content) -> some View {
+        if inColumn {
+            content
+                .padding(.leading, Tokens.Space.s4 + 4)
+                .padding(.trailing, Tokens.Space.s2 + 2)
+                .padding(.vertical, Tokens.Space.s2 + 2)
+                .frame(minHeight: 64)
+                .background(Tokens.Colour.surface.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
+        } else {
+            content
+                .padding(.horizontal, Tokens.Space.s5)
+                .padding(.vertical, Tokens.Space.s2)
+        }
     }
 }
