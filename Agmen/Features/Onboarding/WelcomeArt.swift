@@ -9,6 +9,11 @@ struct WelcomeArt: View {
     let page: Int
     let tactic: Tactic
     let isActive: Bool
+    /// How much bigger than the phone's the picture is drawn (1 on a phone; more on an iPad, sized by `WelcomeView`).
+    /// The pictures are drawn at that size, not scaled up afterwards, so they stay sharp.
+    var scale: CGFloat = 1
+    /// The picture sits inside a wider page (an iPad, at any `scale`): pages 2 and 3 hold the whole pitch's width.
+    var wide = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var opened = Date.now
     @State private var track: CameraTrack?
@@ -53,9 +58,10 @@ struct WelcomeArt: View {
 
     private func steps(at t: Double) -> some View {
         let frame = frame(at: t)
-        let height = BoardGeometry.height(forWidth: Self.boardWidth, kind: tactic.pitch.kind)
+        let width = Self.boardWidth * scale
+        let height = BoardGeometry.height(forWidth: width, kind: tactic.pitch.kind)
         return VStack(spacing: Tokens.Space.s3) {
-            board(frame, options: .init()).frame(width: Self.boardWidth, height: height)
+            board(frame, options: .init()).frame(width: width, height: height)
             HStack(spacing: Tokens.Space.s2) {
                 ForEach(Array((tactic.phases.first?.steps ?? []).enumerated()), id: \.offset) { index, step in
                     chip(index, duration: step.duration, on: index == frame.base.stepIndex)
@@ -64,35 +70,42 @@ struct WelcomeArt: View {
         }
     }
 
+    /// The chips grow with the picture on an iPad, up to half again, so they stay in step with the board above them.
+    private var chipScale: CGFloat { min(scale, 1.5) }
+
     private func chip(_ index: Int, duration: Double, on: Bool) -> some View {
         VStack(spacing: 0) {
-            Text("\(index + 1)").font(Tokens.Typeface.headline)
-            Text("\(duration.formatted(.number.precision(.fractionLength(1)))) s").font(Tokens.Typeface.caption)
+            // Fixed sizes: the chips are part of the picture, sized with it (the words below follow Dynamic Type).
+            Text("\(index + 1)").font(.custom(Tokens.Typeface.uiName, fixedSize: 17 * chipScale).weight(.bold))
+            Text("\(duration.formatted(.number.precision(.fractionLength(1)))) s")
+                .font(.custom(Tokens.Typeface.uiName, fixedSize: 12 * chipScale).weight(.medium))
         }
         .foregroundStyle(on ? Tokens.Colour.accentInk.color : Tokens.Colour.muted.color)
-        .frame(width: 40, height: 48)
+        .frame(width: 40 * chipScale, height: 48 * chipScale)
         .background(on ? Tokens.Colour.accent.color : Tokens.Colour.surface2.color,
-                    in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
+                    in: RoundedRectangle(cornerRadius: Tokens.Radius.tile * chipScale))
     }
 
     // MARK: Page 2
 
     private func playing(at t: Double) -> some View {
         let track = track ?? CameraTrack(tactic: tactic)
-        let options = BoardRenderer.Options(broadcast: reduceMotion ? track.still : track.target(at: t),
-                                            broadcastSpan: reduceMotion ? track.span : nil)
+        // On an iPad the picture sits inside the page, so a pitch running off its sides shows a hard cut: it holds one
+        // view of the whole pitch's width over the move instead of following the ball (Chime, 8 Nov).
+        let span: CameraTrack.Span? = wide ? Self.wideSpan(of: track) : reduceMotion ? track.span : nil
+        let options = BoardRenderer.Options(broadcast: span?.middle ?? track.target(at: t), broadcastSpan: span)
         let steps = tactic.phases.first?.steps.count ?? 0
         return VStack(spacing: Tokens.Space.s3) {
             // Scaled down to fit a 375 pt wide iPhone (SE, mini) instead of overflowing it.
             board(frame(at: t), options: options)
                 .aspectRatio(Self.broadcastSize, contentMode: .fit)
-                .frame(maxWidth: Self.broadcastSize.width)
+                .frame(maxWidth: Self.broadcastSize.width * scale)
             HStack(spacing: 6) {
                 ForEach(0..<steps, id: \.self) { index in
                     segment(fill: tactic.phases.first.map { PlaybackTrack.fill(segment: index, at: t, in: $0) } ?? 0)
                 }
             }
-            .frame(width: Self.boardWidth, height: 48)
+            .frame(width: Self.boardWidth * scale, height: 48)
         }
     }
 
@@ -110,18 +123,31 @@ struct WelcomeArt: View {
     // MARK: Page 3
 
     private func clipFrame(at t: Double) -> some View {
-        let size = Self.clipSize
+        let size = CGSize(width: Self.clipSize.width * scale, height: Self.clipSize.height * scale)
         return Canvas { context, _ in
             guard let clip else { return }
+            let wideSpan = wide ? Self.wideSpan(of: track ?? CameraTrack(tactic: tactic)) : nil
             context.withCGContext { cg in
                 cg.scaleBy(x: size.width / clip.layout.canvas.width, y: size.height / clip.layout.canvas.height)
                 // Reduce Motion: each step at rest (the export itself never changes, rule 8; this is only a picture of it).
-                if reduceMotion { clip.drawStill(frame(at: t), in: cg) } else { clip.draw(at: t, in: cg) }
+                // On an iPad the clip holds the whole pitch's width, as page 2 does (Chime, 8 Nov); the video doesn't.
+                if let wideSpan {
+                    clip.draw(frame(at: t), framing: wideSpan, in: cg)
+                } else if reduceMotion {
+                    clip.drawStill(frame(at: t), in: cg)
+                } else {
+                    clip.draw(at: t, in: cg)
+                }
             }
         }
         .frame(width: size.width, height: size.height)
-        .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.tile))
-        .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.tile).stroke(Tokens.Colour.surface3.color, lineWidth: 2))
+        .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.tile * scale))
+        .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.tile * scale).stroke(Tokens.Colour.surface3.color, lineWidth: 2))
+    }
+
+    /// The whole pitch's width over the move's depth: the iPad's still view on pages 2 and 3.
+    private static func wideSpan(of track: CameraTrack) -> CameraTrack.Span {
+        CameraTrack.Span(min: Point(x: 0, y: track.span.min.y), max: Point(x: 1, y: track.span.max.y))
     }
 
     // MARK: Board

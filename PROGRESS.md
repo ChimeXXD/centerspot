@@ -2,6 +2,20 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## The welcome on the iPad (Sun 8 Nov 2026, night)
+
+**Changed**
+- D-84: on an iPad the welcome's pictures fill the page (pitch about 2× in portrait, 1.5× in landscape), chips grow, Next/Start and the words keep a readable width; pages 2 and 3 hold the whole pitch's width in a still Broadcast view. The phone is unchanged; exports are unchanged.
+- The iPad has the phone's build again (`6b070d9`), then this one.
+
+**Checked**
+- `OnboardingUITests` on iPad Pro 13-inch (screens looked at, pages 1–3) and iPhone 18 Pro (page 1's chips and words pixel-identical to before; only the moving players differ).
+- Code review (medium): 6 found, 3 fixed (a tall narrow iPad window could make pages 1 and 3 wider than it; the clip's and chips' corners didn't grow). Left: chip numbers fixed in size (part of the picture), the page 2 progress bar's thickness, the fixed text room.
+- Second review (medium, the whole-width framing): 6 found, 3 fixed (on an 11-inch or mini iPad in landscape the picture stays at scale 1, so the whole-width view keyed on `scale > 1` didn't apply: it keys on regular width now; the span was worked out twice per frame; `draw(_:framing:in:)` had no flat-export guard). Left: the width cap ignores the side padding (split view only), fixed chip fonts, page 3 differing from the real export (Chime's choice).
+
+**Not verified**
+- Chime's eye on the iPad in landscape after the whole-width change.
+
 ## Fix everything (Sun 8 Nov 2026, night)
 
 **Changed**

@@ -40,8 +40,16 @@ final class ExportFrame {
     /// A picture of this export with Reduce Motion (the welcome's page 3, D-78): each step at rest crossfading into the
     /// next, through the still broadcast view fitted to the whole move. Never used by the export itself (rule 8).
     func drawStill(_ frame: PlaybackTrack.Frame, in ctx: CGContext) {
-        let options = BoardRenderer.Options(broadcast: track?.still, broadcastSpan: track?.span)
-        draw(state: frame.base, target: track?.still, in: ctx) { ctx, rect in
+        guard let track else { return draw(state: frame.base, in: ctx) }
+        draw(frame, framing: track.span, in: ctx)
+    }
+
+    /// A picture of this export through a still broadcast view fitted to `span` (the welcome's page 3 on an iPad, which
+    /// keeps the whole pitch's width in view). Never used by the export itself. A flat export has no camera: its board.
+    func draw(_ frame: PlaybackTrack.Frame, framing span: CameraTrack.Span, in ctx: CGContext) {
+        guard track != nil else { return draw(state: frame.base, in: ctx) }
+        let options = BoardRenderer.Options(broadcast: span.middle, broadcastSpan: span)
+        draw(state: frame.base, target: span.middle, in: ctx) { ctx, rect in
             BoardRenderer.draw(state: frame.base, crossfadingTo: frame.next, mix: frame.mix, tactic: self.tactic, in: ctx,
                                rect: rect, options: options)
         }

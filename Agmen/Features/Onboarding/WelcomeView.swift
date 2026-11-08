@@ -13,6 +13,16 @@ struct WelcomeView: View {
     @State private var page = 1
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    /// The picture's height on a phone; on an iPad it grows into the room the page has (Chime, 8 Nov).
+    static let artHeight: CGFloat = 404
+    /// What the title and its line need under the picture on an iPad, kept clear when the picture grows.
+    static let wideTextRoom: CGFloat = 240
+    /// On an iPad the button and the words keep a readable width instead of running edge to edge.
+    static let wideButtonWidth: CGFloat = 480
+    static let wideTextWidth: CGFloat = 640
+    private var isWide: Bool { sizeClass == .regular }
 
     struct Page {
         let title: String
@@ -61,6 +71,7 @@ struct WelcomeView: View {
                 if page < Self.pages.count { turn(to: page + 1) } else { onStart() }
             }
             .buttonStyle(PrimaryCapsuleStyle())
+            .frame(maxWidth: isWide ? Self.wideButtonWidth : .infinity)
             .padding(.horizontal, Tokens.Space.s5)
             .padding(.bottom, Tokens.Space.s4)
             .accessibilityIdentifier(page < Self.pages.count ? "onboarding.next" : "onboarding.start")
@@ -70,10 +81,22 @@ struct WelcomeView: View {
 
     private func pageView(_ number: Int) -> some View {
         let content = Self.pages[number - 1]
-        return VStack(spacing: 0) {
+        return GeometryReader { proxy in
+            // Grows with the height left over, but never wider than the page: the widest picture (page 2's camera)
+            // sets the cap, so the boards and the clip stay inside a narrow, tall iPad window too.
+            let byWidth = Self.artHeight * proxy.size.width / WelcomeArt.broadcastSize.width
+            let height = isWide ? max(Self.artHeight, min(proxy.size.height - Self.wideTextRoom, byWidth)) : Self.artHeight
+            pageBody(number, content: content, artHeight: height)
+        }
+        .accessibilityIdentifier("onboarding.page")
+    }
+
+    private func pageBody(_ number: Int, content: Page, artHeight: CGFloat) -> some View {
+        VStack(spacing: 0) {
             if !dynamicTypeSize.isAccessibilitySize {
-                WelcomeArt(page: number, tactic: tactic, isActive: page == number)
-                    .frame(maxWidth: .infinity, minHeight: 404, maxHeight: 404)
+                WelcomeArt(page: number, tactic: tactic, isActive: page == number, scale: artHeight / Self.artHeight,
+                           wide: isWide)
+                    .frame(maxWidth: .infinity, minHeight: artHeight, maxHeight: artHeight)
                     .accessibilityElement()
                     .accessibilityLabel(content.picture)
                     .accessibilityAddTraits(.isImage)
@@ -93,12 +116,12 @@ struct WelcomeView: View {
                         .accessibilityIdentifier("onboarding.body")
                 }
                 .multilineTextAlignment(.center)
+                .frame(maxWidth: isWide ? Self.wideTextWidth : .infinity)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, Tokens.Space.s5)
             }
             .scrollBounceBehavior(.basedOnSize)
         }
-        .accessibilityIdentifier("onboarding.page")
     }
 
     /// The active page is a wider white dot, so the page shows by shape as well as colour. One adjustable element for
