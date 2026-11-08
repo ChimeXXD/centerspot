@@ -105,7 +105,7 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [x] Format: zones, shape lines and glows as additive v1 fields (FORMAT.md, import rules, fuzz cases, round trips) (7 Nov: per-step `marks`; `MarksFormatTests`, `FuzzImportTests+Marks`)
 - [x] Renderer: broadcast pitch, discs with a dark outline and numbers on top (D-66/D-67), glow rings, zones, shape lines, heat glow; parity stays green (7 Nov: `BoardRendererTests+Broadcast`, `RendererParityTests` with step 4's marks)
 - [x] Draw tools for zones, shape lines and glow; undoable; VoiceOver words for each (7 Nov: `MarkEditsTests`, `BroadcastUITests`; Spotlight removed; one scrolling row of tools at AX sizes, D-70)
-- [ ] Tilted camera in `BoardRenderer` (perspective projection, far-to-near figures) for playback and exports on iPhone and iPad; editing stays flat; export timing re-measured on the phone
+- [ ] Tilted camera in `BoardRenderer` (perspective projection, far-to-near figures) for playback and exports on iPhone and iPad; editing stays flat; export timing re-measured on the phone (8 Nov: built and tested, D-76, commits 09f73aa..1ed0238; waiting on the timed export and Chime on the phone)
 - [ ] Then the onboarding (D-58) in the new look
 
 ### Day 7: Portfolio and open source

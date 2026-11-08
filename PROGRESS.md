@@ -2,6 +2,30 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Broadcast part 2: the tilted camera (Sun 8 Nov 2026, afternoon)
+
+**Changed**
+- Chime's choices (D-76): Broadcast by default, one remembered choice for Play and Export; Reduce Motion keeps the tilt with one still view fitted to the whole move; no ball follows the middle of the players moving. D-77: CI paused (GitHub Actions minutes used up for November; jobs refused, nothing charged) until the repo is public.
+- `CameraTrack` (Engine): where the camera looks, a pure function of the tactic, Gaussian-smoothed over 0.4 s, sampled at 30 fps, plus the span the subject covers.
+- `BroadcastCamera` (Render): the approved mockup's CSS camera as maths (tilt 54°, perspective, focus row, centre column; 58° wide lens for 16:9), never panning past a touchline; `framing:` zooms out until a span fits.
+- `BoardRenderer` `Options.broadcast`: pitch, marks and arrows drawn on the camera's plane and projected point by point (stroke outlines, so lines thin with distance); discs projected flat, far to near; numbers upright. Without a camera every call is the flat board's own.
+- Playback: the Flat | Broadcast switch where Back was (iPhone nav bar, iPad column nav), full-width board, VoiceOver elements where the camera draws each disc (none for players off screen).
+- Export: Camera row (videos only; images stay flat), broadcast frames edge to edge (16:9 all board, text over it), `VideoExportSettings.camera`.
+- Verifier: 1 gap fixed (the Reduce Motion view only centred on the move; a wing-to-wing switch left the ball off screen). Code review (medium): 7 found, 3 fixed by the review (movers once per step, an overload that could recurse, duplicate disc code), the off-screen VoiceOver elements fixed here; left: the per-frame track fallback, CGContext+Camera's repeated branches, the preview rebuilding the track on a Title/Notes toggle.
+
+**Checked**
+- Red: `CameraTrackTests` 10 and `BroadcastCameraTests` 9 against stubs; `BoardRendererTests+Camera` 4 of 6 against the unused option. Mutations (scratch copy): discs in board order killed by `nearerDiscsAreDrawnOverFartherOnes`; numbers painted on the grass killed by `numbersStayUpright` (after rewriting it on a white away number: the first version was blind, dark ink matched the dark pitch).
+- Parity: screen vs export through the camera first failed D-61's 64/255 cap at ring edges (84/255, 22 px): strokes under a squashing transform rasterise differently in SwiftUI. Discs are now projected filled polygons; passes at 0.9, 3.9, 5.5 s.
+- Gate 3/3 at 1ed0238. AgmenUITests 17 on iPhone 18 Pro (5 iPad-only skipped); IPadLayoutUITests + CameraUITests on the iPad Pro 13-inch (M5) simulator. Simulator timing: 10.6 ms per broadcast frame at 1080 × 1544 vs 6.4 ms flat.
+- `VideoExportTests.theSettingsHaveNoReduceMotionInput` lists the new `camera` field (its comment asks for that; camera is not a Reduce Motion input).
+- Two gate runs failed in FuzzImportTests while other test runs shared the simulator; alone and in a quiet full run they pass.
+
+**Not verified**
+- Timed export on the iPhone 14 Pro (c968c1f installed, Debug; 1ed0238 not yet: the phone dropped off). Chime's feel of the camera on the device. Xcode 26.6 (CI paused, D-77).
+
+**Next**
+- Chime's phone timing and feedback; then onboarding (D-58) in the broadcast look.
+
 ## Straight / Curved switch and small library cards (Sun 8 Nov 2026)
 
 **Changed**
