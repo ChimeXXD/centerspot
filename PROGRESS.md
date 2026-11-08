@@ -20,8 +20,10 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 - `VideoExportTests.theSettingsHaveNoReduceMotionInput` lists the new `camera` field (its comment asks for that; camera is not a Reduce Motion input).
 - Two gate runs failed in FuzzImportTests while other test runs shared the simulator; alone and in a quiet full run they pass.
 
+- On Chime's iPhone 14 Pro (Debug, `-exportBench`, now through both cameras), flat → broadcast: hero (8 s) 9:16 1.68 s 1.33 MB → 2.37 s 2.56 MB (budget 4.27); 1:1 0.85 s 0.69 MB → 1.52 s 1.59 MB (2.40); 16:9 1.35 s 0.83 MB → 2.23 s 2.52 MB (4.27). Ten steps (15.7 s) 9:16 2.98 s 2.75 MB → 4.67 s 5.83 MB (8.37); 1:1 1.64 s 1.40 MB → 2.96 s 3.55 MB (4.71); 16:9 2.60 s 1.70 MB → 4.36 s 5.85 MB (8.37). Broadcast is about 1.5× the time and 2× the size (a moving camera compresses less); every clip is inside its budget and D-11's 8 MB per 15 s. Two earlier runs were cut off with "Operation Interrupted" when the phone locked mid-bench.
+
 **Not verified**
-- Timed export on the iPhone 14 Pro (c968c1f installed, Debug; 1ed0238 not yet: the phone dropped off). Chime's feel of the camera on the device. Xcode 26.6 (CI paused, D-77).
+- Chime's feel of the camera on the device (1ed0238 installed). Xcode 26.6 (CI paused, D-77).
 
 **Next**
 - Chime's phone timing and feedback; then onboarding (D-58) in the broadcast look.

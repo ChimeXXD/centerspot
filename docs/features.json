@@ -412,7 +412,7 @@
       ],
       "verify": "renderer projection tests; export tests; timed export on the iPhone 14 Pro",
       "passes": false,
-      "evidence": "8 Nov 2026, partial: gate 3/3 at 1ed0238 (CameraTrackTests 10, BroadcastCameraTests 10 incl. the mockup's CSS camera as oracle, BoardRendererTests+Camera 6, ExportFrameTests+Camera 7, RendererParityTests.theBroadcastCameraMatches within D-60/D-61); AgmenUITests 17 on iPhone 18 Pro incl. CameraUITests (switch, remembered across relaunch, editing flat); IPadLayoutUITests + CameraUITests on the iPad Pro 13-inch simulator; 2 mutations killed. Open: timed export on the iPhone 14 Pro; Chime's feel on the device; Xcode 26.6 (CI paused, D-77)."
+      "evidence": "8 Nov 2026, partial: gate 3/3 at 1ed0238 (CameraTrackTests 10, BroadcastCameraTests 10 incl. the mockup's CSS camera as oracle, BoardRendererTests+Camera 6, ExportFrameTests+Camera 7, RendererParityTests.theBroadcastCameraMatches within D-60/D-61); AgmenUITests 17 on iPhone 18 Pro incl. CameraUITests (switch, remembered across relaunch, editing flat); IPadLayoutUITests + CameraUITests on the iPad Pro 13-inch simulator; 2 mutations killed. Timed on the iPhone 14 Pro (Debug, -exportBench): broadcast hero 9:16 2.37 s 2.56 MB, ten steps 9:16 4.67 s 5.83 MB of 8.37 MB budget, every clip inside budget. Open: Chime's feel on the device; Xcode 26.6 (CI paused, D-77)."
     },
     {
       "id": "IP-1",

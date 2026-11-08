@@ -3,17 +3,22 @@ import Foundation
 
 /// D5-1: how long does a real export take on this device, and how big is it? Launch with `-exportBench`; it exports
 /// the hero move (5 steps) and a 10-step move in every video format with `VideoExporter` and prints one
-/// `AGMEN-EXPORT …` line each, then deletes the files. Replaces the Day 2 spike (D2-6).
+/// `AGMEN-EXPORT …` line each, then deletes the files. Replaces the Day 2 spike (D2-6). Each through both cameras
+/// (BR-2: the broadcast camera's cost re-measured on the phone).
 enum ExportBench {
     static func report(hero: Tactic) async {
         for (name, tactic) in [("hero", hero), ("ten-steps", tenStepMove(from: hero))] {
-            for format in VideoFormat.allCases {
-                do {
-                    let result = try await VideoExporter.export(tactic, settings: VideoExportSettings(format: format))
-                    print("\(result.logLine) move=\(name) steps=\(tactic.phases.first?.steps.count ?? 0)")
-                    VideoExporter.discard(result.url)
-                } catch {
-                    print("AGMEN-EXPORT failed move=\(name) format=\(format.rawValue): \(error)")
+            for camera in BoardCamera.allCases {
+                for format in VideoFormat.allCases {
+                    let settings = VideoExportSettings(format: format, camera: camera)
+                    do {
+                        let result = try await VideoExporter.export(tactic, settings: settings)
+                        print("\(result.logLine) move=\(name) camera=\(camera.rawValue) "
+                              + "steps=\(tactic.phases.first?.steps.count ?? 0)")
+                        VideoExporter.discard(result.url)
+                    } catch {
+                        print("AGMEN-EXPORT failed move=\(name) camera=\(camera.rawValue) format=\(format.rawValue): \(error)")
+                    }
                 }
             }
         }
