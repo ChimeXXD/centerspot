@@ -122,31 +122,16 @@ enum TokenDrawing {
         if opacity < 1 { ctx.endTransparencyLayer() }
     }
 
+    /// Through the camera (`grass`) the disc and ring are projected and filled (`CGContext+Camera`).
     private static func disc(at c: CGPoint, radius r: CGFloat, fill: CGColor, grass: BroadcastCamera? = nil,
                              in ctx: CGContext) {
-        let box = CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r)
-        ctx.setFillColor(fill)
-        guard let grass else {
-            ctx.fillEllipse(in: box)
-            return
-        }
-        ctx.addPath(grass.project(CGPath(ellipseIn: box, transform: nil)))
-        ctx.fillPath()
+        ctx.fillEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r), fill, camera: grass)
     }
 
     private static func ring(at c: CGPoint, radius r: CGFloat, width: CGFloat, colour: CGColor,
                              grass: BroadcastCamera? = nil, in ctx: CGContext) {
-        let box = CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r)
-        guard let grass else {
-            ctx.setStrokeColor(colour)
-            ctx.setLineWidth(width)
-            ctx.strokeEllipse(in: box)
-            return
-        }
-        ctx.addPath(grass.project(CGPath(ellipseIn: box, transform: nil)
-            .copy(strokingWithWidth: width, lineCap: .butt, lineJoin: .miter, miterLimit: 10)))
-        ctx.setFillColor(colour)
-        ctx.fillPath()
+        ctx.setLineWidth(width)
+        ctx.strokeEllipse(in: CGRect(x: c.x - r, y: c.y - r, width: 2 * r, height: 2 * r), colour, camera: grass)
     }
 
     /// White chalk, so it shows on every kit, including the lime home side (UI-BRIEF §1).

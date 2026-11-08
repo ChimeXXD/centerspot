@@ -14,17 +14,30 @@ struct CameraTrack: Sendable, Equatable {
     /// The smoothed target at each sample: sample k is at `min(k / rate, duration)`, so the last one is the move's end.
     private let targets: [Point]
     private let duration: Double
-    /// Reduce Motion (D-76): one view for the whole move, the middle of everywhere the subject goes.
-    let still: Point
+    /// Everywhere the subject goes over the move: the box it stays inside.
+    struct Span: Sendable, Equatable {
+        var min: Point
+        var max: Point
+
+        var middle: Point { Point(x: (min.x + max.x) / 2, y: (min.y + max.y) / 2) }
+    }
+
+    /// Reduce Motion (D-76): one still view for the whole move, fitted to this (`BroadcastCamera(framing:)`).
+    let span: Span
+    /// The middle of `span`.
+    var still: Point { span.middle }
 
     init(tactic: Tactic, phaseIndex: Int = 0) {
         guard tactic.phases.indices.contains(phaseIndex) else {
-            (targets, duration, still) = ([.centre], 0, .centre)
+            (targets, duration, span) = ([.centre], 0, Span(min: .centre, max: .centre))
             return
         }
         let duration = Timeline.duration(of: tactic.phases[phaseIndex])
         let count = Int((duration * Self.rate).rounded(.up)) + 1
-        let raw = (0..<count).map { Self.subject(at: Self.time(of: $0, duration: duration), in: tactic, phaseIndex: phaseIndex) }
+        let movers = Self.movers(in: tactic, phaseIndex: phaseIndex)
+        let raw = (0..<count).map {
+            Self.subject(at: Self.time(of: $0, duration: duration), in: tactic, phaseIndex: phaseIndex, movers: movers)
+        }
         // No subject (nobody moving): hold the last one; before the first, wait on it; never any: the players' middle.
         let first = raw.lazy.compactMap { $0 }.first ?? Self.middleOfPlayers(in: tactic, phaseIndex: phaseIndex) ?? .centre
         var last = first
@@ -35,7 +48,7 @@ struct CameraTrack: Sendable, Equatable {
         self.duration = duration
         targets = Self.smoothed(held)
         let xs = held.map(\.x), ys = held.map(\.y)
-        still = Point(x: ((xs.min() ?? 0.5) + (xs.max() ?? 0.5)) / 2, y: ((ys.min() ?? 0.5) + (ys.max() ?? 0.5)) / 2)
+        span = Span(min: Point(x: xs.min() ?? 0.5, y: ys.min() ?? 0.5), max: Point(x: xs.max() ?? 0.5, y: ys.max() ?? 0.5))
     }
 
     /// The point on the pitch the camera centres on at `t` (clamped to the move; NaN reads as 0), between samples.
@@ -52,18 +65,31 @@ struct CameraTrack: Sendable, Equatable {
     /// What the camera follows at `t`, before smoothing: the first ball; with no ball, the middle of the players whose
     /// next step puts them somewhere else; nil when no one moves (the last step, or a step where everyone stands).
     static func subject(at t: Double, in tactic: Tactic, phaseIndex: Int = 0) -> Point? {
+        subject(at: t, in: tactic, phaseIndex: phaseIndex, movers: movers(in: tactic, phaseIndex: phaseIndex))
+    }
+
+    /// `subject(at:)` with each step's movers worked out once, not again for every sample.
+    private static func subject(at t: Double, in tactic: Tactic, phaseIndex: Int, movers: [[String]]) -> Point? {
         let state = Timeline.state(at: t, in: tactic, phaseIndex: phaseIndex)
         if let ball = tactic.tokens.first(where: { $0.kind == .ball }) { return state.positions[ball.id] }
-        guard tactic.phases.indices.contains(phaseIndex) else { return nil }
-        let steps = tactic.phases[phaseIndex].steps, index = state.stepIndex
-        guard index + 1 < steps.count else { return nil }
-        let resting = Timeline.restingState(step: index, in: tactic, phaseIndex: phaseIndex).positions
-        let next = steps[index + 1].positions
-        let movers = tactic.tokens.filter { token in
-            guard token.kind == .player, let from = resting[token.id], let to = next[token.id] else { return false }
-            return hypot(to.x - from.x, to.y - from.y) > 1e-6
+        guard movers.indices.contains(state.stepIndex) else { return nil }
+        return middle(of: movers[state.stepIndex].compactMap { state.positions[$0] })
+    }
+
+    /// For each step, the players its move takes somewhere else, in board order (none for the last step).
+    private static func movers(in tactic: Tactic, phaseIndex: Int) -> [[String]] {
+        guard tactic.phases.indices.contains(phaseIndex) else { return [] }
+        let steps = tactic.phases[phaseIndex].steps
+        return steps.indices.map { index in
+            guard index + 1 < steps.count else { return [] }
+            let resting = Timeline.restingState(step: index, in: tactic, phaseIndex: phaseIndex).positions
+            let next = steps[index + 1].positions
+            return tactic.tokens.compactMap { token in
+                guard token.kind == .player, let from = resting[token.id], let to = next[token.id],
+                      hypot(to.x - from.x, to.y - from.y) > 1e-6 else { return nil }
+                return token.id
+            }
         }
-        return middle(of: movers.compactMap { state.positions[$0.id] })
     }
 
     private static func time(of sample: Int, duration: Double) -> Double {

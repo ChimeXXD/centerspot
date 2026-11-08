@@ -6,9 +6,15 @@ import Foundation
 /// shape where it stands, far to near so nearer discs cover farther ones; every number is drawn last, upright, sized to
 /// its disc's distance. One renderer still (D-07): the screen and the video both come through here.
 extension BoardRenderer {
-    static func drawBroadcast(state: BoardState, tactic: Tactic, in ctx: CGContext, rect: CGRect, target: Point,
+    /// The camera `options` ask for in `rect`, or nil for the flat board (and library cards).
+    static func camera(for options: Options, in rect: CGRect, kind: Pitch.Kind) -> BroadcastCamera? {
+        guard options.card == nil, let target = options.broadcast else { return nil }
+        if let span = options.broadcastSpan { return BroadcastCamera(view: rect, kind: kind, framing: span) }
+        return BroadcastCamera(view: rect, kind: kind, target: target)
+    }
+
+    static func drawBroadcast(state: BoardState, tactic: Tactic, in ctx: CGContext, rect: CGRect, camera: BroadcastCamera,
                               options: Options) {
-        let camera = BroadcastCamera(view: rect, kind: tactic.pitch.kind, target: target)
         let g = camera.plane
         if options.fillsBackground {
             ctx.setFillColor(Tokens.Colour.bg.cgColor)

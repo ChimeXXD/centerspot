@@ -175,19 +175,19 @@ struct BoardScreen: View {
             TimelineView(.animation(minimumInterval: nil, paused: !clock.isPlaying)) { _ in
                 let t = clock.t(at: Self.now)
                 let frame = PlaybackTrack.frame(at: t, in: tactic, reduceMotion: reduceMotion)
-                canvas(frame.base, crossfade: frame.next.map { ($0, frame.mix) }, broadcast: broadcastTarget(at: t))
+                canvas(frame.base, crossfade: frame.next.map { ($0, frame.mix) }, aim: broadcastAim(at: t))
             }
         } else {
-            canvas(boardState, crossfade: nil, broadcast: nil)
+            canvas(boardState, crossfade: nil, aim: nil)
         }
     }
 
     private func canvas(_ state: BoardState, crossfade: (state: BoardState, mix: Double)?,
-                        broadcast: Point?) -> some View {
+                        aim: (target: Point, span: CameraTrack.Span?)?) -> some View {
         let drawing = mode == .drawing
         return BoardCanvas(
             tactic: tactic, state: state, selection: mode == .playing ? nil : selectedToken?.id,
-            dimsUnselected: sheet?.isPlayer == true, crossfade: crossfade, broadcast: broadcast,
+            dimsUnselected: sheet?.isPlayer == true, crossfade: crossfade, broadcast: aim?.target, broadcastSpan: aim?.span,
             movesTokens: mode == .editing || (drawing && Self.pencilDraws),
             strokeInput: strokeInput, strokeKind: drawTool.arrowKind ?? .run,
             selectedMark: drawing ? selectedMark : nil, pendingLine: drawing ? lineDraft.tokens : [],

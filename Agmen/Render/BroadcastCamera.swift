@@ -77,6 +77,40 @@ struct BroadcastCamera: Sendable, Equatable {
                   focus: focus, centreX: x, lens: lens)
     }
 
+    /// How far round the moving area (0…1 of the pitch) the still view keeps in sight: a disc and its glow.
+    static let framingMargin = 0.05
+
+    /// Reduce Motion's still view (D-76): the normal framing of `span`'s middle when that shows all of it, else the
+    /// pitch drawn smaller, 5% at a time, until `span` and `framingMargin` round it are inside the view. Nearer the
+    /// bottom edge than the normal lead when the area is deep, so its near side isn't cut off.
+    init(view: CGRect, kind: Pitch.Kind, framing span: CameraTrack.Span) {
+        let follow = BroadcastCamera(view: view, kind: kind, target: span.middle)
+        guard !follow.shows(span) else {
+            self = follow
+            return
+        }
+        let lens = Lens.fitting(view.size)
+        let full = max(min(lens.widthPerViewWidth * view.width, lens.widthPerViewHeight * view.height), 1)
+        let focus = min(span.middle.y - lens.lead, span.min.y - Self.framingMargin)
+            .clamped(to: Self.lowestFocus...(1 - lens.lead))
+        var camera = follow
+        for step in 1...16 {
+            let width = full * (1 - 0.05 * CGFloat(step))
+            camera = BroadcastCamera(view: view, kind: kind, planeWidth: width, tiltDegrees: lens.tiltDegrees,
+                                     eye: lens.eye * width, focus: focus, centreX: span.middle.x, lens: lens)
+            if camera.shows(span) { break }
+        }
+        self = camera
+    }
+
+    /// Whether `span`, with `framingMargin` round it, projects inside the view.
+    func shows(_ span: CameraTrack.Span) -> Bool {
+        let m = Self.framingMargin, bounds = view.insetBy(dx: -0.5, dy: -0.5)
+        return [Point(x: span.min.x - m, y: span.min.y - m), Point(x: span.max.x + m, y: span.min.y - m),
+                Point(x: span.min.x - m, y: span.max.y + m), Point(x: span.max.x + m, y: span.max.y + m)]
+            .allSatisfy { bounds.contains(project(plane.point($0))) }
+    }
+
     /// A point on the plane, in the view.
     func project(_ p: CGPoint) -> CGPoint {
         let (x, y, k) = parts(p)

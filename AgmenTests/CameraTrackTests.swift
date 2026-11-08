@@ -100,6 +100,11 @@ struct CameraTrackTests {
         // The ball covers x 0.4…0.55 and y 0.21…0.97 over the move: the still view looks at the middle of that.
         let track = CameraTrack(tactic: T.small())
         expectNear(track.still, T.p(0.475, 0.59), within: 1e-9)
+        // The whole area it covers, for the still camera to fit (verifier, 8 Nov: the middle alone left a wing-to-wing
+        // switch off screen).
+        expectNear(track.span.min, T.p(0.4, 0.21), within: 1e-9)
+        expectNear(track.span.max, T.p(0.55, 0.97), within: 1e-9)
+        expectNear(track.span.middle, track.still, within: 1e-12)
     }
 
     @Test func itIsAPureFunctionOfTheTactic() {

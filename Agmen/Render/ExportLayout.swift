@@ -34,7 +34,7 @@ struct ExportLayout: Sendable, Equatable {
     ///   and mark keep their places.
     static func make(_ canvas: ExportCanvas, kind: Pitch.Kind, showsTitle: Bool, showsNote: Bool,
                      broadcast: Bool = false) -> ExportLayout {
-        var layout = make(canvas, kind: kind, showsTitle: showsTitle, showsNote: showsNote)
+        var layout = flat(canvas, kind: kind, showsTitle: showsTitle, showsNote: showsNote)
         guard broadcast else { return layout }
         if case .wide = canvas {
             layout.board = CGRect(origin: .zero, size: layout.canvas)
@@ -44,7 +44,7 @@ struct ExportLayout: Sendable, Equatable {
         return layout
     }
 
-    private static func make(_ canvas: ExportCanvas, kind: Pitch.Kind, showsTitle: Bool, showsNote: Bool) -> ExportLayout {
+    private static func flat(_ canvas: ExportCanvas, kind: Pitch.Kind, showsTitle: Bool, showsNote: Bool) -> ExportLayout {
         let aspect = CGFloat(kind.size.length / kind.size.width)
         switch canvas {
         case .vertical: return portrait(width: 1080, fixedHeight: true, aspect: aspect, title: showsTitle, note: showsNote)

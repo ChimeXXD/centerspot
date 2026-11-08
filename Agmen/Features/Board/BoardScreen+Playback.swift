@@ -12,12 +12,12 @@ extension BoardScreen {
     /// Playing through the broadcast camera: the board fills its space instead of hugging the flat pitch.
     var showsBroadcast: Bool { mode == .playing && camera == .broadcast }
 
-    /// Where the broadcast camera looks at `t` (BR-2), or nil for the flat board. Reduce Motion holds one view of the
-    /// whole move, so nothing pans (D-76, rule 8).
-    func broadcastTarget(at t: Double) -> Point? {
+    /// Where the broadcast camera looks at `t` (BR-2), or nil for the flat board. Reduce Motion holds one still view
+    /// fitted to the whole move, so nothing pans and nothing it covers is off screen (D-76, rule 8).
+    func broadcastAim(at t: Double) -> (target: Point, span: CameraTrack.Span?)? {
         guard showsBroadcast else { return nil }
         let track = cameraTrack ?? CameraTrack(tactic: tactic)
-        return reduceMotion ? track.still : track.target(at: t)
+        return reduceMotion ? (track.still, track.span) : (track.target(at: t), nil)
     }
 
     @ViewBuilder var playbackBar: some View {

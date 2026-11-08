@@ -22,9 +22,12 @@ enum BoardRenderer {
         /// Playback and export through the tilted broadcast camera (D-66, BR-2), looking at this point on the pitch
         /// (`CameraTrack`). Nil draws the flat board.
         var broadcast: Point?
+        /// Reduce Motion's still broadcast view (D-76): fit this whole area instead of following `broadcast`.
+        var broadcastSpan: CameraTrack.Span?
 
         init(selection: String? = nil, dimsUnselected: Bool = false, showsLift: Bool = false, fillsBackground: Bool = false,
-             selectedMark: String? = nil, pendingLine: [String] = [], card: CardStyle? = nil, broadcast: Point? = nil) {
+             selectedMark: String? = nil, pendingLine: [String] = [], card: CardStyle? = nil, broadcast: Point? = nil,
+             broadcastSpan: CameraTrack.Span? = nil) {
             self.selection = selection
             self.dimsUnselected = dimsUnselected
             self.showsLift = showsLift
@@ -33,6 +36,7 @@ enum BoardRenderer {
             self.pendingLine = pendingLine
             self.card = card
             self.broadcast = broadcast
+            self.broadcastSpan = broadcastSpan
         }
     }
 
@@ -43,8 +47,8 @@ enum BoardRenderer {
     /// A library card (`options.card`, D-74) turns the grass, marks and arrows a quarter clockwise; the discs are then
     /// drawn where the turn puts them, so numbers stay upright and the ball stays at its carrier's lower right.
     static func draw(state: BoardState, tactic: Tactic, in ctx: CGContext, rect: CGRect, options: Options = .init()) {
-        if let target = options.broadcast, options.card == nil {
-            drawBroadcast(state: state, tactic: tactic, in: ctx, rect: rect, target: target, options: options)
+        if let camera = camera(for: options, in: rect, kind: tactic.pitch.kind) {
+            drawBroadcast(state: state, tactic: tactic, in: ctx, rect: rect, camera: camera, options: options)
             return
         }
         let card = options.card

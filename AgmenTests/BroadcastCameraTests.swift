@@ -114,6 +114,27 @@ struct BroadcastCameraTests {
         }
     }
 
+    /// D-76 (Reduce Motion): one still view that shows everywhere the move goes. A switch of play from wing to wing
+    /// zooms out until both wings (and a disc's width around them) are inside the view; a small move keeps the normal
+    /// framing.
+    @Test func theStillViewFitsTheWholeMove() {
+        let tall = CGRect(x: 0, y: 0, width: 393, height: 600)
+        for span in [CameraTrack.Span(min: Point(x: 0.1, y: 0.3), max: Point(x: 0.9, y: 0.7)),
+                     CameraTrack.Span(min: Point(x: 0.05, y: 0.05), max: Point(x: 0.95, y: 0.95)),
+                     CameraTrack.Span(min: Point(x: 0.2, y: 0.6), max: Point(x: 0.3, y: 1.0))] {
+            let camera = BroadcastCamera(view: tall, kind: .full, framing: span)
+            let m = BroadcastCamera.framingMargin
+            for corner in [Point(x: span.min.x - m, y: span.min.y - m), Point(x: span.max.x + m, y: span.min.y - m),
+                           Point(x: span.min.x - m, y: span.max.y + m), Point(x: span.max.x + m, y: span.max.y + m)] {
+                let p = camera.project(camera.plane.point(corner))
+                #expect(tall.insetBy(dx: -0.5, dy: -0.5).contains(p), "\(span): \(corner) at \(p)")
+            }
+        }
+        let small = CameraTrack.Span(min: Point(x: 0.45, y: 0.5), max: Point(x: 0.55, y: 0.6))
+        #expect(BroadcastCamera(view: tall, kind: .full, framing: small)
+                == BroadcastCamera(view: tall, kind: .full, target: small.middle))
+    }
+
     @Test func aWideViewUsesTheWideLens() {
         let wide = BroadcastCamera(view: CGRect(x: 0, y: 0, width: 1920, height: 1080), kind: .full, target: .centre)
         let tall = BroadcastCamera(view: CGRect(x: 0, y: 0, width: 1080, height: 1544), kind: .full, target: .centre)
