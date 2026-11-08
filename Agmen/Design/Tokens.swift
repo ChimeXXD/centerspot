@@ -79,6 +79,10 @@ enum Tokens {
         /// The Agmen wordmark: the one heavy word in the interface.
         static let wordmark = Font.custom(uiName, size: 34, relativeTo: .largeTitle).weight(.heavy)
         static let note = Font.custom(noteName, size: 18, relativeTo: .body)
+        /// Interface icons (D-81): one weight, two sizes. Bar icons sit in the toolbar, nav and playback bars; inline
+        /// icons (×, ✓, +) sit next to text or alone in a small button. A disclosure chevron stays small, in the caption font.
+        static let barIcon = title.weight(.medium)
+        static let inlineIcon = headline.weight(.medium)
         /// Token numbers on the pitch scale with the board, not Dynamic Type.
         static func number(size: CGFloat) -> Font { .custom(uiName, fixedSize: size).weight(.heavy) }
     }

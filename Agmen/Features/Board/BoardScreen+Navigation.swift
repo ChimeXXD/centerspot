@@ -49,7 +49,7 @@ extension BoardScreen {
         ToolbarItem(placement: .topBarTrailing) {
             Button(action: finishDrawing) {
                 Image(systemName: "checkmark")
-                    .font(Tokens.Typeface.headline.weight(.bold))
+                    .font(Tokens.Typeface.inlineIcon)
                     .foregroundStyle(Tokens.Colour.accentInk.color)
                     .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                     .background(Tokens.Colour.accent.color, in: Circle())
@@ -104,7 +104,7 @@ extension BoardScreen {
                     .lineLimit(1)
                     .truncationMode(.tail)
                 Image(systemName: "chevron.down")
-                    .font(Tokens.Typeface.caption.weight(.semibold))
+                    .font(Tokens.Typeface.caption)
                     .foregroundStyle(Tokens.Colour.muted.color)
             }
             .foregroundStyle(Tokens.Colour.text.color)

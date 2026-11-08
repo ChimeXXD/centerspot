@@ -35,8 +35,8 @@ struct BoardToastView: View {
                     .accessibilityIdentifier("toast.undo")
             }
         }
-        .padding(.leading, Tokens.Space.s4 + 2)
-        .padding(.trailing, Tokens.Space.s1 + 2)
+        .padding(.leading, Tokens.Space.s4)
+        .padding(.trailing, Tokens.Space.s2)
         .frame(minHeight: Tokens.Size.toast)
         .background(Tokens.Colour.surface3.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
         .shadow(color: Tokens.Colour.bg.color.opacity(0.4), radius: 12, y: 8)

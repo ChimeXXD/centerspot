@@ -20,7 +20,7 @@ struct AgmenTipStyle: TipViewStyle {
                 configuration.tip.invalidate(reason: .tipClosed)
             } label: {
                 Image(systemName: "xmark")
-                    .font(Tokens.Typeface.headline)
+                    .font(Tokens.Typeface.inlineIcon)
                     .foregroundStyle(Tokens.Colour.muted.color)
                     .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                     .contentShape(Rectangle())

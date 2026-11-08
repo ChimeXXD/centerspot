@@ -120,8 +120,8 @@ struct WelcomeArt: View {
             }
         }
         .frame(width: size.width, height: size.height)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Tokens.Colour.surface3.color, lineWidth: 2))
+        .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.tile))
+        .overlay(RoundedRectangle(cornerRadius: Tokens.Radius.tile).stroke(Tokens.Colour.surface3.color, lineWidth: 2))
     }
 
     // MARK: Board

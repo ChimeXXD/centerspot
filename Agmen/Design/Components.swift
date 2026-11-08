@@ -51,7 +51,7 @@ struct SheetCloseButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "xmark")
-                .font(Tokens.Typeface.headline)
+                .font(Tokens.Typeface.inlineIcon)
                 .foregroundStyle(Tokens.Colour.text.color)
                 .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                 .background(Tokens.Colour.surface2.color, in: Circle())
@@ -91,7 +91,7 @@ struct CapsuleSegments<Value: Hashable>: View {
     @Binding var selection: Value
     /// The track behind the segments, and its inset (the Draw panel's Shape switch sits on a darker one, D-72).
     var track = Tokens.Colour.surface2.color
-    var inset: CGFloat = 3
+    var inset: CGFloat = 4
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     /// One row; at the accessibility sizes, a column when the row won't fit ("11-a-s…", D6-3).
@@ -151,5 +151,15 @@ extension View {
             .presentationCornerRadius(Tokens.Radius.sheet)
             .presentationDragIndicator(.visible)
             .preferredColorScheme(.dark)
+    }
+
+    /// The iPad column's row card (the mockup's row card, D-73, D-81): the context row while editing, the mark row
+    /// while drawing.
+    func columnCard() -> some View {
+        padding(.leading, Tokens.Space.s4 + 4)
+            .padding(.trailing, Tokens.Space.s3)
+            .padding(.vertical, Tokens.Space.s3)
+            .frame(minHeight: 64)
+            .background(Tokens.Colour.surface.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
     }
 }

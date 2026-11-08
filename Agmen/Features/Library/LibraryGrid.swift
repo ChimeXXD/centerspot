@@ -47,9 +47,9 @@ struct LibraryGrid: Equatable {
     /// Padding plus the tile's 2 pt border, on the sides and the top (the mockup's 6 + 2 and 8 + 2).
     var inset: CGFloat { isWide ? 10 : 8 }
     var bottomInset: CGFloat { isWide ? 12 : 10 }
-    var cornerRadius: CGFloat { isWide ? 16 : 14 }
-    /// The thumbnail's own corners (the mockup's 5 px on the svg).
-    static let thumbnailCorner: CGFloat = 5
+    var cornerRadius: CGFloat { Tokens.Radius.tile }
+    /// The thumbnail's own corners, nested inside the card's (D-81): the card's radius less the inset.
+    var thumbnailCorner: CGFloat { max(0, cornerRadius - inset) }
     var nameSize: CGFloat { isWide ? 15 : 13 }
     var metaSize: CGFloat { isWide ? 12 : 11 }
     /// The name: heavy Nunito at the mockup's size, scaling with Dynamic Type.

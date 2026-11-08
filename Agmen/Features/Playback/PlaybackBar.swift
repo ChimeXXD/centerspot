@@ -122,7 +122,7 @@ struct PlaybackBar: View {
             Button(action: onToggle) {
                 VStack(spacing: Tokens.Space.s1) {
                     Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                        .font(Tokens.Typeface.title)
+                        .font(Tokens.Typeface.barIcon)
                         .foregroundStyle(Tokens.Colour.accentInk.color)
                         .frame(width: Tokens.Size.playDisc, height: Tokens.Size.playDisc)
                         .background(Tokens.Colour.accent.color, in: Circle())
@@ -161,7 +161,7 @@ struct PlaybackBar: View {
                       action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(Tokens.Typeface.title.weight(.semibold))
+                .font(Tokens.Typeface.barIcon)
                 .foregroundStyle(tint.color)
                 .frame(maxWidth: .infinity, minHeight: Tokens.Size.touch + Tokens.Space.s2)
                 .contentShape(Rectangle())

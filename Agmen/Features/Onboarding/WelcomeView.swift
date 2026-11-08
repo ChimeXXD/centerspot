@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The welcome on first launch, and again after Show tips again (D-58, D-78, mockup `onboarding-*--bc`): three pages,
-/// each with the real example move playing above a title and one line. Skip goes to the library; Start, on the last
+/// each with the real example move playing above a title and one line, all on the centre line (D-81). Skip goes to the library; Start, on the last
 /// page, opens the example move, where the first tip waits. At the accessibility text sizes the picture steps aside
 /// and the words scroll, with Skip, the dots and the button pinned (mockup `onboarding-1--ax5`).
 struct WelcomeView: View {
@@ -70,7 +70,7 @@ struct WelcomeView: View {
 
     private func pageView(_ number: Int) -> some View {
         let content = Self.pages[number - 1]
-        return VStack(alignment: .leading, spacing: 0) {
+        return VStack(spacing: 0) {
             if !dynamicTypeSize.isAccessibilitySize {
                 WelcomeArt(page: number, tactic: tactic, isActive: page == number)
                     .frame(maxWidth: .infinity, minHeight: 404, maxHeight: 404)
@@ -81,7 +81,7 @@ struct WelcomeView: View {
                     .padding(.bottom, Tokens.Space.s5)
             }
             ScrollView {
-                VStack(alignment: .leading, spacing: Tokens.Space.s2) {
+                VStack(spacing: Tokens.Space.s2) {
                     Text(content.title)
                         .font(Tokens.Typeface.largeTitle)
                         .foregroundStyle(Tokens.Colour.text.color)
@@ -92,7 +92,8 @@ struct WelcomeView: View {
                         .foregroundStyle(Tokens.Colour.muted.color)
                         .accessibilityIdentifier("onboarding.body")
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal, Tokens.Space.s5)
             }
             .scrollBounceBehavior(.basedOnSize)

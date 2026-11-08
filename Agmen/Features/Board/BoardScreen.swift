@@ -139,8 +139,11 @@ struct BoardScreen: View {
     /// nil keeps the iPhone's inset board.
     func pitchStack(_ size: CGSize?) -> some View {
         ZStack(alignment: .bottom) {
+            // The empty prompt sits on a dimmed pitch, so its words don't cross the halfway line (D-81). The animation
+            // is scoped to the opacity, so a pitch-size change from the first formation isn't animated with it.
             sizedBoard(size)
-            if tactic.tokens.isEmpty, mode == .editing { emptyState }
+                .animation(Tokens.Motion.ease(Tokens.Motion.select)) { $0.opacity(showsEmptyState ? 0.4 : 1) }
+            if showsEmptyState { emptyState }
             if let toast {
                 BoardToastView(toast: toast) { undoFromToast(toast) }
                     .padding(.horizontal, Tokens.Space.s4)
@@ -214,6 +217,8 @@ struct BoardScreen: View {
 
         bottomToolbar(drawing: false)
     }
+
+    private var showsEmptyState: Bool { tactic.tokens.isEmpty && mode == .editing }
 
     private var emptyState: some View {
         VStack(spacing: Tokens.Space.s4) {

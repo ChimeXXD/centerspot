@@ -34,7 +34,7 @@ struct TacticCard: View {
     private var thumbnail: some View {
         CardThumbnail(tactic: tactic)
             .aspectRatio(Self.aspect, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: LibraryGrid.thumbnailCorner))
+            .clipShape(RoundedRectangle(cornerRadius: grid.thumbnailCorner))
     }
 
     /// "1 step", "5 steps" (the main phase, as on the board).

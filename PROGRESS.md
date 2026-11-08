@@ -2,6 +2,24 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Unslop, screen-by-screen pass (Sun 8 Nov 2026, night)
+
+**Changed**
+- Chime asked whether the design had really been unslopped; the first pass (D-80) was colour, weight and two strings only. This pass screenshotted 38 screens from the UI suites, audited them against the skill's signs list and the code, and put four fixes to Chime, who picked all four and added "centre the onboarding" (D-81).
+- Spacing on the 4 pt grid: the 2 pt nudges (10, 14, 18, 6, 5, 3) in the Draw panel, player sheet, formation grid, toast, toolbar, step chips (8 apart, as on iPad), export buttons and segment track become 4/8/12/16. The library grid's 10 pt gap stays (pinned to the D-74 mockup by `LibraryGridTests`).
+- One icon rule: `Typeface.barIcon` (22, medium) in the toolbar, nav and playback bars; `Typeface.inlineIcon` (17, medium) for ×, ✓ and +. Disclosure chevrons stay caption size.
+- Corners from the tokens: library cards 16 with nested thumbnails (card less inset), welcome clip 16, export preview 12.
+- The empty board's prompt sits on the pitch dimmed to 40%.
+- The welcome pages are centred (art, title, line).
+
+**Checked**
+- Before/after screenshots of every changed screen (BoardScreenshot, Onboarding, Broadcast, DrawShape, ExportFlow UI tests, all passing on iPhone 18 Pro).
+- VideoExportTests alone after the gate's run collided with the screenshot run on one simulator (both pass alone; the collision, not the code).
+
+**Not verified**
+- Chime's eye on the phone; the iPad layouts (iPad check comes next).
+- The empty board: the halfway line is fainter but still runs between the words and the button.
+
 ## Unslop pass, polish mode (Sun 8 Nov 2026, evening)
 
 **Changed**

@@ -16,14 +16,15 @@
 ### Waiting on Chime
 1. How the Broadcast camera feels in Play on the phone (drift on passes?). BR-2 stays `passes: false` until then (rule 9).
 2. The onboarding on the phone: delete the app or use More › Show tips again.
-3. The unslop choices were applied as the recommended options while Chime was away (D-80): one lime lead per screen, lighter weights, no periods on welcome titles. One commit to reverse if Chime disagrees.
+3. The unslop: D-80 (lime, weights, periods; applied while Chime was away) and D-81 (screen-by-screen: 4 pt spacing, one icon rule, token corners, dimmed empty board, centred welcome; Chime picked these). Chime to look on the phone; the empty board's halfway line still runs between the prompt's words and button at 40%.
 4. Older: the iPad questions from 8 Nov morning (Straight/Curved and the bend dot feel, dot above or below players, Remove moving the player back, finger drawing zones on iPad, ⌘Z), AX5 screenshots, Day 3/4 approvals.
 
 ### Fix everything (next, before Day 7)
 - From the camera review: the per-frame `CameraTrack` fallback in `broadcastTarget`; `CGContext+Camera` repeated branches; the export preview rebuilds the track on a Title/Notes toggle.
 - From the onboarding review: tips show on any board, not only the example (as specified; Chime may want example-only); the tip modifier swaps a control's identity when a tip comes or goes; on a board with no players the drag tip holds the others back.
 - From 8 Nov morning: the selected arrow is an index (undo can move it); the iPad library's first frame lays out the phone grid; card discs widen the carry radius; Pencil + finger can drop a dot drag; `-seedLibrary` adds up; the heat glow's tap area; a smaller shape on 11 players leaves extras.
-- Unslop leftovers not done: icon weights (toolbar regular, nav semibold); a few 2 pt nudges (`s1 + 2`, `s2 + 2`).
+- The board's title truncates to "Overlap dow…" on the phone (the Undo/Redo/Share group is wide), seen in the D-81 audit.
+- The Draw panel's "Shape" label is a one-off 13 pt size; the library grid's 10 pt gap is off the 4 pt grid but pinned by `LibraryGridTests` to the D-74 mockup (change both together if Chime wants it).
 
 ### Working rules learned this session
 - **Never let two test runs share a simulator.** The gate runs at every turn end; a background UI suite on the same simulator made it fail (signal kill, fuzz timeouts). Wait for UI runs to finish (Monitor/until-loop) before ending a turn, and tell review agents not to run xcodebuild.

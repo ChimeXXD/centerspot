@@ -30,7 +30,7 @@ struct BoardToolbar: View {
                 .agmenTip(showsTips ? Onboarding.shared.current(ExportTip.self) : nil, arrowEdge: .bottom)
         }
         .frame(maxWidth: itemsWidth)
-        .padding(.horizontal, Tokens.Space.s1 + 2)
+        .padding(.horizontal, Tokens.Space.s2)
         .padding(.top, Tokens.Space.s2)
         .frame(height: Tokens.Size.toolbarHeight, alignment: .top)
         .frame(maxWidth: .infinity)
@@ -43,7 +43,7 @@ struct BoardToolbar: View {
     private func label(_ title: String, symbol: String, lit: Bool = false) -> some View {
         VStack(spacing: Tokens.Space.s1) {
             Image(systemName: symbol)
-                .font(Tokens.Typeface.title.weight(.regular))
+                .font(Tokens.Typeface.barIcon)
                 .frame(height: 28)
             Text(title)
                 .font(Tokens.Typeface.caption)
@@ -82,7 +82,7 @@ struct BoardToolbar: View {
         Button(action: onPlay) {
             VStack(spacing: Tokens.Space.s1) {
                 Image(systemName: "play.fill")
-                    .font(Tokens.Typeface.title)
+                    .font(Tokens.Typeface.barIcon)
                     .foregroundStyle(Tokens.Colour.accentInk.color)
                     .frame(width: Tokens.Size.playDisc, height: Tokens.Size.playDisc)
                     .background(Tokens.Colour.accent.color, in: Circle())

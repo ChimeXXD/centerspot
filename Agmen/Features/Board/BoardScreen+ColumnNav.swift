@@ -73,7 +73,7 @@ extension BoardScreen {
         case .drawing:
             Button(action: finishDrawing) {
                 Image(systemName: "checkmark")
-                    .font(Tokens.Typeface.headline.weight(.bold))
+                    .font(Tokens.Typeface.inlineIcon)
                     .foregroundStyle(Tokens.Colour.accentInk.color)
                     .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                     .background(Tokens.Colour.accent.color, in: Circle())
@@ -87,7 +87,7 @@ extension BoardScreen {
                          action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(Tokens.Typeface.title.weight(.semibold))
+                .font(Tokens.Typeface.barIcon)
                 .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                 .contentShape(Rectangle())
         }

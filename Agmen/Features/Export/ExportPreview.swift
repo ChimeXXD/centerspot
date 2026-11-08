@@ -27,7 +27,7 @@ struct ExportPreview: View {
         .frame(width: size.width, height: size.height)
         .overlay { safeZones(size) }
         .overlay { veil }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.item))
         .frame(width: Self.box.width, height: Self.box.height)
         .accessibilityElement()
         .accessibilityLabel(model.preset.video != nil && model.camera == .broadcast

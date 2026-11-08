@@ -42,7 +42,7 @@ struct PlayerSheet: View {
                     Button("Delete player") { onDelete(token) }
                         .buttonStyle(QuietCapsuleStyle(foreground: Tokens.Colour.danger.color))
                         .accessibilityIdentifier("inspector.delete")
-                        .padding(.top, Tokens.Space.s4 + 2)
+                        .padding(.top, Tokens.Space.s4)
                 }
                 .padding(.horizontal, Tokens.Space.s5)
                 .padding(.top, Tokens.Space.s5)
@@ -66,7 +66,7 @@ struct PlayerSheet: View {
     }
 
     private var fields: some View {
-        HStack(spacing: Tokens.Space.s2 + 2) {
+        HStack(spacing: Tokens.Space.s3) {
             TextField("Name", text: $name)
                 .focused($focus, equals: .name)
                 .textInputAutocapitalization(.words)
@@ -92,7 +92,7 @@ struct PlayerSheet: View {
 
     /// The roles of one line at a time, as in the mockup ("Role · Defenders"); the label switches line.
     private func roles(_ token: Token) -> some View {
-        VStack(spacing: 6) {
+        VStack(spacing: Tokens.Space.s2) {
             Menu {
                 Picker("Line", selection: $line) {
                     ForEach(Self.lines, id: \.0) { Text($0.1).tag($0.0) }
@@ -117,12 +117,12 @@ struct PlayerSheet: View {
                         Spacer()
                         if on {
                             Image(systemName: "checkmark")
-                                .font(Tokens.Typeface.headline)
+                                .font(Tokens.Typeface.inlineIcon)
                                 .foregroundStyle(Tokens.Colour.text.color)
                         }
                     }
                     .foregroundStyle(Tokens.Colour.text.color)
-                    .padding(.horizontal, Tokens.Space.s3 + 2)
+                    .padding(.horizontal, Tokens.Space.s4)
                     .frame(minHeight: Tokens.Size.field)
                     .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.item))
                     .contentShape(RoundedRectangle(cornerRadius: Tokens.Radius.item))
@@ -175,7 +175,7 @@ private extension View {
     func fieldStyle() -> some View {
         font(Tokens.Typeface.body)
             .foregroundStyle(Tokens.Colour.text.color)
-            .padding(.horizontal, Tokens.Space.s3 + 2)
+            .padding(.horizontal, Tokens.Space.s4)
             .frame(minHeight: Tokens.Size.field)
             .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.item))
     }

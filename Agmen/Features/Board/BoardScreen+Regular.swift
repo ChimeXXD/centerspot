@@ -41,7 +41,7 @@ extension BoardScreen {
                 let strip = StepsStrip(
                     steps: steps, current: current, pulse: pulse, onSelect: selectStep,
                     onAdd: { addStep("Add step") }, onMove: moveStep,
-                    chipSize: CGSize(width: 56, height: 64), spacing: Tokens.Space.s2, inset: 0, showsTip: tipsOn
+                    chipSize: CGSize(width: 56, height: 64), inset: 0, showsTip: tipsOn
                 )
                 strip.frame(maxWidth: strip.contentWidth)
             }
@@ -101,11 +101,7 @@ extension BoardScreen {
     /// The mockup's row card: the selected player and their actions, a step's actions, or the formation and step.
     private var contextCard: some View {
         contextRow(prominent: true)
-            .padding(.leading, Tokens.Space.s4 + 4)
-            .padding(.trailing, Tokens.Space.s2 + 2)
-            .padding(.vertical, Tokens.Space.s2 + 2)
-            .frame(minHeight: 64)
-            .background(Tokens.Colour.surface.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
+            .columnCard()
             .animation(Tokens.Motion.ease(Tokens.Motion.select), value: contextKey)
     }
 

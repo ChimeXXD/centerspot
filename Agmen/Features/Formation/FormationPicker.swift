@@ -11,7 +11,7 @@ struct FormationPicker: View {
     @State private var chosen: String?
     @State private var confirming = false
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: Tokens.Space.s2 + 2), count: 3)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: Tokens.Space.s3), count: 3)
 
     private var shapes: [Formation] { Presets.shared.formations.filter { $0.pitch == size } }
     private var formation: Formation? { shapes.first { $0.id == chosen } ?? shapes.first }
@@ -26,7 +26,7 @@ struct FormationPicker: View {
                     .init(value: .sevenASide, title: "7-a-side", identifier: "formation.size.seven"),
                     .init(value: .fiveASide, title: "5-a-side", identifier: "formation.size.five"),
                 ], selection: $size)
-                LazyVGrid(columns: columns, spacing: Tokens.Space.s2 + 2) {
+                LazyVGrid(columns: columns, spacing: Tokens.Space.s3) {
                     ForEach(shapes) { shape in tile(shape) }
                 }
             }
@@ -66,7 +66,7 @@ struct FormationPicker: View {
     private func tile(_ shape: Formation) -> some View {
         let on = shape.id == formation?.id
         return Button { chosen = shape.id } label: {
-            VStack(spacing: 6) {
+            VStack(spacing: Tokens.Space.s2) {
                 FormationDiagram(formation: shape)
                     .frame(width: 74, height: 92)
                 Text(shape.name)

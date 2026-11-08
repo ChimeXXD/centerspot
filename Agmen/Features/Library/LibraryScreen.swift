@@ -104,7 +104,7 @@ struct LibraryScreen: View {
             .accessibilityIdentifier("library.menu.tips")
         } label: {
             Image(systemName: "ellipsis")
-                .font(Tokens.Typeface.title.weight(.semibold))
+                .font(Tokens.Typeface.barIcon)
                 .foregroundStyle(Tokens.Colour.text.color)
                 .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                 .contentShape(Rectangle())

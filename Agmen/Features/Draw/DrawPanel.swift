@@ -21,7 +21,7 @@ struct DrawPanel: View {
     static let columnTile: CGFloat = 64
 
     private func columns(_ count: Int) -> [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: Tokens.Space.s1 + 2), count: count)
+        Array(repeating: GridItem(.flexible(), spacing: Tokens.Space.s2), count: count)
     }
 
     /// iPad landscape (D-73): the mark row and the tools are cards in the right column, the hint under them.
@@ -35,8 +35,7 @@ struct DrawPanel: View {
         VStack(spacing: Tokens.Space.s5) {
             if let selectedMark { markRow(selectedMark) }
             tools
-                .padding(.horizontal, Tokens.Space.s3 + 2)
-                .padding(.vertical, Tokens.Space.s3)
+                .padding(Tokens.Space.s3)
                 .background(Tokens.Colour.surface.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.sheet))
             if !dynamicTypeSize.isAccessibilitySize { hintLine }
         }
@@ -61,9 +60,9 @@ struct DrawPanel: View {
             .foregroundStyle(Tokens.Colour.muted.color)
             .multilineTextAlignment(.center)
             .padding(.horizontal, Tokens.Space.s5)
-            .padding(.top, Tokens.Space.s1 + 2)
+            .padding(.top, Tokens.Space.s2)
             .accessibilityIdentifier("draw.hint")
-            .padding(.bottom, Tokens.Space.s3)  // the mockup's draw--shape-*: 6 pt under the pitch, 13 over the panel
+            .padding(.bottom, Tokens.Space.s3)  // 8 pt under the pitch, 12 over the panel (D-81)
     }
 
     /// The mockup's "Zone 1 · step 4" row with Remove, in the hint's place.
@@ -85,7 +84,7 @@ struct DrawPanel: View {
     private var panel: some View {
         tools
             .padding(.horizontal, Tokens.Space.s3)
-            .padding(.vertical, Tokens.Space.s2 + 2)
+            .padding(.vertical, Tokens.Space.s3)
             .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.panel))
             .shadow(color: .black.opacity(0.5), radius: 15, y: 8)
             .padding(.horizontal, Tokens.Space.s4)
@@ -96,9 +95,9 @@ struct DrawPanel: View {
     /// The Shape switch for an arrow (or a mark's help line) and the tiles, shared by the panel under the pitch and the
     /// column's card.
     private var tools: some View {
-        // The mockup's 5 pt between the rows. The help line's slot is as tall as the Shape row, so the pitch keeps its
+        // 4 pt between the rows (D-81). The help line's slot is as tall as the Shape row, so the pitch keeps its
         // size when the tool changes.
-        VStack(alignment: .leading, spacing: Tokens.Space.s1 + 1) {
+        VStack(alignment: .leading, spacing: Tokens.Space.s1) {
             if tool.arrowKind != nil {
                 shapeRow
             } else {
@@ -106,7 +105,7 @@ struct DrawPanel: View {
                     .font(Tokens.Typeface.caption)
                     .foregroundStyle(Tokens.Colour.muted.color)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, Tokens.Space.s1 + 2)
+                    .padding(.horizontal, Tokens.Space.s2)
                     .frame(minHeight: Self.shapeRowHeight, alignment: .leading)
                     .accessibilityIdentifier("draw.kind-help")
             }
@@ -122,7 +121,7 @@ struct DrawPanel: View {
     /// "Shape  Straight | Curved" (D-72). At the accessibility sizes it stays one row at the largest standard size, with
     /// the Large Content Viewer on each segment, so the pitch keeps its room (D-70).
     private var shapeRow: some View {
-        HStack(spacing: Tokens.Space.s2 + 2) {
+        HStack(spacing: Tokens.Space.s3) {
             Text("Shape")
                 .font(.custom(Tokens.Typeface.uiName, size: 13, relativeTo: .caption).weight(.semibold))
                 .foregroundStyle(Tokens.Colour.muted.color)
@@ -131,7 +130,7 @@ struct DrawPanel: View {
                 .accessibilityElement(children: .contain)
                 .accessibilityLabel("Arrow shape")
         }
-        .padding(.leading, Tokens.Space.s1 + 2)
+        .padding(.leading, Tokens.Space.s2)
         .padding(.trailing, 2)
         .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
     }
@@ -145,7 +144,7 @@ struct DrawPanel: View {
     ]
 
     private func row(_ tools: [DrawTool]) -> some View {
-        LazyVGrid(columns: columns(tools.count), spacing: Tokens.Space.s1 + 2) {
+        LazyVGrid(columns: columns(tools.count), spacing: Tokens.Space.s2) {
             ForEach(tools, id: \.self) { tile($0) }
         }
     }
@@ -154,7 +153,7 @@ struct DrawPanel: View {
     private var scrollingRow: some View {
         ScrollViewReader { reader in
             ScrollView(.horizontal) {
-                HStack(spacing: Tokens.Space.s1 + 2) {
+                HStack(spacing: Tokens.Space.s2) {
                     ForEach(DrawTool.arrows + DrawTool.marks, id: \.self) { option in
                         tile(option, fitsName: true).id(option)
                     }
@@ -169,7 +168,7 @@ struct DrawPanel: View {
     private func tile(_ option: DrawTool, fitsName: Bool = false) -> some View {
         let on = option == tool
         return Button { tool = option } label: {
-            VStack(spacing: 3) {
+            VStack(spacing: Tokens.Space.s1) {
                 ToolIcon(tool: option)
                     .frame(width: 40, height: 22)
                 Text(option.title)
@@ -202,12 +201,7 @@ private struct MarkRowFrame: ViewModifier {
 
     @ViewBuilder func body(content: Content) -> some View {
         if inColumn {
-            content
-                .padding(.leading, Tokens.Space.s4 + 4)
-                .padding(.trailing, Tokens.Space.s2 + 2)
-                .padding(.vertical, Tokens.Space.s2 + 2)
-                .frame(minHeight: 64)
-                .background(Tokens.Colour.surface.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
+            content.columnCard()
         } else {
             content
                 .padding(.horizontal, Tokens.Space.s5)

@@ -160,7 +160,7 @@ struct ExportSheet: View {
                 .buttonStyle(QuietCapsuleStyle())
                 .accessibilityIdentifier("export.cancel")
         case .finished(let file):
-            VStack(spacing: Tokens.Space.s2 + 2) {
+            VStack(spacing: Tokens.Space.s3) {
                 ShareLink(item: file.url) { Text(file.isVideo ? "Share video" : "Share image") }
                     .buttonStyle(PrimaryCapsuleStyle())
                     .accessibilityIdentifier("export.share")
@@ -170,7 +170,7 @@ struct ExportSheet: View {
                     .accessibilityIdentifier("export.save")
             }
         case .failed:
-            VStack(spacing: Tokens.Space.s2 + 2) {
+            VStack(spacing: Tokens.Space.s3) {
                 Button("Try again") { model.start() }
                     .buttonStyle(PrimaryCapsuleStyle())
                     .accessibilityIdentifier("export.retry")

@@ -10,9 +10,9 @@ struct StepsStrip: View {
     var onSelect: (Int) -> Void
     var onAdd: () -> Void
     var onMove: (_ from: Int, _ to: Int) -> Void
-    /// The iPad portrait row uses bigger chips, closer together, and no side inset of its own (D-73).
+    /// The iPad portrait row uses bigger chips and no side inset of its own (D-73); both rows space chips 8 pt (D-81).
     var chipSize = Tokens.Size.stepChip
-    var spacing = Tokens.Space.s2 + 2
+    var spacing = Tokens.Space.s2
     var inset = Tokens.Space.s5
     /// The step tip, only while editing with no sheet open (D-58).
     var showsTip = true
@@ -87,7 +87,7 @@ struct StepsStrip: View {
     private var addChip: some View {
         Button(action: onAdd) {
             Image(systemName: "plus")
-                .font(Tokens.Typeface.title.weight(.semibold))
+                .font(Tokens.Typeface.inlineIcon)
                 .foregroundStyle(Tokens.Colour.text.color)
                 .frame(minWidth: chipSize.width, minHeight: chipSize.height)
                 .overlay {
