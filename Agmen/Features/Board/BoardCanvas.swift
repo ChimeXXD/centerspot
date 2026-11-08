@@ -63,7 +63,11 @@ struct BoardCanvas: View {
         GeometryReader { proxy in
             let rect = CGRect(origin: .zero, size: proxy.size)
             let geometry = BoardGeometry(kind: tactic.pitch.kind, fitting: rect)
+            let centres = tokenCentres(geometry, view: rect)
             ZStack(alignment: .topLeading) {
+                // Under the pitch, so the drag it asks for reaches the pitch (an anchor that ignores touches never
+                // shows its popover).
+                dragTipAnchor(centres)
                 Canvas { context, size in
                     context.withCGContext { cg in
                         BoardRenderer.draw(state: state, crossfadingTo: crossfade?.state, mix: crossfade?.mix ?? 0,
@@ -91,7 +95,7 @@ struct BoardCanvas: View {
 
                 // Marks under the players, as drawn: a player on a zone or line is found by touch first.
                 if showsMarks { markLayer(geometry) }
-                accessibilityLayer(geometry, view: rect)
+                accessibilityLayer(centres)
                 bendElement(geometry)
             }
         }
@@ -175,7 +179,30 @@ struct BoardCanvas: View {
     /// touches through to the canvas; VoiceOver and UI tests use it.
     /// Through the broadcast camera each element sits where the camera draws its disc, and a player the camera can't
     /// see has none, so VoiceOver never lands off the board or over the controls (review, 8 Nov).
-    private func accessibilityLayer(_ geometry: BoardGeometry, view: CGRect) -> some View {
+    private func accessibilityLayer(_ centres: [String: CGPoint]) -> some View {
+        let roles = Presets.shared.roles
+        return ForEach(BoardRenderer.drawingOrder(tactic.tokens)) { token in
+            if let centre = centres[token.id], let point = state.positions[token.id] {
+                tokenElement(token, at: centre, point: point, roles: roles)
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    /// The "Move a player" tip's anchor (D-82): its own 44 pt view on the player, under the pitch. Hung on the token
+    /// element, `position` stretched the anchor over the whole board and the arrow pointed at the bottom middle, where
+    /// the keeper stands.
+    @ViewBuilder private func dragTipAnchor(_ centres: [String: CGPoint]) -> some View {
+        if let id = dragTipToken, let tip = Onboarding.shared.current(DragTip.self), let centre = centres[id] {
+            Color.clear
+                .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
+                .agmenTip(tip, arrowEdge: .top)
+                .position(centre)
+        }
+    }
+
+    /// Where each token is drawn, flat or through the broadcast camera; a token the camera can't see has none.
+    private func tokenCentres(_ geometry: BoardGeometry, view: CGRect) -> [String: CGPoint] {
         let camera = BoardRenderer.camera(for: options, in: view, kind: tactic.pitch.kind)
         let flat = (camera?.plane ?? geometry).drawnCentres(positions: state.positions, tokens: tactic.tokens, carry: state.carry)
         let centres: [String: CGPoint]
@@ -184,13 +211,7 @@ struct BoardCanvas: View {
         } else {
             centres = flat
         }
-        let roles = Presets.shared.roles
-        return ForEach(BoardRenderer.drawingOrder(tactic.tokens)) { token in
-            if let centre = centres[token.id], let point = state.positions[token.id] {
-                tokenElement(token, at: centre, point: point, roles: roles)
-            }
-        }
-        .allowsHitTesting(false)
+        return centres
     }
 
     /// One token's element. Kept apart, with its traits typed, so Xcode 26.6's type checker finishes in time (CI).
@@ -223,6 +244,5 @@ struct BoardCanvas: View {
             }
             .accessibilityAction(named: "Move left") { if movesTokens { onNudge(token.id, Nudge.left.applied(to: point)) } }
             .accessibilityAction(named: "Move right") { if movesTokens { onNudge(token.id, Nudge.right.applied(to: point)) } }
-            .agmenTip(token.id == dragTipToken ? Onboarding.shared.current(DragTip.self) : nil, arrowEdge: .top)
     }
 }

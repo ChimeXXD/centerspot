@@ -12,10 +12,8 @@ extension BoardScreen {
     /// Tips show only while editing with nothing over the board: not while playing, drawing or with a sheet open (D-58).
     var tipsOn: Bool { mode == .editing && sheet == nil }
 
-    /// The player the "Move a player" tip points at (D-78): 3 in the example, else the first player.
-    var dragTipToken: String? {
-        tactic.tokens.first { $0.id == "h3" && $0.kind == .player }?.id ?? tactic.tokens.first { $0.kind == .player }?.id
-    }
+    /// The player the "Move a player" tip points at: our number 7 (D-82).
+    var dragTipToken: String? { Onboarding.dragTipPlayer(in: tactic.tokens) }
 
     /// Playing through the broadcast camera: the board fills its space instead of hugging the flat pitch.
     var showsBroadcast: Bool { mode == .playing && camera == .broadcast }

@@ -31,16 +31,16 @@ final class OnboardingUITests: XCTestCase {
         }
         XCTAssertFalse(A.element(app, "onboarding.next").exists, "the last page starts instead")
 
-        // Start: the example move, and the first tip at 3.
+        // Start: the example move, and the first tip at our 7 (D-82).
         A.element(app, "onboarding.start").tap()
-        XCTAssertTrue(A.element(app, "board.token.h3").waitForExistence(timeout: A.timeout))
+        XCTAssertTrue(A.element(app, "board.token.h7").waitForExistence(timeout: A.timeout))
         XCTAssertTrue(app.staticTexts["Move a player"].waitForExistence(timeout: A.timeout))
         sleep(1)
         A.save("tip-drag--bc", in: self)
 
-        // Done by doing it: dragging 3 brings the next tip.
-        let three = A.element(app, "board.token.h3").coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-        three.press(forDuration: 0.2, thenDragTo: three.withOffset(CGVector(dx: 30, dy: -20)))
+        // Done by doing it: dragging 7 brings the next tip.
+        let seven = A.element(app, "board.token.h7").coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        seven.press(forDuration: 0.2, thenDragTo: seven.withOffset(CGVector(dx: -30, dy: -20)))
         XCTAssertTrue(app.staticTexts["Move a player"].waitForNonExistence(timeout: A.timeout))
         XCTAssertTrue(app.staticTexts["Every step is a moment"].waitForExistence(timeout: A.timeout))
         sleep(1)

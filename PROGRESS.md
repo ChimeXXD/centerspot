@@ -2,6 +2,19 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Tip on 7, even safe zone (Sun 8 Nov 2026, night)
+
+**Changed**
+- D-82: the "Move a player" tip points at our 7 (`Onboarding.dragTipPlayer`), with its own anchor on the player under the pitch; before, the anchor covered the whole board and the arrow pointed at the keeper.
+- D-82: the vertical export preview's dashed safe zone has even sides (15%).
+
+**Checked**
+- `DragTipPlayerTests` red (no `dragTipPlayer`), then green (4 tests).
+- `OnboardingUITests` (drags 7 to finish the tip; screenshot shows the arrow on 7), `BoardScreenshotUITests`, `ExportFlowUITests/testExportFlow`, `BroadcastUITests` on iPhone 18 Pro.
+
+**Not verified**
+- Chime's eye on the phone.
+
 ## Unslop, screen-by-screen pass (Sun 8 Nov 2026, night)
 
 **Changed**

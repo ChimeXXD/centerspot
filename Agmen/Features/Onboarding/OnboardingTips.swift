@@ -47,6 +47,16 @@ final class Onboarding {
     /// The step the "Every step is a moment" tip points at: step 2, or step 1 when there is only one (D-78).
     nonisolated static func stepTipIndex(stepCount: Int) -> Int { min(1, stepCount - 1) }
 
+    /// The player the "Move a player" tip points at (D-82): our number 7, else our first outfield player (never the
+    /// keeper, by a goalkeeping role or by the number 1), else any player.
+    nonisolated static func dragTipPlayer(in tokens: [Token], roles: [Role] = Presets.shared.roles) -> String? {
+        let keeperRoles = Set(roles.filter { $0.line == .gk }.map(\.id)).union(["goalkeeper"])
+        let players = tokens.filter { $0.kind == .player }
+        let outfield = players.filter { $0.side == .home && !keeperRoles.contains($0.roleID ?? "") && $0.number != 1 }
+        if let seven = outfield.first(where: { $0.number == 7 }) { return seven.id }
+        return outfield.first?.id ?? players.first?.id
+    }
+
     /// The tip due now, if it is of type `T` (each anchor asks for its own).
     func current<T: Tip>(_ type: T.Type) -> T? { tips.currentTip as? T }
 

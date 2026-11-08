@@ -59,11 +59,12 @@ struct ExportPreview: View {
         frame.draw(at: ExportClock.time(ofFrame: index, duration: frame.duration), in: cg)
     }
 
-    /// Where platform buttons and captions sit over a vertical clip, and a title-safe margin on the others.
+    /// Where platform buttons and captions sit over a vertical clip, and a title-safe margin on the others. The vertical
+    /// zone keeps the same margin on both sides (the buttons' 15%), so it sits centred on the pitch (D-82).
     @ViewBuilder private func safeZones(_ size: CGSize) -> some View {
         if let format = model.preset.video {
             let insets = format == .vertical
-                ? EdgeInsets(top: 0.12, leading: 0.06, bottom: 0.2, trailing: 0.15)
+                ? EdgeInsets(top: 0.12, leading: 0.15, bottom: 0.2, trailing: 0.15)
                 : EdgeInsets(top: 0.06, leading: 0.06, bottom: 0.06, trailing: 0.06)
             Rectangle()
                 .stroke(Tokens.Colour.text.color.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
