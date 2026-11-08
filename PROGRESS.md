@@ -2,6 +2,20 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Unslop pass, polish mode (Sun 8 Nov 2026, evening)
+
+**Changed**
+- Audit with the unslop skill: light slop (no emoji, gradients, glows or hype copy). Found: lime on up to four things per screen, heavy weights everywhere, periods on welcome titles, mixed icon weights, a few 2 pt nudges.
+- D-80, applied as the recommended options (Chime was away when asked): one lime lead per screen (main action, Play, current step, progress); selected tiles get a white ring; ticks, toggles, Loop, the camera switch, playback Done, the toast's Undo and the welcome dots go neutral. Heavy (800) only for the wordmark (`Typeface.wordmark`) and shirt numbers; titles and buttons 700, reading text 500, small labels 600. Welcome titles without periods (mockup synced).
+- Not done: icon weights, the 2 pt nudges (logged for "fix everything").
+
+**Checked**
+- ControlLabelUITests (accessibility audit incl. contrast), DynamicTypeUITests (AX5), LibraryGridUITests, BoardScreenshotUITests, ExportFlowUITests, OnboardingUITests on iPhone 18 Pro; gate 3/3 at `61e71d1`. Screenshots in `fidelity/shots/unslop/`.
+- No code review: styling-only change (colours, weights, two strings).
+
+**Not verified**
+- Chime's eye on the phone (installed).
+
 ## Onboarding in the broadcast look (Sun 8 Nov 2026, evening)
 
 **Changed**
@@ -15,8 +29,12 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 - `OnboardingUITests`: all three pages, Start, each tip in order (drag done by dragging 3, step closed with ×, Play by playing, no tip while playing, Draw closed, Export by opening it), Show tips again, Skip. Screenshots in `fidelity/shots/onboarding/` match the approved frames (page 3 is the real export frame, so its step note sits in the title band).
 - Design check: the onboarding frames pass (the 4 iPad frames are measured at phone width by the kit, as before).
 
+- Verifier: 4 gaps fixed (`3961592`): tips only while editing with no sheet open, the Draw tip needs a run or arrow, page 3's Reduce Motion picture holds the still camera with crossfades, and the UI test now checks the tips return after Show tips again and hide under the player sheet. Code review: 9 found, 6 fixed (VoiceOver moves finish the drag tip, tapping the current step doesn't finish the step tip, page 2 fits 375 pt phones, the example loads once, two copies of code merged); left for "fix everything": tips on any board, the tip modifier's identity swap.
+- A tip modifier on every token broke `RendererParityTests` (0% match: `ImageRenderer` can't draw a popover host) and a Draw-mode tap; it is now attached only when a tip is due.
+- Gate 3/3 at `3961592`; full AgmenUITests passing.
+
 **Not verified**
-- On the phone; the full gate and UI suite (running at the time of writing).
+- Chime on the phone (installed).
 
 ## Broadcast part 2: the tilted camera (Sun 8 Nov 2026, afternoon)
 
