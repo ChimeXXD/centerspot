@@ -34,7 +34,7 @@ struct StepsList: View {
             Spacer(minLength: Tokens.Space.s2)
             Button(action: onAdd) {
                 Image(systemName: "plus")
-                    .font(Tokens.Typeface.headline.weight(.heavy))
+                    .font(Tokens.Typeface.headline.weight(.bold))
                     .foregroundStyle(Tokens.Colour.text.color)
                     .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                     .overlay {
@@ -101,7 +101,7 @@ struct StepsList: View {
                 .foregroundStyle(ink)
                 .frame(minWidth: 28, alignment: .leading)
             Text(BoardContextRow.seconds(step.duration))
-                .font(Tokens.Typeface.caption.weight(.bold))
+                .font(Tokens.Typeface.caption.weight(.semibold))
                 .foregroundStyle(quiet)
                 .frame(minWidth: 40, alignment: .leading)
             Text(noteText(step))

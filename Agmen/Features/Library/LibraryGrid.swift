@@ -54,11 +54,11 @@ struct LibraryGrid: Equatable {
     var metaSize: CGFloat { isWide ? 12 : 11 }
     /// The name: heavy Nunito at the mockup's size, scaling with Dynamic Type.
     var nameFont: Font {
-        Font.custom(Tokens.Typeface.uiName, size: nameSize, relativeTo: isWide ? .subheadline : .footnote).weight(.heavy)
+        Font.custom(Tokens.Typeface.uiName, size: nameSize, relativeTo: isWide ? .subheadline : .footnote).weight(.bold)
     }
     /// "5 steps".
     var metaFont: Font {
-        Font.custom(Tokens.Typeface.uiName, size: metaSize, relativeTo: isWide ? .caption : .caption2).weight(.semibold)
+        Font.custom(Tokens.Typeface.uiName, size: metaSize, relativeTo: isWide ? .caption : .caption2).weight(.medium)
     }
     var nameGap: CGFloat { isWide ? 8 : 6 }
     static let metaGap: CGFloat = 2

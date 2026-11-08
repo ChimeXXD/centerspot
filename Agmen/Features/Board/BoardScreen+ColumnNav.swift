@@ -66,14 +66,14 @@ extension BoardScreen {
         case .playing:
             Button("Done", action: stopPlayback)
                 .font(Tokens.Typeface.headline)
-                .foregroundStyle(Tokens.Colour.accent.color)
+                .foregroundStyle(Tokens.Colour.text.color)
                 .frame(minWidth: Tokens.Size.touch, minHeight: Tokens.Size.touch)
                 .accessibilityHint("Back to editing this step")
                 .accessibilityIdentifier("playback.done")
         case .drawing:
             Button(action: finishDrawing) {
                 Image(systemName: "checkmark")
-                    .font(Tokens.Typeface.headline.weight(.heavy))
+                    .font(Tokens.Typeface.headline.weight(.bold))
                     .foregroundStyle(Tokens.Colour.accentInk.color)
                     .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                     .background(Tokens.Colour.accent.color, in: Circle())

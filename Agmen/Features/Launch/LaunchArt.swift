@@ -50,7 +50,7 @@ struct LaunchTitle: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Tokens.Space.s1) {
             Text("Agmen")
-                .font(Tokens.Typeface.largeTitle)
+                .font(Tokens.Typeface.wordmark)
                 .foregroundStyle(Tokens.Colour.text.color)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityIdentifier("library.title")

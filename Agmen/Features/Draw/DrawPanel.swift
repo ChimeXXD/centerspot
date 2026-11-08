@@ -124,7 +124,7 @@ struct DrawPanel: View {
     private var shapeRow: some View {
         HStack(spacing: Tokens.Space.s2 + 2) {
             Text("Shape")
-                .font(.custom(Tokens.Typeface.uiName, size: 13, relativeTo: .caption).weight(.bold))
+                .font(.custom(Tokens.Typeface.uiName, size: 13, relativeTo: .caption).weight(.semibold))
                 .foregroundStyle(Tokens.Colour.muted.color)
                 .accessibilityIdentifier("draw.shape-label")
             CapsuleSegments(options: Self.shapes, selection: $shape, track: Tokens.Colour.surface.color, inset: 2)
@@ -173,7 +173,7 @@ struct DrawPanel: View {
                 ToolIcon(tool: option)
                     .frame(width: 40, height: 22)
                 Text(option.title)
-                    .font(Tokens.Typeface.body.weight(.bold))
+                    .font(Tokens.Typeface.body.weight(.semibold))
                     .foregroundStyle(Tokens.Colour.text.color)
                     .lineLimit(1)
                     .minimumScaleFactor(fitsName ? 1 : 0.7)
@@ -184,7 +184,7 @@ struct DrawPanel: View {
             .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
             .overlay {
                 RoundedRectangle(cornerRadius: Tokens.Radius.tile)
-                    .strokeBorder(on ? Tokens.Colour.accent.color : .clear, lineWidth: 2)
+                    .strokeBorder(on ? Tokens.Colour.text.color : .clear, lineWidth: 2)
             }
             .contentShape(RoundedRectangle(cornerRadius: Tokens.Radius.tile))
         }

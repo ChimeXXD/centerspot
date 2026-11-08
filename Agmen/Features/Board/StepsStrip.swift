@@ -72,9 +72,9 @@ struct StepsStrip: View {
     private func chipFace(_ index: Int, _ step: Step, on: Bool) -> some View {
         VStack(spacing: 1) {
             Text("\(index + 1)")
-                .font(Tokens.Typeface.headline.weight(.heavy))
+                .font(Tokens.Typeface.headline.weight(.bold))
             Text(BoardContextRow.seconds(step.duration))
-                .font(Tokens.Typeface.caption.weight(.bold))
+                .font(Tokens.Typeface.caption.weight(.semibold))
                 .foregroundStyle(on ? Tokens.Colour.accentInk.color.opacity(0.75) : Tokens.Colour.muted.color)
         }
         .foregroundStyle(on ? Tokens.Colour.accentInk.color : Tokens.Colour.text.color)

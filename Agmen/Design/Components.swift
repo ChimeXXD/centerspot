@@ -6,7 +6,7 @@ import SwiftUI
 struct PrimaryCapsuleStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(Tokens.Typeface.headline.weight(.heavy))
+            .font(Tokens.Typeface.headline.weight(.bold))
             .foregroundStyle(Tokens.Colour.accentInk.color)
             .frame(maxWidth: .infinity, minHeight: Tokens.Size.capsule)
             .background(Tokens.Colour.accent.color, in: Capsule())
@@ -20,7 +20,7 @@ struct QuietCapsuleStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(Tokens.Typeface.headline.weight(.heavy))
+            .font(Tokens.Typeface.headline.weight(.bold))
             .foregroundStyle(foreground)
             .frame(maxWidth: .infinity, minHeight: Tokens.Size.capsule)
             .background(Tokens.Colour.surface2.color, in: Capsule())
@@ -34,7 +34,7 @@ struct RowCapsuleStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(Tokens.Typeface.caption.weight(.bold))
+            .font(Tokens.Typeface.caption.weight(.semibold))
             .foregroundStyle(Tokens.Colour.text.color)
             .padding(.horizontal, Tokens.Space.s3)
             .frame(minHeight: Tokens.Size.touch)
@@ -112,7 +112,7 @@ struct CapsuleSegments<Value: Hashable>: View {
                 let on = option.value == selection
                 Button { selection = option.value } label: {
                     Text(option.title)
-                        .font(Tokens.Typeface.body.weight(.bold))
+                        .font(Tokens.Typeface.body.weight(.semibold))
                         .foregroundStyle(on ? Tokens.Colour.text.color : Tokens.Colour.muted.color)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)

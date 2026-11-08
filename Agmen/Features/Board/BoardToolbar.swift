@@ -48,7 +48,7 @@ struct BoardToolbar: View {
             Text(title)
                 .font(Tokens.Typeface.caption)
         }
-        .foregroundStyle(lit ? Tokens.Colour.accent.color : Tokens.Colour.muted.color)
+        .foregroundStyle(lit ? Tokens.Colour.text.color : Tokens.Colour.muted.color)
         .frame(maxWidth: .infinity, minHeight: 60)
         .contentShape(Rectangle())
     }

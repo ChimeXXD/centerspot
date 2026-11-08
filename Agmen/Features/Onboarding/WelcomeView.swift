@@ -22,13 +22,13 @@ struct WelcomeView: View {
     }
 
     static let pages = [
-        Page(title: "Draw the move, not just the shape.",
+        Page(title: "Draw the move, not just the shape",
              body: "Place your players, then add steps. Each step is one moment of the move.",
              picture: "A pitch showing a five-step move"),
-        Page(title: "Press Play. Watch it move.",
+        Page(title: "Press Play. Watch it move",
              body: "Players run from step to step, and the Broadcast camera follows the ball.",
              picture: "The move playing in the tilted Broadcast camera"),
-        Page(title: "Share it as a 9:16 clip.",
+        Page(title: "Share it as a 9:16 clip",
              body: "One tap makes a vertical video for the team chat, with your title on top.",
              picture: "A vertical video of the move in the Broadcast camera, with its title at the top"),
     ]
@@ -100,13 +100,13 @@ struct WelcomeView: View {
         .accessibilityIdentifier("onboarding.page")
     }
 
-    /// The active page is a wider lime dot, so the page shows by shape as well as colour. One adjustable element for
+    /// The active page is a wider white dot, so the page shows by shape as well as colour. One adjustable element for
     /// VoiceOver ("Page 1 of 3"); a tap on its left or right half goes back or on.
     private var dots: some View {
         HStack(spacing: Tokens.Space.s2) {
             ForEach(1...Self.pages.count, id: \.self) { number in
                 Capsule()
-                    .fill(number == page ? Tokens.Colour.accent.color : Tokens.Colour.muted.color)
+                    .fill(number == page ? Tokens.Colour.text.color : Tokens.Colour.muted.color)
                     .frame(width: number == page ? 24 : 8, height: 8)
             }
         }

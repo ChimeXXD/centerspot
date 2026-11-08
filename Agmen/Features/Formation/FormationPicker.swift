@@ -70,14 +70,14 @@ struct FormationPicker: View {
                 FormationDiagram(formation: shape)
                     .frame(width: 74, height: 92)
                 Text(shape.name)
-                    .font(Tokens.Typeface.caption.weight(.bold))
+                    .font(Tokens.Typeface.caption.weight(.semibold))
                     .foregroundStyle(Tokens.Colour.text.color)
             }
             .frame(maxWidth: .infinity, minHeight: 128)
             .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
             .overlay {
                 RoundedRectangle(cornerRadius: Tokens.Radius.tile)
-                    .strokeBorder(on ? Tokens.Colour.accent.color : .clear, lineWidth: 2)
+                    .strokeBorder(on ? Tokens.Colour.text.color : .clear, lineWidth: 2)
             }
             .contentShape(RoundedRectangle(cornerRadius: Tokens.Radius.tile))
         }

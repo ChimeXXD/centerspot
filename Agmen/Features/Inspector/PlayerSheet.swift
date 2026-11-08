@@ -118,7 +118,7 @@ struct PlayerSheet: View {
                         if on {
                             Image(systemName: "checkmark")
                                 .font(Tokens.Typeface.headline)
-                                .foregroundStyle(Tokens.Colour.accent.color)
+                                .foregroundStyle(Tokens.Colour.text.color)
                         }
                     }
                     .foregroundStyle(Tokens.Colour.text.color)

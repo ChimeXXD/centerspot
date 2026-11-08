@@ -15,15 +15,15 @@ const OB_CAM = { pw: 470, tilt: 54, focus: .3, cx: .32, persp: 790, horizon: 0 }
 const OB_CLIP_CAM = { pw: 330, tilt: 54, focus: .32, cx: .32, persp: 560, horizon: 0, lift: 40 };
 
 const WELCOME_BC = [
-  { title: "Draw the move, not just the shape.", body: "Place your players, then add steps. Each step is one moment of the move.",
+  { title: "Draw the move, not just the shape", body: "Place your players, then add steps. Each step is one moment of the move.",
     label: "A pitch showing a five-step move",
     art: () => `${staticBoard(222, 1, {}, { arrows: [...STEPS[1].arrows, ...runArrows(1)] })}
       <div class="ob-chips">${STEPS.map((s, i) => `<span class="step ${i === 1 ? "on" : ""}"><b>${i + 1}</b><small>${s.duration} s</small></span>`).join("")}</div>` },
-  { title: "Press Play. Watch it move.", body: "Players run from step to step, and the Broadcast camera follows the ball.",
+  { title: "Press Play. Watch it move", body: "Players run from step to step, and the Broadcast camera follows the ball.",
     label: "The move playing in the tilted Broadcast camera",
     art: () => `<div style="position:relative;width:393px;height:340px">${BC.tilted(393, 340, lerpPos(pos(2), pos(3), 0.45), STEPS[2].arrows, {}, OB_CAM, "onboarding.board.2")}</div>
       <div class="ob-scrub">${STEPS.map((_, i) => `<i style="background:linear-gradient(90deg,var(--accent) ${i < 2 ? 100 : i === 2 ? 45 : 0}%,var(--surface-2) 0)"></i>`).join("")}</div>` },
-  { title: "Share it as a 9:16 clip.", body: "One tap makes a vertical video for the team chat, with your title on top.",
+  { title: "Share it as a 9:16 clip", body: "One tap makes a vertical video for the team chat, with your title on top.",
     label: "A vertical video of the move in the Broadcast camera, with its title at the top",
     art: () => `<div class="ob-clip" style="padding:12px 0;overflow:hidden">${txt("onboarding.clip.title", HERO.title, "title-band", "div", "padding:0 10px")}
       <div style="position:relative;width:223px;height:300px">${BC.tilted(223, 300, pos(3), STEPS[3].arrows, M4, OB_CLIP_CAM, "onboarding.board.3")}</div>

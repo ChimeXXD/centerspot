@@ -28,8 +28,8 @@ struct BoardToastView: View {
             Spacer(minLength: Tokens.Space.s2)
             if toast.offersUndo {
                 Button("Undo", action: onUndo)
-                    .font(Tokens.Typeface.body.weight(.heavy))
-                    .foregroundStyle(Tokens.Colour.accent.color)
+                    .font(Tokens.Typeface.body.weight(.semibold))
+                    .foregroundStyle(Tokens.Colour.text.color)
                     .padding(.horizontal, Tokens.Space.s4)
                     .frame(minHeight: Tokens.Size.touch)
                     .accessibilityIdentifier("toast.undo")

@@ -18,7 +18,7 @@ final class OnboardingUITests: XCTestCase {
         app.launch()
 
         // The welcome, page by page.
-        let titles = ["Draw the move, not just the shape.", "Press Play. Watch it move.", "Share it as a 9:16 clip."]
+        let titles = ["Draw the move, not just the shape", "Press Play. Watch it move", "Share it as a 9:16 clip"]
         XCTAssertTrue(app.staticTexts[titles[0]].waitForExistence(timeout: A.timeout))
         XCTAssertEqual(A.element(app, "onboarding.dots").label, "Page 1 of 3")
         sleep(1)

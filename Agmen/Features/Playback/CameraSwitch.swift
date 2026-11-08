@@ -23,7 +23,7 @@ struct CameraSwitch: View {
             icon()
                 .stroke(style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
                 .frame(width: 22, height: 22)
-                .foregroundStyle(on ? Tokens.Colour.accent.color : Tokens.Colour.muted.color)
+                .foregroundStyle(on ? Tokens.Colour.text.color : Tokens.Colour.muted.color)
                 .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                 .background(on ? Tokens.Colour.surface3.color : .clear, in: Capsule())
                 .contentShape(Capsule())

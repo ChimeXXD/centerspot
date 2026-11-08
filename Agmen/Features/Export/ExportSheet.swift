@@ -72,7 +72,7 @@ struct ExportSheet: View {
                     .accessibilityIdentifier("export.notes")
             }
             .toggleStyle(.switch)
-            .tint(Tokens.Colour.accent.color)
+            .tint(Tokens.Colour.muted.color)
             .font(Tokens.Typeface.headline)
             .foregroundStyle(Tokens.Colour.text.color)
         case .rendering:
@@ -213,7 +213,7 @@ private struct ExportPresetTiles: View {
                             .stroke(Tokens.Colour.text.color, lineWidth: 2)
                             .frame(width: Self.shapes[preset]?.width, height: Self.shapes[preset]?.height)
                         Text(preset.title)
-                            .font(Tokens.Typeface.caption.weight(.bold))
+                            .font(Tokens.Typeface.caption.weight(.semibold))
                             .foregroundStyle(Tokens.Colour.text.color)
                             .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
                             .multilineTextAlignment(.center)
@@ -223,7 +223,7 @@ private struct ExportPresetTiles: View {
                     .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
                     .overlay {
                         RoundedRectangle(cornerRadius: Tokens.Radius.tile)
-                            .strokeBorder(on ? Tokens.Colour.accent.color : .clear, lineWidth: 2)
+                            .strokeBorder(on ? Tokens.Colour.text.color : .clear, lineWidth: 2)
                     }
                     .contentShape(RoundedRectangle(cornerRadius: Tokens.Radius.tile))
                 }

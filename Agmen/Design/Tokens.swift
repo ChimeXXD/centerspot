@@ -64,17 +64,20 @@ enum Tokens {
     }
 
     /// Nunito for numbers and interface, Kalam for handwritten step notes (D-44). Both scale with Dynamic Type.
+    /// D-80: heavy (800) only for the wordmark and shirt numbers; titles and buttons 700, reading text 500.
     enum Typeface {
         static let uiName = "Nunito"
         static let noteName = "Kalam"
         /// Kalam's PostScript name, for Core Text in exports.
         static let noteFullName = "Kalam-Regular"
 
-        static let largeTitle = Font.custom(uiName, size: 34, relativeTo: .largeTitle).weight(.heavy)
-        static let title = Font.custom(uiName, size: 22, relativeTo: .title2).weight(.heavy)
+        static let largeTitle = Font.custom(uiName, size: 34, relativeTo: .largeTitle).weight(.bold)
+        static let title = Font.custom(uiName, size: 22, relativeTo: .title2).weight(.bold)
         static let headline = Font.custom(uiName, size: 17, relativeTo: .headline).weight(.bold)
-        static let body = Font.custom(uiName, size: 15, relativeTo: .body).weight(.semibold)
-        static let caption = Font.custom(uiName, size: 12, relativeTo: .caption).weight(.semibold)
+        static let body = Font.custom(uiName, size: 15, relativeTo: .body).weight(.medium)
+        static let caption = Font.custom(uiName, size: 12, relativeTo: .caption).weight(.medium)
+        /// The Agmen wordmark: the one heavy word in the interface.
+        static let wordmark = Font.custom(uiName, size: 34, relativeTo: .largeTitle).weight(.heavy)
         static let note = Font.custom(noteName, size: 18, relativeTo: .body)
         /// Token numbers on the pitch scale with the board, not Dynamic Type.
         static func number(size: CGFloat) -> Font { .custom(uiName, fixedSize: size).weight(.heavy) }

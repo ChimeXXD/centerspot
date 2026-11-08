@@ -115,7 +115,7 @@ struct PlaybackBar: View {
 
     private var controls: some View {
         HStack(alignment: .top, spacing: 0) {
-            icon("repeat", label: "Loop", identifier: "playback.loop", tint: loops ? Tokens.Colour.accent : Tokens.Colour.muted,
+            icon("repeat", label: "Loop", identifier: "playback.loop", tint: loops ? Tokens.Colour.text : Tokens.Colour.muted,
                  action: onLoop)
                 .accessibilityAddTraits(loops ? .isSelected : [])
             icon("backward.end.fill", label: "Previous step", identifier: "playback.prev", action: onPrevious)
