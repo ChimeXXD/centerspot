@@ -39,7 +39,23 @@ struct DocumentEditorUndoTests {
         ("Add glow", { _ = MarkEdits.addRings(on: "h9", step: 2, in: &$0) }),
         ("Add heat", { _ = MarkEdits.addHeat(at: Point(x: 0.5, y: 0.8), step: 2, in: &$0) }),
         ("Remove line", { MarkEdits.remove("l1", step: stepWith("l1", in: $0), in: &$0) }),
+        // D-72: dragging the middle dot is one edit on lift, and so is removing an arrow.
+        ("Bend arrow", { StrokeEdits.bend(arrow: 0, to: bentDot(of: $0), step: stepWithArrow($0), in: &$0) }),
+        ("Remove arrow", { StrokeEdits.removeArrow(at: 0, step: stepWithArrow($0), in: &$0) }),
     ]
+
+    /// The first step with an arrow (-1 if none).
+    nonisolated private static func stepWithArrow(_ tactic: Tactic) -> Int {
+        tactic.phases.first?.steps.firstIndex { !$0.arrows.isEmpty } ?? -1
+    }
+
+    /// A dot 0.08 to the side of the middle of that step's first arrow, so dragging it there bends it.
+    nonisolated private static func bentDot(of tactic: Tactic) -> Point {
+        guard let arrow = tactic.phases.first?.steps[safe: stepWithArrow(tactic)]?.arrows.first,
+              let a = arrow.points.first, let b = arrow.points.last else { return .centre }
+        let dx = b.x - a.x, dy = b.y - a.y, length = max(hypot(dx, dy), 1e-9)
+        return Point(x: (a.x + b.x) / 2 - dy / length * 0.08, y: (a.y + b.y) / 2 + dx / length * 0.08)
+    }
 
     /// The step holding the hero's mark `id` wherever the edits before have moved it (-1 if none).
     nonisolated private static func stepWith(_ id: String, in tactic: Tactic) -> Int {

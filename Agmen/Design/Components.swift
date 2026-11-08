@@ -89,6 +89,9 @@ struct CapsuleSegments<Value: Hashable>: View {
 
     let options: [Option]
     @Binding var selection: Value
+    /// The track behind the segments, and its inset (the Draw panel's Shape switch sits on a darker one, D-72).
+    var track = Tokens.Colour.surface2.color
+    var inset: CGFloat = 3
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     /// One row; at the accessibility sizes, a column when the row won't fit ("11-a-s…", D6-3).
@@ -123,8 +126,8 @@ struct CapsuleSegments<Value: Hashable>: View {
                 .accessibilityAddTraits(on ? .isSelected : [])
             }
         }
-        .padding(3)
-        .background(Tokens.Colour.surface2.color, in: shape)
+        .padding(inset)
+        .background(track, in: shape)
     }
 }
 

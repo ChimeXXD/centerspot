@@ -1,15 +1,21 @@
 import SwiftUI
 
-/// Under the pitch in draw mode (the mockup's "draw" and "draw--tools" screens): the handwritten hint, or the selected
-/// mark's row with Remove, then a panel with the picked tool's help line and two rows of tools: the four arrows that
-/// move players (D-59) and the three marks that explain (D-65). At the accessibility sizes all seven sit in one row that
+/// Under the pitch in draw mode (the mockup's "draw", "draw--tools" and "draw--shape-*" screens): the handwritten hint,
+/// or the selected mark's row with Remove, then a panel with the Shape switch (D-72: Straight or Curved, for the four
+/// arrows) or the picked mark's help line, and two rows of tools: the four arrows that move players (D-59) and the three
+/// marks that explain (D-65). At the accessibility sizes all seven sit in one row that
 /// scrolls sideways, so the pitch keeps its room (D-70). Each tile draws its line style in its colour, so arrow kinds
 /// never differ by colour alone (D-15).
 struct DrawPanel: View {
     @Binding var tool: DrawTool
-    /// "Zone 1 · step 4" for the selected mark, or nil to show the hint.
+    /// How the next arrow is drawn (D-72).
+    @Binding var shape: ArrowShape
+    /// "Zone 1 · step 4" for the selected mark (or, in the iPad column, "3's run · drag the dot to bend"), or nil to show
+    /// the hint.
     var selectedMark: String?
     var onRemoveMark: () -> Void = {}
+    /// The hint in place of the tool's own ("Drag the middle dot to change the bend."), or nil.
+    var hint: String?
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     /// The column's tiles are taller (the mockup's 64 pt).
     static let columnTile: CGFloat = 64
@@ -32,7 +38,7 @@ struct DrawPanel: View {
                 .padding(.horizontal, Tokens.Space.s3 + 2)
                 .padding(.vertical, Tokens.Space.s3)
                 .background(Tokens.Colour.surface.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.sheet))
-            if !dynamicTypeSize.isAccessibilitySize { hint }
+            if !dynamicTypeSize.isAccessibilitySize { hintLine }
         }
     }
 
@@ -43,21 +49,21 @@ struct DrawPanel: View {
             } else if !dynamicTypeSize.isAccessibilitySize {
                 // At the accessibility sizes the hint would push the pitch down to a thumbnail, so it's left out and the
                 // pitch keeps the room (D-68). The help line below names the tool's line, not where to start.
-                hint
+                hintLine
             }
             panel
         }
     }
 
-    private var hint: some View {
-        Text(tool.hint)
+    private var hintLine: some View {
+        Text(hint ?? tool.hint)
             .font(Tokens.Typeface.note)
             .foregroundStyle(Tokens.Colour.muted.color)
             .multilineTextAlignment(.center)
             .padding(.horizontal, Tokens.Space.s5)
-            .padding(.top, Tokens.Space.s3)
+            .padding(.top, Tokens.Space.s1 + 2)
             .accessibilityIdentifier("draw.hint")
-            .padding(.bottom, Tokens.Space.s5)
+            .padding(.bottom, Tokens.Space.s3)  // the mockup's draw--shape-*: 6 pt under the pitch, 13 over the panel
     }
 
     /// The mockup's "Zone 1 · step 4" row with Remove, in the hint's place.
@@ -87,15 +93,23 @@ struct DrawPanel: View {
             .padding(.bottom, Tokens.Space.s2)
     }
 
-    /// The picked tool's help line and the tiles, shared by the panel under the pitch and the column's card.
+    /// The Shape switch for an arrow (or a mark's help line) and the tiles, shared by the panel under the pitch and the
+    /// column's card.
     private var tools: some View {
-        VStack(alignment: .leading, spacing: Tokens.Space.s2) {
-            Text(tool.help)
-                .font(Tokens.Typeface.caption)
-                .foregroundStyle(Tokens.Colour.muted.color)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, Tokens.Space.s1 + 2)
-                .accessibilityIdentifier("draw.kind-help")
+        // The mockup's 5 pt between the rows. The help line's slot is as tall as the Shape row, so the pitch keeps its
+        // size when the tool changes.
+        VStack(alignment: .leading, spacing: Tokens.Space.s1 + 1) {
+            if tool.arrowKind != nil {
+                shapeRow
+            } else {
+                Text(tool.help)
+                    .font(Tokens.Typeface.caption)
+                    .foregroundStyle(Tokens.Colour.muted.color)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, Tokens.Space.s1 + 2)
+                    .frame(minHeight: Self.shapeRowHeight, alignment: .leading)
+                    .accessibilityIdentifier("draw.kind-help")
+            }
             if dynamicTypeSize.isAccessibilitySize {
                 scrollingRow
             } else {
@@ -104,6 +118,31 @@ struct DrawPanel: View {
             }
         }
     }
+
+    /// "Shape  Straight | Curved" (D-72). At the accessibility sizes it stays one row at the largest standard size, with
+    /// the Large Content Viewer on each segment, so the pitch keeps its room (D-70).
+    private var shapeRow: some View {
+        HStack(spacing: Tokens.Space.s2 + 2) {
+            Text("Shape")
+                .font(.custom(Tokens.Typeface.uiName, size: 13, relativeTo: .caption).weight(.bold))
+                .foregroundStyle(Tokens.Colour.muted.color)
+                .accessibilityIdentifier("draw.shape-label")
+            CapsuleSegments(options: Self.shapes, selection: $shape, track: Tokens.Colour.surface.color, inset: 2)
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel("Arrow shape")
+        }
+        .padding(.leading, Tokens.Space.s1 + 2)
+        .padding(.trailing, 2)
+        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+    }
+
+    /// A segment (44 pt) on its 2 pt inset track.
+    static let shapeRowHeight = Tokens.Size.touch + 4
+
+    private static let shapes: [CapsuleSegments<ArrowShape>.Option] = [
+        .init(value: .straight, title: "Straight", identifier: "draw.shape.straight"),
+        .init(value: .curved, title: "Curved", identifier: "draw.shape.curved"),
+    ]
 
     private func row(_ tools: [DrawTool]) -> some View {
         LazyVGrid(columns: columns(tools.count), spacing: Tokens.Space.s1 + 2) {

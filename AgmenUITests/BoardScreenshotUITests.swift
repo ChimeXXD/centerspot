@@ -177,7 +177,8 @@ final class BoardScreenshotUITests: XCTestCase {
         XCTAssertTrue(element(app, "draw.title").waitForExistence(timeout: timeout))
         XCTAssertTrue(element(app, "draw.kind.run").isSelected, "Run is picked")
         XCTAssertEqual(element(app, "draw.hint").label, "Start on a player to draw their run.")
-        XCTAssertEqual(element(app, "draw.kind-help").label, "Run · solid line · the player follows it")
+        // D-72: for the arrows, the Shape switch takes the help line's place (Straight by default).
+        XCTAssertTrue(element(app, "draw.shape.straight").isSelected, "Straight is the default")
         XCTAssertFalse(element(app, "steps.chip.1").exists)
         let pitch = element(app, "board.pitch")
         XCTAssertEqual(pitch.label, "Pitch, step 5 of 5")
@@ -198,7 +199,8 @@ final class BoardScreenshotUITests: XCTestCase {
         element(app, "toolbar.draw").tap()
         XCTAssertTrue(element(app, "draw.cancel").waitForExistence(timeout: timeout))
         element(app, "draw.kind.pass").tap()
-        XCTAssertEqual(element(app, "draw.kind-help").label, "Pass · dashed line · the ball follows it")
+        XCTAssertTrue(element(app, "draw.kind.pass").isSelected)
+        XCTAssertTrue(element(app, "draw.shape.straight").exists, "the Shape switch stays for Pass")
         // 3 doesn't have the ball on step 5, so a pass would only draw an arrow; a press moves 3.
         element(app, "draw.kind.press").tap()
         drawStroke(from: element(app, "board.token.h3"))

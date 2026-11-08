@@ -29,10 +29,12 @@ extension BoardScreen {
 
     private var aspect: Double { tactic.pitch.kind.size.length / tactic.pitch.kind.size.width }
 
+    /// Clears Draw's selection: the mark, the line being tapped out, the zone under the finger, and the selected arrow.
     func clearMarkState() {
         selectedMark = nil
         lineDraft.clear()
         zonePreview = nil
+        clearArrowState()
     }
 
     /// Picking another tool finishes a line being tapped out (mockup draw.kind.line) and clears the selection.

@@ -6,6 +6,8 @@ import SwiftUI
 struct StepsList: View {
     let steps: [Step]
     let current: Int
+    /// Whether tapping the current row shows its actions (not in draw mode, where it does nothing).
+    var showsStepActions = true
     var onSelect: (Int) -> Void
     var onAdd: () -> Void
     var onMove: (_ from: Int, _ to: Int) -> Void
@@ -76,9 +78,14 @@ struct StepsList: View {
                 return true
             }
             .accessibilityLabel(Self.label(index: index, count: steps.count, step: step))
-            .accessibilityHint(index == current ? "Double-tap for step actions" : "Double-tap to go to this step")
+            .accessibilityHint(hint(isCurrent: index == current))
             .accessibilityAddTraits(index == current ? .isSelected : [])
             .accessibilityIdentifier("steps.row.\(index + 1)")
+    }
+
+    private func hint(isCurrent: Bool) -> String {
+        guard isCurrent else { return "Double-tap to go to this step" }
+        return showsStepActions ? "Double-tap for step actions" : ""
     }
 
     private func rowFace(_ index: Int, _ step: Step, on: Bool) -> some View {

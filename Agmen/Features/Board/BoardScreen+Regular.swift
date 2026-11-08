@@ -28,7 +28,8 @@ extension BoardScreen {
             case .editing: portraitBar
             case .playing: playbackBar
             case .drawing:
-                DrawPanel(tool: $drawTool, selectedMark: selectedMarkLabel, onRemoveMark: removeSelectedMark)
+                DrawPanel(tool: $drawTool, shape: shapeBinding, selectedMark: drawRowLabel,
+                          onRemoveMark: removeDrawSelection)
             }
         }
     }
@@ -78,16 +79,16 @@ extension BoardScreen {
         VStack(alignment: .leading, spacing: Tokens.Space.s5) {
             columnNavRow
             if mode != .playing, !tactic.tokens.isEmpty {
-                StepsList(steps: steps, current: current, onSelect: selectStepFromList,
-                          onAdd: { addStep("Add step") }, onMove: moveStep)
+                StepsList(steps: steps, current: current, showsStepActions: mode != .drawing, onSelect: selectStepFromList,
+                          onAdd: addStepFromList, onMove: moveStepFromList)
                     .layoutPriority(1)
             }
             switch mode {
             case .editing:
                 contextCard
             case .drawing:
-                DrawPanel(tool: $drawTool, selectedMark: selectedMarkLabel, onRemoveMark: removeSelectedMark,
-                          inColumn: true)
+                DrawPanel(tool: $drawTool, shape: shapeBinding, selectedMark: drawRowLabel,
+                          onRemoveMark: removeDrawSelection, inColumn: true)
             case .playing:
                 playbackBar.padding(.horizontal, -Tokens.Space.s5)
             }
@@ -111,9 +112,31 @@ extension BoardScreen {
     private func selectStepFromList(_ index: Int) {
         guard mode == .drawing else { return selectStep(index) }
         guard index != current else { return }
+        leaveDrawStep()
+        selectStep(index)
+    }
+
+    /// + and drag-to-reorder change the step too, so in draw mode they finish a line and clear the selection first.
+    private func addStepFromList() {
+        if mode == .drawing { leaveDrawStep() }
+        addStep("Add step")
+    }
+
+    private func moveStepFromList(_ from: Int, _ to: Int) {
+        if mode == .drawing { leaveDrawStep() }
+        moveStep(from, to)
+    }
+
+    private func leaveDrawStep() {
         finishLine()
         clearMarkState()
-        selectStep(index)
+    }
+
+    /// The iPad's draw row: the selected mark, or the selected arrow ("3's run · drag the dot to bend", D-72).
+    private var drawRowLabel: String? { selectedMarkLabel ?? arrowRowLabel }
+
+    private func removeDrawSelection() {
+        if selectedMarkLabel != nil { removeSelectedMark() } else { removeSelectedArrow() }
     }
 
     /// The bottom toolbar; on iPad its items gather in the middle, and in landscape it stays in draw mode with Draw

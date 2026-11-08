@@ -11,6 +11,33 @@ enum BoardDebugLaunch {
         library.defaults.removeObject(forKey: TacticLibrary.seededKey)
     }
 
+    /// With `-seedLibrary N` (after `-resetLibrary YES`), N more tactics in different formations, so the library's
+    /// grid can be checked full (D-74). Their names are our own words (D-13), from the mockup's library.
+    static func seedLibraryIfAsked(_ library: TacticLibrary) {
+        let count = UserDefaults.standard.integer(forKey: "seedLibrary")
+        guard count > 0 else { return }
+        let formations = ["4-4-2", "3-4-3", "5-3-2", "4-3-3", "4-2-3-1", "4-1-4-1", "3-5-2"]
+            .compactMap { Presets.shared.formation($0) }
+        guard !formations.isEmpty else { return }
+        for n in 0..<min(count, 60) {
+            var tactic = TacticDocument.blank()
+            tactic.title = seedTitles[n % seedTitles.count] + (n < seedTitles.count ? "" : " \(n / seedTitles.count + 1)")
+            tactic = formations[n % formations.count].apply(to: tactic, stepIndex: 0)
+            tactic.tokens.append(Token(id: "ball", kind: .ball))
+            tactic.phases[0].steps[0].positions["ball"] = Point(x: 0.5, y: 0.5)
+            _ = try? library.save(tactic, to: library.uniqueURL(for: tactic.title))
+        }
+    }
+
+    private static let seedTitles = [
+        "Press their keeper", "Back three, then five", "Hold the edge of the box", "Switch to the far side",
+        "Third-man run through the middle", "Near-post corner flick", "Low block after we score", "Back-post free kick",
+        "Counter from our own box", "Sunday kick-off routine", "Striker drops, 10 runs beyond", "Full-backs step inside",
+        "Throw-in down the line", "Trap them on the touchline", "Long ball, win the second", "Goal kick: play out short",
+        "Wing-back underlap", "Cut-back from the byline", "Keeper sweeps behind a high line", "Two up top, both press",
+        "Late run from the edge",
+    ]
+
     /// With `-openExample YES`, the app opens straight onto the hero move (D-29), adding it if it was deleted.
     @MainActor static func openExampleIfAsked(_ store: LibraryStore) {
         guard UserDefaults.standard.bool(forKey: "openExample"),

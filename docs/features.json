@@ -441,7 +441,7 @@
       ],
       "verify": "ShapedPathTests; StrokeShapeTests; ArrowDrawingTests; UI test for the switch; on the iPhone and iPad",
       "passes": false,
-      "evidence": "8 Nov 2026, engine only: ShapedPathTests 12, StrokeShapeTests 12, ArrowDrawingTests 2 pass; 19/19 mutations killed. Open: the switch and the bend dot UI."
+      "evidence": "8 Nov 2026, partial: BendDotTests 10, ShapedPathTests, StrokeShapeTests, ArrowDrawingTests pass; DrawShapeUITests (iPhone and iPad column) pass; gate 3/3. Open: Chime drawing curves on the iPhone and with the Pencil on the iPad."
     },
     {
       "id": "LC-1",
@@ -454,7 +454,7 @@
       ],
       "verify": "UI test and screenshots vs mockup/screens-nov8.js",
       "passes": false,
-      "evidence": ""
+      "evidence": "8 Nov 2026, partial: CardThumbnailTests 7, LibraryGridTests 7, LibraryGridUITests 4 (3 a row on iPhone, 6 on the 13-inch iPad) pass; gate 3/3. Open: Chime on the devices."
     },
     {
       "id": "D7-1",

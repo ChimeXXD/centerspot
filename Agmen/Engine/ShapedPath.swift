@@ -40,11 +40,21 @@ enum ShapedPath {
         return curve(frame, along: deepest.along, off: deepest.off)
     }
 
-    /// Where the middle dot is drawn: the curve's apex for one of ours, otherwise the point half way along the line
-    /// (a straight arrow's midpoint). Nil for an empty path.
+    /// Where the middle dot is drawn: the apex of one of our curves; for any other line with points between its ends
+    /// (an older freehand arrow) the one furthest from the line joining its ends, where it bends most; otherwise the
+    /// point half way along it (a straight arrow's midpoint). Nil for an empty path.
     static func middle(of path: [Point], aspect: Double = 1) -> Point? {
-        guard let first = path.first else { return nil }
-        if path.count == curveSamples { return path[curveSamples / 2] }
+        guard let first = path.first, let last = path.last else { return nil }
+        if isOwnCurve(path) { return path[curveSamples / 2] }
+        let frame = Chord(first, last, aspect: aspect)
+        if path.count > 2, frame.length > 0 {
+            var furthest = (point: first, off: 0.0)
+            for point in path.dropFirst().dropLast() {
+                let off = abs(frame.coordinates(of: point).off)
+                if off > furthest.off { furthest = (point, off) }
+            }
+            if furthest.off > 1e-9 { return furthest.point }  // not rounding error on a straight line
+        }
         let lengths = zip(path, path.dropFirst()).map { hypot($1.x - $0.x, ($1.y - $0.y) * aspect) }
         var remaining = lengths.reduce(0, +) / 2
         for (i, length) in lengths.enumerated() where length > 0 {
@@ -55,6 +65,25 @@ enum ShapedPath {
             remaining -= length
         }
         return first
+    }
+
+    /// Whether `path` is one of our curves: `curveSamples` points, every one where the quadratic through its ends and
+    /// its middle sample puts it. The test doesn't depend on the pitch's shape (a Bézier is unchanged by stretching).
+    private static func isOwnCurve(_ path: [Point]) -> Bool {
+        guard path.count == curveSamples, let a = path.first, let b = path.last else { return false }
+        let rebuilt = quadratic(from: a, through: path[curveSamples / 2], to: b)
+        return zip(rebuilt, path).allSatisfy { abs($0.x - $1.x) < 1e-9 && abs($0.y - $1.y) < 1e-9 }
+    }
+
+    /// Where VoiceOver's bend more (`delta` > 0) or less moves the middle dot: `delta` pitch widths further from the
+    /// chord on the side it bends to. Less than straight is straight (on the chord), never a bend the other way.
+    static func dot(of path: [Point], bentBy delta: Double, aspect: Double = 1) -> Point? {
+        guard let first = path.first, let last = path.last, let dot = middle(of: path, aspect: aspect) else { return nil }
+        let frame = Chord(first, last, aspect: aspect)
+        guard frame.length > 0 else { return nil }
+        let (along, off) = frame.coordinates(of: dot)
+        let side: Double = off < 0 ? -1 : 1
+        return frame.point(along: along, off: side * max(abs(off) + delta, 0)).clamped
     }
 
     /// `path` re-bent so its middle dot is at `dot` (pulled onto the pitch and between the quarters), keeping its ends.
@@ -72,8 +101,12 @@ enum ShapedPath {
     /// The quadratic from the chord's start to its end whose apex is `off` from the chord, `along` of the way along
     /// it, sampled evenly in t and clamped to the pitch.
     private static func curve(_ frame: Chord, along: Double, off: Double) -> [Point] {
-        let a = frame.start, b = frame.end
         let dot = frame.point(along: along.clamped(to: dotRange), off: off).clamped
+        return quadratic(from: frame.start, through: dot, to: frame.end)
+    }
+
+    /// `curveSamples` points, even in t, of the quadratic from `a` to `b` whose middle (t = ½) is `dot`.
+    private static func quadratic(from a: Point, through dot: Point, to b: Point) -> [Point] {
         let control = Point(x: 2 * dot.x - (a.x + b.x) / 2, y: 2 * dot.y - (a.y + b.y) / 2)
         let last = curveSamples - 1
         return (0...last).map { i in

@@ -44,14 +44,17 @@ extension BoardScreen {
         withAnimation(Tokens.Motion.ease(Tokens.Motion.step)) { mode = .editing }
     }
 
-    /// A finished stroke from `BoardCanvas`: what it does depends on the picked kind and where it started (D-59).
+    /// A finished stroke from `BoardCanvas`: what it does depends on the picked kind and where it started (D-59), and it
+    /// takes the Shape picked on the panel (D-72).
     func drawStroke(_ points: [Point], from tokenID: String?) {
         guard let kind = drawTool.arrowKind else { return }
         var outcome = StrokeEdits.Outcome()
+        let shape = arrowEdit.shape
         let applied = applyEdit("Draw \(DrawTool(kind).title.lowercased())") {
-            outcome = StrokeEdits.draw(points, kind: kind, from: tokenID, step: current, in: &$0)
+            outcome = StrokeEdits.draw(points, kind: kind, shape: shape, from: tokenID, step: current, in: &$0)
         }
         guard applied else { return }
+        strokeDrew(outcome, shape: shape)
         if outcome.hitStepLimit {
             show("A move can have up to \(Phase.stepCountRange.upperBound) steps, so nothing can run from the last one.")
         } else if outcome.hitArrowLimit {

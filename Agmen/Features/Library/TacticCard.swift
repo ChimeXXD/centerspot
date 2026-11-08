@@ -1,37 +1,40 @@
 import SwiftUI
 
-/// One tactic in the library grid (mockup "library"): step 1 at rest, drawn by the board's own renderer (D-07),
-/// then the title and "11-a-side · 5 steps".
+/// One tactic in the library grid (D-74, mockup `library--compact` and `ipad-library`): step 1 at rest with the
+/// whole pitch turned sideways, drawn by the board's own renderer (D-07, `CardStyle`), then the name (two lines at
+/// most) and "5 steps". Sizes come from the grid, so a wide iPad card gets the mockup's bigger type and padding.
 struct TacticCard: View {
     let tactic: Tactic
+    let grid: LibraryGrid
 
-    /// Every card uses the full pitch's shape so the grid lines up; smaller pitches are centred inside it.
-    static let aspect = CGFloat(Pitch.Kind.full.size.width / Pitch.Kind.full.size.length)
+    /// Every card uses the full pitch's shape, turned sideways, so the grid lines up; smaller pitches sit centred in it.
+    static let aspect = CGFloat(Pitch.Kind.full.size.length / Pitch.Kind.full.size.width)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Tokens.Space.s1) {
-            Canvas { context, size in
-                let state = Timeline.restingState(step: 0, in: tactic)
-                context.withCGContext { cg in
-                    BoardRenderer.draw(state: state, tactic: tactic, in: cg, rect: CGRect(origin: .zero, size: size))
-                }
-            }
-            .aspectRatio(Self.aspect, contentMode: .fit)
-            .padding(.bottom, Tokens.Space.s2)
-
+        VStack(alignment: .leading, spacing: 0) {
+            thumbnail
             Text(tactic.title)
-                .font(Tokens.Typeface.headline.weight(.heavy))
+                .font(grid.nameFont)
                 .foregroundStyle(Tokens.Colour.text.color)
-                .lineLimit(2)
+                .lineLimit(2, reservesSpace: true)
                 .multilineTextAlignment(.leading)
-            Text("\(Self.pitchName(tactic.pitch.kind)) · \(Self.steps(tactic))")
-                .font(Tokens.Typeface.caption)
+                .padding(.top, grid.nameGap)
+            Text(Self.steps(tactic))
+                .font(grid.metaFont)
                 .foregroundStyle(Tokens.Colour.muted.color)
+                .padding(.top, LibraryGrid.metaGap)
         }
-        .padding(Tokens.Space.s3)
+        .padding([.horizontal, .top], grid.inset)
+        .padding(.bottom, grid.bottomInset)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: Tokens.Radius.tile))
-        .contentShape(RoundedRectangle(cornerRadius: Tokens.Radius.tile))
+        .background(Tokens.Colour.surface2.color, in: RoundedRectangle(cornerRadius: grid.cornerRadius))
+        .contentShape(RoundedRectangle(cornerRadius: grid.cornerRadius))
+    }
+
+    private var thumbnail: some View {
+        CardThumbnail(tactic: tactic)
+            .aspectRatio(Self.aspect, contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: LibraryGrid.thumbnailCorner))
     }
 
     /// "1 step", "5 steps" (the main phase, as on the board).
@@ -39,12 +42,21 @@ struct TacticCard: View {
         let count = tactic.phases.first?.steps.count ?? 0
         return count == 1 ? "1 step" : "\(count) steps"
     }
+}
 
-    static func pitchName(_ kind: Pitch.Kind) -> String {
-        switch kind {
-        case .full: "11-a-side"
-        case .sevenASide: "7-a-side"
-        case .fiveASide: "5-a-side"
+/// Step 1 at rest, sideways, through `Canvas` and `withCGContext` like the board (D-07). Drawing a card takes about
+/// 1 ms (measured in `CardThumbnailTests`), and `Canvas` keeps its drawing until the tactic or size changes.
+struct CardThumbnail: View {
+    let tactic: Tactic
+
+    var body: some View {
+        Canvas { context, size in
+            let state = Timeline.restingState(step: 0, in: tactic)
+            context.withCGContext { cg in
+                BoardRenderer.draw(state: state, tactic: tactic, in: cg, rect: CGRect(origin: .zero, size: size),
+                                   options: .init(card: .card))
+            }
         }
+        .accessibilityHidden(true)
     }
 }

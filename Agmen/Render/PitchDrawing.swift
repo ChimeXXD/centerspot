@@ -11,7 +11,8 @@ enum PitchDrawing {
     /// The pitch's corner radius at 345 pt.
     static let cornerRadius: CGFloat = 6
 
-    static func draw(_ pitch: Pitch, geometry g: BoardGeometry, in ctx: CGContext) {
+    /// - Parameter minimumLine: the thinnest a marking may get (library cards keep 0.75 pt, D-74).
+    static func draw(_ pitch: Pitch, geometry g: BoardGeometry, minimumLine: CGFloat = 0, in ctx: CGContext) {
         let rect = g.pitchRect
         let corner = cornerRadius * g.scale
         ctx.saveGState()
@@ -27,12 +28,11 @@ enum PitchDrawing {
                 ctx.fill(CGRect(x: rect.minX, y: rect.minY + CGFloat(i) * h, width: rect.width, height: h))
             }
         }
-        drawMarkings(geometry: g, in: ctx)
+        drawMarkings(geometry: g, width: max(lineWidth * g.scale, minimumLine), in: ctx)
         ctx.restoreGState()
     }
 
-    private static func drawMarkings(geometry g: BoardGeometry, in ctx: CGContext) {
-        let w = lineWidth * g.scale
+    private static func drawMarkings(geometry g: BoardGeometry, width w: CGFloat, in ctx: CGContext) {
         let (sx, sy) = g.metreScale
         let chalk = Tokens.Colour.bcLine.cgColor
         let lines = CGMutablePath()

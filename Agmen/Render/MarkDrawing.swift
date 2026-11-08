@@ -25,6 +25,11 @@ enum MarkDrawing {
         let geometry: BoardGeometry
         /// Where each token is drawn (`BoardGeometry.drawnCentres`).
         let centres: [String: CGPoint]
+        /// The thinnest a mark's line may get (library cards keep 1.2 pt, D-74).
+        var minimumLine: CGFloat = 0
+
+        /// A line `width` points wide at the 345 pt pitch, scaled to this one.
+        func width(_ width: CGFloat) -> CGFloat { max(width * geometry.scale, minimumLine) }
     }
 
     static func draw(_ marks: [BoardState.VisibleMark], in scene: Scene, selected: String?, pendingLine: [String],
@@ -36,7 +41,7 @@ enum MarkDrawing {
         ctx.addPath(CGPath(roundedRect: g.pitchRect, cornerWidth: corner, cornerHeight: corner, transform: nil))
         ctx.clip()
 
-        for mark in marks { if case .zone(let zone) = mark.shape { draw(zone, opacity: mark.opacity, g: g, ctx: ctx) } }
+        for mark in marks { if case .zone(let zone) = mark.shape { draw(zone, opacity: mark.opacity, scene: scene, ctx: ctx) } }
         for mark in marks {
             if case .glow(let glow) = mark.shape, case let .spot(centre, radius) = glow.target {
                 heat(at: centre, radius: radius, opacity: mark.opacity, g: g, ctx: ctx)
@@ -66,14 +71,14 @@ enum MarkDrawing {
         return CGRect(x: a.x, y: a.y, width: b.x - a.x, height: b.y - a.y)
     }
 
-    private static func draw(_ zone: Zone, opacity: Double, g: BoardGeometry, ctx: CGContext) {
-        let kit = Tokens.kit(zone.colour).fill, box = rect(of: zone, g: g)
+    private static func draw(_ zone: Zone, opacity: Double, scene: Scene, ctx: CGContext) {
+        let kit = Tokens.kit(zone.colour).fill, box = rect(of: zone, g: scene.geometry)
         ctx.saveGState()
         ctx.setAlpha(CGFloat(opacity))
         ctx.setFillColor(kit.opacity(Tokens.Colour.zoneFill.alpha).cgColor)
         ctx.fill(box)
         ctx.setStrokeColor(kit.opacity(Tokens.Colour.zoneStroke.alpha).cgColor)
-        ctx.setLineWidth(zoneLineWidth * g.scale)
+        ctx.setLineWidth(scene.width(zoneLineWidth))
         ctx.stroke(box)
         ctx.restoreGState()
     }
@@ -99,7 +104,7 @@ enum MarkDrawing {
         ctx.saveGState()
         ctx.setAlpha(CGFloat(opacity) * lineOpacity)
         ctx.setStrokeColor(kit.cgColor)
-        ctx.setLineWidth(lineWidth * scene.geometry.scale)
+        ctx.setLineWidth(scene.width(lineWidth))
         ctx.setLineCap(.round)
         ctx.setLineJoin(.round)
         ctx.addLines(between: corners)
@@ -115,7 +120,7 @@ enum MarkDrawing {
         let tint = r * rings[0].radius
         ctx.setFillColor(kit.opacity(Tokens.Colour.glowFillOpacity).cgColor)
         ctx.fillEllipse(in: CGRect(x: c.x - tint, y: c.y - tint, width: 2 * tint, height: 2 * tint))
-        ctx.setLineWidth(ringWidth * scene.geometry.scale)
+        ctx.setLineWidth(scene.width(ringWidth))
         for ring in rings {
             let rr = r * ring.radius
             ctx.setStrokeColor(kit.opacity(Double(ring.opacity)).cgColor)
@@ -140,13 +145,19 @@ enum MarkDrawing {
 
     /// White handles with a dark edge at the four corners of the selected zone (mockup draw--tools).
     private static func handles(_ zone: Zone, g: BoardGeometry, ctx: CGContext) {
-        let box = rect(of: zone, g: g), k = g.scale, r = handleRadius * k
+        let box = rect(of: zone, g: g)
+        handles(at: [CGPoint(x: box.minX, y: box.minY), CGPoint(x: box.maxX, y: box.minY),
+                     CGPoint(x: box.minX, y: box.maxY), CGPoint(x: box.maxX, y: box.maxY)], scale: g.scale, ctx: ctx)
+    }
+
+    /// The draw handle: a white dot with a dark edge, at each point (zone corners; an arrow's bend, D-72).
+    static func handles(at points: [CGPoint], scale k: CGFloat, ctx: CGContext) {
+        let r = handleRadius * k
         ctx.saveGState()
         ctx.setFillColor(Tokens.Colour.text.cgColor)
         ctx.setStrokeColor(Tokens.Colour.bg.cgColor)
         ctx.setLineWidth(handleStroke * k)
-        for p in [CGPoint(x: box.minX, y: box.minY), CGPoint(x: box.maxX, y: box.minY),
-                  CGPoint(x: box.minX, y: box.maxY), CGPoint(x: box.maxX, y: box.maxY)] {
+        for p in points {
             ctx.addEllipse(in: CGRect(x: p.x - r, y: p.y - r, width: 2 * r, height: 2 * r))
         }
         ctx.drawPath(using: .fillStroke)

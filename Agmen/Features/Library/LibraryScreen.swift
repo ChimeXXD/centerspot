@@ -2,26 +2,23 @@ import SwiftUI
 
 /// Agmen's home (D-56, UI-BRIEF §4.1, mockup "library"): the name and tagline over a faint chalk pitch, the lime
 /// New tactic, then the tactics as cards, newest first. Press and hold a card for Rename · Duplicate · Share · Delete.
+/// D-74: small wide cards, as many a row as the width allows (`LibraryGrid`): 3 on an iPhone, 6 on a 13-inch iPad in
+/// landscape, where New tactic moves to the right of the title (mockup `ipad-library`).
 struct LibraryScreen: View {
     let store: LibraryStore
 
     @State private var renaming: TacticLibrary.Entry?
     @State private var newTitle = ""
     @State private var deleting: TacticLibrary.Entry?
+    /// The screen's width, which sets the grid. Until it is known, the phone's.
+    @State private var width: CGFloat = 393
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Tokens.Space.s5) {
-                LaunchTitle()
-                Button {
-                    store.newTactic()
-                } label: {
-                    Label("New tactic", systemImage: "plus")
-                }
-                .buttonStyle(PrimaryCapsuleStyle())
-                .accessibilityIdentifier("launch.new")
+                header
 
                 if store.entries.isEmpty {
                     Text("Your tactics show up here.")
@@ -33,12 +30,13 @@ struct LibraryScreen: View {
                 }
                 footer
             }
-            .padding(.horizontal, Tokens.Space.s5)
+            .padding(.horizontal, grid.margin)
             .padding(.top, Tokens.Space.s6)
             .padding(.bottom, Tokens.Space.s6)
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
         .scrollBounceBehavior(.basedOnSize)
-        .background { LaunchBackground() }
+        .background { LaunchBackground(wideFade: grid.isWide ? Self.wideFade : nil) }
         // Hidden here, but it names the board's back button.
         .navigationTitle("Agmen")
         .toolbar(.hidden, for: .navigationBar)
@@ -66,6 +64,42 @@ struct LibraryScreen: View {
 
     // MARK: Parts
 
+    private var grid: LibraryGrid {
+        LibraryGrid(width: width, accessibilityText: dynamicTypeSize.isAccessibilitySize)
+    }
+
+    /// The phone's title over a full-width New tactic; on a wide screen New tactic sits at the title's right (stacked
+    /// again at the accessibility text sizes, where the title needs the width).
+    @ViewBuilder private var header: some View {
+        if grid.isWide, !dynamicTypeSize.isAccessibilitySize {
+            HStack(alignment: .bottom, spacing: Tokens.Space.s5) {
+                LaunchTitle()
+                Spacer(minLength: 0)
+                newTactic.frame(width: Self.wideNewTacticWidth)
+            }
+            .padding(.bottom, Tokens.Space.s2)
+        } else {
+            LaunchTitle()
+            newTactic
+        }
+    }
+
+    /// Where the chalk pitch behind the title fades on a wide screen (mockup `ipad-library`).
+    static let wideFade: ClosedRange<CGFloat> = 96...176
+
+    /// The mockup's New tactic beside the title on a wide screen.
+    static let wideNewTacticWidth: CGFloat = 240
+
+    private var newTactic: some View {
+        Button {
+            store.newTactic()
+        } label: {
+            Label("New tactic", systemImage: "plus")
+        }
+        .buttonStyle(PrimaryCapsuleStyle())
+        .accessibilityIdentifier("launch.new")
+    }
+
     private var recent: some View {
         VStack(alignment: .leading, spacing: Tokens.Space.s3) {
             Text("Recent")
@@ -73,7 +107,7 @@ struct LibraryScreen: View {
                 .foregroundStyle(Tokens.Colour.muted.color)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityIdentifier("library.recent")
-            LazyVGrid(columns: columns, alignment: .leading, spacing: Tokens.Space.s4) {
+            LazyVGrid(columns: columns, alignment: .leading, spacing: grid.rowGap) {
                 ForEach(Array(store.entries.enumerated()), id: \.element.id) { index, entry in
                     card(entry, number: index + 1)
                 }
@@ -81,17 +115,17 @@ struct LibraryScreen: View {
         }
     }
 
-    /// Two columns, or one at the accessibility text sizes so titles stay readable.
+    /// `LibraryGrid`'s count, equal widths.
     private var columns: [GridItem] {
-        let count = dynamicTypeSize.isAccessibilitySize ? 1 : 2
-        return Array(repeating: GridItem(.flexible(), spacing: Tokens.Space.s4, alignment: .top), count: count)
+        let grid = grid
+        return Array(repeating: GridItem(.flexible(), spacing: grid.columnGap, alignment: .top), count: grid.columns)
     }
 
     private func card(_ entry: TacticLibrary.Entry, number: Int) -> some View {
         Button {
             store.open(entry.url)
         } label: {
-            TacticCard(tactic: entry.tactic)
+            TacticCard(tactic: entry.tactic, grid: grid)
         }
         .buttonStyle(.plain)
         .contextMenu { actions(entry) }

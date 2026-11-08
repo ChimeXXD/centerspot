@@ -35,6 +35,8 @@ struct BoardScreen: View {
     @State var selectedMark: String?
     @State var lineDraft = LineDraft()
     @State var zonePreview: Zone?
+    /// Draw's arrows (D-72): the Shape switch, the selected bent arrow and its dot under the finger.
+    @State var arrowEdit = ArrowEditing()
     /// Edits made since draw mode opened (strokes, and on iPad the finger's token moves), so Cancel can take them
     /// all back (the mockup's "without changes").
     @State var drawEdits = 0
@@ -61,7 +63,7 @@ struct BoardScreen: View {
     var layout: BoardLayout { BoardLayout(sizeClass: sizeClass, size: container) }
 
     private var boardState: BoardState {
-        var state = Timeline.restingState(step: current, in: tactic)
+        var state = Timeline.restingState(step: current, in: shownTactic)
         if let dragPreview {
             state.positions[dragPreview.id] = dragPreview.point.clamped
             state.carry = [:]  // stale once a token moves; the renderer works the same weight out from distance
@@ -119,7 +121,8 @@ struct BoardScreen: View {
             case .editing: editingBar
             case .playing: playbackBar
             case .drawing:
-                DrawPanel(tool: $drawTool, selectedMark: selectedMarkLabel, onRemoveMark: removeSelectedMark)
+                DrawPanel(tool: $drawTool, shape: shapeBinding, selectedMark: selectedMarkLabel,
+                          onRemoveMark: removeSelectedMark, hint: arrowHint)
             }
         }
     }
@@ -178,7 +181,7 @@ struct BoardScreen: View {
             strokeInput: strokeInput, strokeKind: drawTool.arrowKind ?? .run,
             selectedMark: drawing ? selectedMark : nil, pendingLine: drawing ? lineDraft.tokens : [],
             zonePreview: drawing ? zonePreview : nil, marking: boardMarking,
-            showsMarks: mode != .playing, markActions: drawing ? markActions : nil,
+            showsMarks: mode != .playing, markActions: drawing ? markActions : nil, bending: boardBending,
             onStroke: drawStroke, onTap: tapBoard, onDoubleTap: doubleTapBoard,
             onDrag: { id, point in dragPreview = DragPreview(id: id, point: point) },
             onDragEnd: endDrag, onDragCancel: { dragPreview = nil }, onNudge: nudge
@@ -271,28 +274,4 @@ struct BoardScreen: View {
             ExportSheet(tactic: tactic, stepIndex: current, boardWidth: boardWidth)
         }
     }
-}
-
-/// The sheets the board can show.
-enum BoardSheet: Identifiable, Hashable {
-    case player(String)
-    case formation
-    case note(Int)
-    case export
-
-    var id: String {
-        switch self {
-        case .player(let id): "player-\(id)"
-        case .formation: "formation"
-        case .note(let index): "note-\(index)"
-        case .export: "export"
-        }
-    }
-
-    var isPlayer: Bool { if case .player = self { true } else { false } }
-}
-
-/// What the board is doing: editing a step, playing the move (D4-1) or drawing on it (D4-2).
-enum BoardMode: Equatable {
-    case editing, playing, drawing
 }

@@ -17,6 +17,8 @@ struct BoardGeometry: Sendable, Equatable {
 
     /// The pitch: vertical, attacking upward, fitted inside the rect at its kind's aspect and centred.
     let pitchRect: CGRect
+    /// Discs drawn this many times the board's size (library cards: 1.5, D-74). Everywhere else 1.
+    var tokenScale: CGFloat = 1
 
     init(kind: Pitch.Kind, fitting rect: CGRect) {
         let aspect = CGFloat(kind.size.length / kind.size.width)  // height ÷ width
@@ -36,7 +38,12 @@ struct BoardGeometry: Sendable, Equatable {
         width * CGFloat(kind.size.length / kind.size.width)
     }
 
-    var tokenRadius: CGFloat { pitchRect.width * Self.tokenRadiusRatio }
+    /// The pitch's width for a given length (a sideways card's height for its width).
+    static func width(forLength length: CGFloat, kind: Pitch.Kind) -> CGFloat {
+        length * CGFloat(kind.size.width / kind.size.length)
+    }
+
+    var tokenRadius: CGFloat { pitchRect.width * Self.tokenRadiusRatio * tokenScale }
 
     /// Line and arrow scale: 1 at the mockup's 345 pt pitch.
     var scale: CGFloat { pitchRect.width / Self.referenceWidth }

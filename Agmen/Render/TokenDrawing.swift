@@ -11,12 +11,16 @@ enum TokenDrawing {
     static let numberWeight: CGFloat = 800
     /// D-67's outline, in disc radii: thin, just outside the disc's edge.
     static let outlineWidth: CGFloat = 0.1
+    /// A number's point size, in disc radii.
+    static let numberSizeRatio: CGFloat = 1.05
 
     struct Style: Sendable {
         var selected = false
         var opacity: CGFloat = 1
         /// The slight lift under a selected token, on screen only (SPEC §4).
         var lift = false
+        /// The dark outline is at least this wide (library cards: 0.6 pt, D-74).
+        var minimumOutline: CGFloat = 0
     }
 
     /// The whole token, body then number: for one token on its own (the lineup card's list).
@@ -32,7 +36,7 @@ enum TokenDrawing {
             case .ball:
                 if style.selected { selectionRing(at: c, radius: r * 0.42 + r * 0.6, width: r * 0.14, in: ctx) }
                 disc(at: c, radius: r * 0.42, fill: Tokens.Colour.ball.cgColor, in: ctx)
-                ring(at: c, radius: r * 0.42, width: r * 0.14, colour: Tokens.Colour.bg.cgColor, in: ctx)
+                ring(at: c, radius: r * 0.42, width: max(r * 0.14, style.minimumOutline), colour: Tokens.Colour.bg.cgColor, in: ctx)
             case .cone, .marker:
                 if style.selected { selectionRing(at: c, radius: r * 1.1, width: r * 0.14, in: ctx) }
                 let h = r * 0.95
@@ -84,7 +88,7 @@ enum TokenDrawing {
             if let outline = kit.outline { ring(at: c, radius: r - r * 0.05, width: r * 0.1, colour: outline.cgColor, in: ctx) }
             edge = r
         }
-        let width = r * outlineWidth
+        let width = max(r * outlineWidth, style.minimumOutline)
         ring(at: c, radius: edge + width / 2, width: width, colour: Tokens.Colour.discOutline.cgColor, in: ctx)
     }
 
@@ -118,7 +122,7 @@ enum TokenDrawing {
 
     /// Centred on the disc, baseline at `y + 0.36 r` as in the mockup. Expects a y-down context.
     private static func drawNumber(_ number: Int, at c: CGPoint, radius r: CGFloat, colour: CGColor, in ctx: CGContext) {
-        let font = numberFont(size: r * 1.05)
+        let font = numberFont(size: r * numberSizeRatio)
         let attributes: [NSAttributedString.Key: Any] = [
             NSAttributedString.Key(kCTFontAttributeName as String): font,
             NSAttributedString.Key(kCTForegroundColorAttributeName as String): colour,

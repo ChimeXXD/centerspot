@@ -103,6 +103,16 @@ enum StrokeEdits {
         return true
     }
 
+    /// Takes arrow `index` off step `step` (the Draw row's Remove, D-72). Only the arrow: a run it set out stays,
+    /// as a player dragged to a new spot does, until it is redrawn or the step changed. Returns whether it was there.
+    @discardableResult
+    static func removeArrow(at index: Int, step: Int, in tactic: inout Tactic, phase: Int = 0) -> Bool {
+        guard tactic.phases.indices.contains(phase), tactic.phases[phase].steps.indices.contains(step),
+              tactic.phases[phase].steps[step].arrows.indices.contains(index) else { return false }
+        tactic.phases[phase].steps[step].arrows.remove(at: index)
+        return true
+    }
+
     /// Who follows a stroke of `kind` that starts on `token` (D-59). A loose ball follows any stroke but a press. A
     /// pass or dribble moves the ball only when the player has it at their feet; otherwise the ball stays.
     static func movers(of kind: Arrow.Kind, from token: Token?, in tactic: Tactic,

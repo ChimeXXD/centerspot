@@ -21,11 +21,14 @@ enum ArrowDrawing {
         }
     }
 
-    /// - Parameter tokenCentres: where tokens are drawn, so the arrow can stop short of one at its end.
-    static func draw(_ arrow: Arrow, opacity: CGFloat, geometry g: BoardGeometry, tokenCentres: [CGPoint], in ctx: CGContext) {
+    /// - Parameters:
+    ///   - tokenCentres: where tokens are drawn, so the arrow can stop short of one at its end.
+    ///   - minimumScale: the smallest scale its sizes may take (library cards keep 0.55, D-74).
+    static func draw(_ arrow: Arrow, opacity: CGFloat, geometry g: BoardGeometry, tokenCentres: [CGPoint],
+                     minimumScale: CGFloat = 0, in ctx: CGContext) {
         var points = arrow.points.map(g.point)
         guard points.count >= 2, opacity > 0 else { return }
-        let k = g.scale, r = g.tokenRadius
+        let k = max(g.scale, minimumScale), r = g.tokenRadius
         shortenEnd(&points, radius: r, tokenCentres: tokenCentres)
         let end = points[points.count - 1]
         // The head points along the last stretch that goes somewhere: a clamped curve can end in repeated points.

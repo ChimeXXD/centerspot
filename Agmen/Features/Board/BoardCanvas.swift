@@ -25,6 +25,8 @@ struct BoardCanvas: View {
     /// Each mark is read out by VoiceOver; in draw mode these actions select, remove, move and resize them.
     var showsMarks = true
     var markActions: MarkActions?
+    /// While an arrow tool is picked (D-72): taps select a bent arrow, and its middle dot drags its bend.
+    var bending: BoardBending?
     /// A finished stroke: its points on the pitch (unclamped) and the token it started on (`strokeStart`).
     var onStroke: ([Point], String?) -> Void = { _, _ in }
     var onTap: (String?) -> Void
@@ -47,6 +49,9 @@ struct BoardCanvas: View {
     @State var markTouch: (start: CGPoint, drag: BoardMarking.DragKind?)?
     /// The last tap a mark tool took, so a tap reported both as a short stroke and by the tap gesture counts once.
     @State var lastMarkTap: (time: ContinuousClock.Instant, at: CGPoint, viaStroke: Bool)?
+    /// A touch on the bend dot: where it began, how far from the dot's centre it grabbed it, and whether it has left a
+    /// tap's reach (a tap on the dot bends nothing).
+    @State var bendTouch: (start: CGPoint, grab: CGSize, moved: Bool)?
 
     var body: some View {
         GeometryReader { proxy in
@@ -70,15 +75,18 @@ struct BoardCanvas: View {
                 }, including: movesTokens ? .all : .none)
                 .simultaneousGesture(SpatialTapGesture(count: 1).onEnded { value in
                     if let marking { markTap(value.location, geometry, marking, viaStroke: false) } else { onTap(hit(value.location, geometry)) }
+                    bending?.onTap(geometry.normalised(value.location))
                 })
                 .gesture(StrokeCapture(input: strokeInput) { phase, location in capture(phase, location, geometry) })
 
                 liveStroke
                 zoneBox(geometry)
+                bendDot(geometry)
 
                 // Marks under the players, as drawn: a player on a zone or line is found by touch first.
                 if showsMarks { markLayer(geometry) }
                 accessibilityLayer(geometry)
+                bendElement(geometry)
             }
         }
     }
@@ -104,6 +112,7 @@ struct BoardCanvas: View {
             captureMark(phase, location, geometry, marking)
             return
         }
+        if captureBend(phase, location, geometry) { return }
         switch phase {
         case .began:
             if dragging != nil { dragging = nil; onDragCancel() }
@@ -114,6 +123,7 @@ struct BoardCanvas: View {
         case .ended:
             if stroke.last != location { stroke.append(location) }
             onStroke(stroke.map(geometry.normalised), strokeStart)
+            tapArrow(stroke, geometry)
             stroke = []
             strokeStart = nil
         case .cancelled:
@@ -132,6 +142,7 @@ struct BoardCanvas: View {
     private func dragGesture(_ geometry: BoardGeometry) -> some Gesture {
         DragGesture(minimumDistance: 4)
             .onChanged { value in
+                if dragBend(value, ended: false, geometry) { return }
                 if dragging?.start != value.startLocation {
                     if dragging != nil { dragging = nil; onDragCancel() }
                     guard let id = hit(value.startLocation, geometry), let p = state.positions[id] else { return }
@@ -143,6 +154,7 @@ struct BoardCanvas: View {
                 onDrag(dragging.id, landing(value.location, dragging.offset, geometry))
             }
             .onEnded { value in
+                if dragBend(value, ended: true, geometry) { return }
                 guard let dragging else { return }
                 onDragEnd(dragging.id, landing(value.location, dragging.offset, geometry))
                 self.dragging = nil

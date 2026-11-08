@@ -23,7 +23,7 @@ struct BoardLayoutTests {
         #expect(BoardLayout(sizeClass: .regular, size: .zero) == .compact)
     }
 
-    @Test func stepRowsReadTheirNumberTimeAndNote() {
+    @Test @MainActor func stepRowsReadTheirNumberTimeAndNote() {
         let step = Step(id: "s2", duration: 1.4, note: "11 drives inside")
         #expect(StepsList.label(index: 1, count: 5, step: step) == "Step 2 of 5, 1.4 seconds, 11 drives inside")
         let plain = Step(id: "s1", duration: 1)

@@ -57,12 +57,13 @@ extension BoardScreen {
     @ToolbarContentBuilder private var editingItems: some ToolbarContent {
         ToolbarItemGroup(placement: .topBarTrailing) {
             // The board's UndoManager isn't the window's (D-56), so a hardware keyboard needs these shortcuts.
+            // iPad landscape hides this bar and its column nav row registers the shortcuts, so they're left off here.
             Button("Undo", systemImage: "arrow.uturn.backward") { undoManager?.undo() }
-                .keyboardShortcut("z", modifiers: .command)
+                .keyboardShortcut(barShortcut(.command))
                 .disabled(!canUndo)
                 .accessibilityIdentifier("nav.undo")
             Button("Redo", systemImage: "arrow.uturn.forward") { undoManager?.redo() }
-                .keyboardShortcut("z", modifiers: [.command, .shift])
+                .keyboardShortcut(barShortcut([.command, .shift]))
                 .disabled(!canRedo)
                 .accessibilityIdentifier("nav.redo")
         }
@@ -73,6 +74,12 @@ extension BoardScreen {
             Button("Share", systemImage: "square.and.arrow.up") { show("Sharing comes on Day 6") }
                 .accessibilityIdentifier("nav.share")
         }
+    }
+
+    /// ⌘Z / ⇧⌘Z on the bar's Undo and Redo, except in iPad landscape, where the bar is hidden and the column's nav row
+    /// has them (one registration each).
+    private func barShortcut(_ modifiers: EventModifiers) -> KeyboardShortcut? {
+        layout == .regularLandscape ? nil : KeyboardShortcut("z", modifiers: modifiers)
     }
 
     /// The title is our own menu (Rename, then the mockup's "more" options: the pitch). The system's editable title

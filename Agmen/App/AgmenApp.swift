@@ -10,6 +10,7 @@ struct AgmenApp: App {
         let library = TacticLibrary.documents
         #if DEBUG
         BoardDebugLaunch.resetLibraryIfAsked(library)
+        BoardDebugLaunch.seedLibraryIfAsked(library)
         // D5-1: time real exports on the device (`-exportBench`); prints AGMEN-EXPORT lines.
         if ProcessInfo.processInfo.arguments.contains("-exportBench"), let url = library.exampleURL,
            let hero = try? library.load(url) {

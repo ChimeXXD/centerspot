@@ -17,15 +17,18 @@ enum BoardRenderer {
         /// out (its players so far, with a dashed ring round the last).
         var selectedMark: String?
         var pendingLine: [String] = []
+        /// A library card (D-74): the pitch turned sideways, bigger discs, numbers only when legible.
+        var card: CardStyle?
 
         init(selection: String? = nil, dimsUnselected: Bool = false, showsLift: Bool = false, fillsBackground: Bool = false,
-             selectedMark: String? = nil, pendingLine: [String] = []) {
+             selectedMark: String? = nil, pendingLine: [String] = [], card: CardStyle? = nil) {
             self.selection = selection
             self.dimsUnselected = dimsUnselected
             self.showsLift = showsLift
             self.fillsBackground = fillsBackground
             self.selectedMark = selectedMark
             self.pendingLine = pendingLine
+            self.card = card
         }
     }
 
@@ -33,32 +36,59 @@ enum BoardRenderer {
     static let dimmedOpacity: CGFloat = 0.35
 
     /// The pitch, then the marks on the grass (D-65), the arrows, every disc, and every number last (D-67).
+    /// A library card (`options.card`, D-74) turns the grass, marks and arrows a quarter clockwise; the discs are then
+    /// drawn where the turn puts them, so numbers stay upright and the ball stays at its carrier's lower right.
     static func draw(state: BoardState, tactic: Tactic, in ctx: CGContext, rect: CGRect, options: Options = .init()) {
-        let g = BoardGeometry(kind: tactic.pitch.kind, fitting: rect)
+        let card = options.card
+        let g = card?.geometry(kind: tactic.pitch.kind, in: rect) ?? BoardGeometry(kind: tactic.pitch.kind, fitting: rect)
+        let turn = card?.sideways == true ? CardStyle.sidewaysTransform(into: rect) : .identity
         if options.fillsBackground {
             ctx.setFillColor(Tokens.Colour.bg.cgColor)
             ctx.fill(rect)
         }
-        PitchDrawing.draw(tactic.pitch, geometry: g, in: ctx)
-
         let centres = g.drawnCentres(positions: state.positions, tokens: tactic.tokens, carry: state.carry)
-        MarkDrawing.draw(state.marks, in: .init(tactic: tactic, geometry: g, centres: centres),
-                         selected: options.selectedMark, pendingLine: options.pendingLine, ctx: ctx)
-        let tokenCentres = Array(centres.values)
+        // On a card the discs keep their on-screen offset (the ball down and to the right of its carrier), so what is
+        // drawn under the turn (rings, lines, arrow ends) uses where those discs land, turned back.
+        let discCentres = turn.isIdentity ? centres : turned(centres, positions: state.positions, geometry: g, by: turn)
+        let sceneCentres = turn.isIdentity ? centres : discCentres.mapValues { $0.applying(turn.inverted()) }
+
+        ctx.saveGState()
+        ctx.concatenate(turn)
+        PitchDrawing.draw(tactic.pitch, geometry: g, minimumLine: card?.minimumPitchLine ?? 0, in: ctx)
+        let scene = MarkDrawing.Scene(tactic: tactic, geometry: g, centres: sceneCentres,
+                                      minimumLine: card?.minimumMarkLine ?? 0)
+        MarkDrawing.draw(state.marks, in: scene, selected: options.selectedMark, pendingLine: options.pendingLine, ctx: ctx)
+        let tokenCentres = Array(sceneCentres.values)
         for visible in state.arrows {
-            ArrowDrawing.draw(visible.arrow, opacity: CGFloat(visible.opacity), geometry: g, tokenCentres: tokenCentres, in: ctx)
+            ArrowDrawing.draw(visible.arrow, opacity: CGFloat(visible.opacity), geometry: g, tokenCentres: tokenCentres,
+                              minimumScale: card?.minimumArrowScale ?? 0, in: ctx)
         }
+        ctx.restoreGState()
 
         // Kit and style worked out once per token; both passes use them.
         let tokens = drawingOrder(tactic.tokens).compactMap { token in
-            centres[token.id].map { (token, $0, kit(for: token, in: tactic), style(of: token, options)) }
+            discCentres[token.id].map { (token, $0, kit(for: token, in: tactic), style(of: token, options)) }
         }
         for (token, c, kit, style) in tokens {
             TokenDrawing.drawBody(token, at: c, kit: kit, radius: g.tokenRadius, style: style, in: ctx)
         }
+        guard card?.showsNumbers(radius: g.tokenRadius) ?? true else { return }
         for (token, c, kit, style) in tokens {
             TokenDrawing.drawNumber(token, at: c, kit: kit, radius: g.tokenRadius, style: style, in: ctx)
         }
+    }
+
+    /// Drawn centres moved by `turn`: each token's place on the pitch is turned, and any offset from it (the ball at
+    /// its carrier's feet) is kept as it is on screen, down and to the right.
+    private static func turned(_ centres: [String: CGPoint], positions: [String: Point], geometry g: BoardGeometry,
+                               by turn: CGAffineTransform) -> [String: CGPoint] {
+        var result: [String: CGPoint] = [:]
+        for (id, c) in centres {
+            guard let p = positions[id] else { continue }
+            let place = g.point(p), spot = place.applying(turn)
+            result[id] = CGPoint(x: spot.x + c.x - place.x, y: spot.y + c.y - place.y)
+        }
+        return result
     }
 
     private static func style(of token: Token, _ options: Options) -> TokenDrawing.Style {
@@ -67,6 +97,7 @@ enum BoardRenderer {
         style.selected = selected
         style.lift = selected && options.showsLift
         if options.dimsUnselected, !selected { style.opacity = dimmedOpacity }
+        style.minimumOutline = options.card?.minimumOutline ?? 0
         return style
     }
 

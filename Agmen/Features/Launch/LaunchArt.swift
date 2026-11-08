@@ -7,11 +7,15 @@ struct LaunchBackground: View {
     static let opacity = 0.6
     /// Gone before the centre circle starts (about 0.41 of the pitch), so no stray arc shows beside the cards.
     static let fadeEnd = 0.38
+    /// On a wide screen the pitch is far taller than the header, so the fade is set in points from the top of the
+    /// screen instead: whole down to the first, gone by the second (mockup `ipad-library`: 96 to 176 pt, D-74).
+    var wideFade: ClosedRange<CGFloat>?
 
     var body: some View {
         GeometryReader { proxy in
             let width = proxy.size.width
             let height = BoardGeometry.height(forWidth: width, kind: .full)
+            let top = proxy.safeAreaInsets.top - height * 0.12
             Canvas { context, size in
                 let tactic = TacticDocument.blank(id: UUID(uuidString: "00000000-0000-0000-0000-000000000000")!)
                 let state = BoardState(positions: [:], arrows: [], stepIndex: 0)
@@ -21,13 +25,23 @@ struct LaunchBackground: View {
             }
             .frame(width: width, height: height)
             .opacity(Self.opacity)
-            .mask(LinearGradient(stops: [.init(color: .black, location: 0), .init(color: .clear, location: Self.fadeEnd)],
-                                  startPoint: .top, endPoint: .bottom))
+            .mask(LinearGradient(stops: fadeStops(height: height, top: top, safeTop: proxy.safeAreaInsets.top),
+                                 startPoint: .top, endPoint: .bottom))
             .frame(maxHeight: .infinity, alignment: .top)
-            .offset(y: proxy.safeAreaInsets.top - height * 0.12)
+            .offset(y: top)
             .accessibilityHidden(true)
         }
         .background(Tokens.Colour.bg.color.ignoresSafeArea())
+    }
+
+    /// The mask's stops along the pitch, which starts `top` points below the safe area's top (`safeTop` below the
+    /// screen's, where the mockup measures from).
+    private func fadeStops(height: CGFloat, top: CGFloat, safeTop: CGFloat) -> [Gradient.Stop] {
+        guard let wideFade, height > 0 else {
+            return [.init(color: .black, location: 0), .init(color: .clear, location: Self.fadeEnd)]
+        }
+        let start = (wideFade.lowerBound - safeTop - top) / height, end = (wideFade.upperBound - safeTop - top) / height
+        return [.init(color: .black, location: start), .init(color: .clear, location: end)]
     }
 }
 

@@ -2,6 +2,24 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Straight / Curved switch and small library cards (Sun 8 Nov 2026)
+
+**Changed**
+- D-72 UI: "Shape | Straight | Curved" in the Draw panel (iPhone) and the iPad column, Straight by default, hidden for Zone/Line/Glow. A curved arrow shows a middle dot; dragging it bends the line (one undo step, D-69 cap, counted for Cancel); dropping it on the straight line straightens it. iPad row "3's run · drag the dot to bend" with Remove (new `StrokeEdits.removeArrow`). `middle(of:)` now finds the furthest point from the chord for old freehand paths. Verifier fixes G1–G3 (step list in Draw mode; ⌘Z once in iPad landscape; no step-actions hint while drawing).
+- D-74 library cards: `Options.card` in the one `BoardRenderer` turns the pitch a quarter clockwise with upright numbers (only at 7 pt or more), discs 1.5×, minimum line widths. `LibraryGrid` picks columns from the width: 3 on every iPhone, 6 on the 13-inch iPad in landscape, 5 on the 11-inch (keeps numbers), 4/3 in portrait, a third as many at AX sizes. Debug `-seedLibrary N`.
+- Code review (high): 10 found, 4 fixed (a tap on the dot saved an empty bend; marks and arrow ends on cards missed a carried ball's disc; per-frame tactic copies while dragging; indentation). Left: the selected arrow is an index, so undo can move the selection to another arrow; the library's first frame on iPad lays out the phone grid; cards' larger discs widen the carry radius; Pencil + finger together can drop a dot drag; debug seeding adds up without `-resetLibrary`.
+
+**Checked**
+- Red runs recorded by both lanes (scratch copies with stubs); mutations 7/7 and 7/7 killed.
+- Gate 3/3 (413 unit tests). iPhone UI 11 passed (iPad-only tests skip) on iPhone 18 Pro; iPad UI 6/6 on the iPad Pro 13-inch simulator (6 cards a row, shape row in the column, board layout).
+- Installed on the iPhone 14 Pro and the borrowed iPad.
+
+**Not verified**
+- Chime on the devices: drawing curves with finger and Pencil, dragging the dot, card scroll smoothness. Xcode 26.6 until CI.
+
+**Next**
+- Chime's iPad feedback; then broadcast part 2 (tilted camera), onboarding (D-58), Day 7.
+
 ## iPad big-screen board and arrow shapes (engine) (Sun 8 Nov 2026)
 
 **Changed**

@@ -110,10 +110,9 @@ struct ShapedPathTests {
         let half = ShapedPath.middle(of: [Self.p(0.2, 0.2), Self.p(0.4, 0.6)])
         #expect(half.map { abs($0.x - 0.3) < 1e-9 && abs($0.y - 0.4) < 1e-9 } == true)
         #expect(ShapedPath.middle(of: []) == nil)
-        // Not one of ours: the point half way along it.
-        let elbow = [Self.p(0.2, 0.2), Self.p(0.2, 0.4), Self.p(0.6, 0.4), Self.p(0.6, 0.6)]
-        let mid = ShapedPath.middle(of: elbow)
-        #expect(mid.map { abs($0.x - 0.4) < 1e-9 && abs($0.y - 0.4) < 1e-9 } == true)
+        // Not one of ours (an older freehand line): the point furthest from the line joining its ends (D-72 review).
+        let freehand = [Self.p(0.2, 0.2), Self.p(0.1, 0.35), Self.p(0.25, 0.5), Self.p(0.2, 0.6)]
+        #expect(ShapedPath.middle(of: freehand) == Self.p(0.1, 0.35))
     }
 
     @Test func nudgingMovesTheBendAndKeepsTheEnds() throws {
