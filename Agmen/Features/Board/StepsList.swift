@@ -10,16 +10,17 @@ struct StepsList: View {
     var showsStepActions = true
     /// The step tip, only while editing with no sheet open (D-58).
     var showsTip = true
-    var onSelect: (Int) -> Void
+    var onSelect: @MainActor (Int) -> Void
     var onAdd: () -> Void
-    var onMove: (_ from: Int, _ to: Int) -> Void
+    var onMove: @MainActor (_ from: Int, _ to: Int) -> Void
 
     var body: some View {
+        let rows = rows
         VStack(alignment: .leading, spacing: Tokens.Space.s2) {
             header
             ViewThatFits(in: .vertical) {
                 rows
-                scrollingRows
+                scrollingRows(rows)
             }
         }
     }
@@ -48,79 +49,21 @@ struct StepsList: View {
         }
     }
 
-    private var rows: some View {
-        VStack(spacing: Tokens.Space.s2) {
-            ForEach(Array(steps.enumerated()), id: \.element.id) { index, step in
-                row(index, step).id(step.id)
-            }
+    /// On iPadOS 26 hardware SwiftUI builds these rows on its own render thread (`com.apple.SwiftUI.AsyncRenderer`)
+    /// while it measures the list, so every closure it calls later (`ForEach`'s, `ScrollViewReader`'s) is `@Sendable`
+    /// and only hands plain values on: one that reached main-actor state there failed Swift's isolation check and
+    /// closed the app (Chime's iPad and Mac, 8 Nov). The tip is read here, on the main actor.
+    private var rows: StepRows {
+        StepRows(steps: steps, current: current, showsStepActions: showsStepActions,
+                 tip: showsTip ? Onboarding.shared.current(StepTip.self) : nil,
+                 tipIndex: Onboarding.stepTipIndex(stepCount: steps.count), onSelect: onSelect, onMove: onMove)
+    }
+
+    private func scrollingRows(_ rows: StepRows) -> some View {
+        let ids = steps.map(\.id), current = current
+        return ScrollViewReader { @Sendable proxy in
+            StepRowsScroller(proxy: proxy, rows: rows, ids: ids, current: current)
         }
-    }
-
-    private var scrollingRows: some View {
-        ScrollViewReader { proxy in
-            ScrollView(.vertical) { rows }
-                .scrollIndicators(.automatic)
-                .onAppear { scroll(proxy, to: current, animated: false) }
-                .onChange(of: current) { _, new in scroll(proxy, to: new, animated: true) }
-        }
-    }
-
-    private func scroll(_ proxy: ScrollViewProxy, to index: Int, animated: Bool) {
-        guard steps.indices.contains(index) else { return }
-        withAnimation(animated ? Tokens.Motion.ease(Tokens.Motion.step) : nil) { proxy.scrollTo(steps[index].id) }
-    }
-
-    private func row(_ index: Int, _ step: Step) -> some View {
-        Button { onSelect(index) } label: { rowFace(index, step, on: index == current) }
-            .buttonStyle(.plain)
-            .draggable(step.id) { rowFace(index, step, on: true).frame(width: 320) }
-            .dropDestination(for: String.self) { ids, _ in
-                guard let id = ids.first, let from = steps.firstIndex(where: { $0.id == id }) else { return false }
-                onMove(from, index)
-                return true
-            }
-            .accessibilityLabel(Self.label(index: index, count: steps.count, step: step))
-            .accessibilityHint(hint(isCurrent: index == current))
-            .accessibilityAddTraits(index == current ? .isSelected : [])
-            .accessibilityIdentifier("steps.row.\(index + 1)")
-            .agmenTip(showsTip && index == Onboarding.stepTipIndex(stepCount: steps.count)
-                      ? Onboarding.shared.current(StepTip.self) : nil, arrowEdge: .trailing)
-    }
-
-    private func hint(isCurrent: Bool) -> String {
-        guard isCurrent else { return "Double-tap to go to this step" }
-        return showsStepActions ? "Double-tap for step actions" : ""
-    }
-
-    private func rowFace(_ index: Int, _ step: Step, on: Bool) -> some View {
-        let ink = on ? Tokens.Colour.accentInk.color : Tokens.Colour.text.color
-        let quiet = on ? Tokens.Colour.accentInk.color.opacity(0.75) : Tokens.Colour.muted.color
-        return HStack(alignment: .firstTextBaseline, spacing: Tokens.Space.s3) {
-            Text("\(index + 1)")
-                .font(Tokens.Typeface.title)
-                .foregroundStyle(ink)
-                .frame(minWidth: 28, alignment: .leading)
-            Text(BoardContextRow.seconds(step.duration))
-                .font(Tokens.Typeface.caption.weight(.semibold))
-                .foregroundStyle(quiet)
-                .frame(minWidth: 40, alignment: .leading)
-            Text(noteText(step))
-                .font(Tokens.Typeface.note)
-                .foregroundStyle(step.note?.isEmpty == false ? ink : quiet)
-                .lineLimit(2)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.horizontal, Tokens.Space.s4)
-        .padding(.vertical, Tokens.Space.s2)
-        .frame(minHeight: Tokens.Size.stepChip.height)
-        .background(on ? Tokens.Colour.accent.color : Tokens.Colour.surface2.color,
-                    in: RoundedRectangle(cornerRadius: Tokens.Radius.item))
-        .contentShape(RoundedRectangle(cornerRadius: Tokens.Radius.item))
-    }
-
-    private func noteText(_ step: Step) -> String {
-        if let note = step.note, !note.isEmpty { return note }
-        return "No note"
     }
 
     /// "Step 2 of 5, 1.4 seconds, 11 drives inside; 3 starts the overlap".

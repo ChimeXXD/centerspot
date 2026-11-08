@@ -80,8 +80,8 @@ struct SheetHeader: View {
 }
 
 /// A capsule segmented control (formation sizes, the player's side).
-struct CapsuleSegments<Value: Hashable>: View {
-    struct Option {
+struct CapsuleSegments<Value: Hashable & Sendable>: View {
+    struct Option: Sendable {
         let value: Value
         let title: String
         let identifier: String
@@ -106,28 +106,49 @@ struct CapsuleSegments<Value: Hashable>: View {
         }
     }
 
-    private func segments(_ layout: some Layout, in shape: some Shape) -> some View {
-        layout {
-            ForEach(options, id: \.identifier) { option in
-                let on = option.value == selection
-                Button { selection = option.value } label: {
-                    Text(option.title)
-                        .font(Tokens.Typeface.body.weight(.semibold))
-                        .foregroundStyle(on ? Tokens.Colour.text.color : Tokens.Colour.muted.color)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                        .frame(maxWidth: .infinity, minHeight: Tokens.Size.touch)
-                        .background(on ? Tokens.Colour.surface3.color : .clear, in: shape)
-                        .contentShape(shape)
-                }
-                .buttonStyle(.plain)
-                .accessibilityShowsLargeContentViewer { Text(option.title) }
-                .accessibilityIdentifier(option.identifier)
-                .accessibilityAddTraits(on ? .isSelected : [])
+    /// `ViewThatFits` may measure these on SwiftUI's render thread (iPadOS 26 hardware), so the closure is `@Sendable`
+    /// and hands plain values to `CapsuleSegment` (as `StepsList` does, Chime's iPad, 8 Nov).
+    private func segments<S: Shape>(_ layout: some Layout, in shape: S) -> some View {
+        let selection = $selection, current = self.selection
+        return layout {
+            ForEach(options, id: \.identifier) { @Sendable option in
+                CapsuleSegment(option: option, on: option.value == current, selection: selection, shape: shape)
             }
         }
         .padding(inset)
         .background(track, in: shape)
+    }
+}
+
+/// One segment of `CapsuleSegments`, made with a `nonisolated` init so it can be built off the main actor.
+private struct CapsuleSegment<Value: Hashable & Sendable, S: Shape>: View {
+    let option: CapsuleSegments<Value>.Option
+    let on: Bool
+    let selection: Binding<Value>
+    let shape: S
+
+    nonisolated init(option: CapsuleSegments<Value>.Option, on: Bool, selection: Binding<Value>, shape: S) {
+        self.option = option
+        self.on = on
+        self.selection = selection
+        self.shape = shape
+    }
+
+    var body: some View {
+        Button { selection.wrappedValue = option.value } label: {
+            Text(option.title)
+                .font(Tokens.Typeface.body.weight(.semibold))
+                .foregroundStyle(on ? Tokens.Colour.text.color : Tokens.Colour.muted.color)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .frame(maxWidth: .infinity, minHeight: Tokens.Size.touch)
+                .background(on ? Tokens.Colour.surface3.color : .clear, in: shape)
+                .contentShape(shape)
+        }
+        .buttonStyle(.plain)
+        .accessibilityShowsLargeContentViewer { Text(option.title) }
+        .accessibilityIdentifier(option.identifier)
+        .accessibilityAddTraits(on ? .isSelected : [])
     }
 }
 

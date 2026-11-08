@@ -25,6 +25,28 @@ final class IPadLayoutUITests: XCTestCase {
         XCUIDevice.shared.orientation = .portrait
     }
 
+    /// Chime's iPad and Mac (8 Nov): opening a tactic in landscape with the tips on crashed, because the steps
+    /// list's rows read the tip state off the main thread. The tips are on here (the other tests hide them).
+    /// The simulator never built the rows on SwiftUI's render thread, so this guards the flow, not the crash itself:
+    /// that still needs the iPad.
+    @MainActor
+    func testLandscapeWithTipsOpensTheBoard() throws {
+        XCUIDevice.shared.orientation = .landscapeLeft
+        let app = XCUIApplication()
+        app.launchArguments = ["-resetLibrary", "YES", "-onboarding", "YES"]
+        app.launch()
+        let skip = element(app, "onboarding.skip")
+        XCTAssertTrue(skip.waitForExistence(timeout: timeout))
+        skip.tap()
+        let card = AccessibilityAudit.card(app, "Overlap down the left, 5 steps")
+        XCTAssertTrue(card.waitForExistence(timeout: timeout))
+        card.tap()
+        XCTAssertTrue(element(app, "steps.row.2").waitForExistence(timeout: timeout), "the board opens")
+        XCTAssertTrue(app.staticTexts["Move a player"].waitForExistence(timeout: timeout), "with its first tip")
+        sleep(2)
+        XCTAssertEqual(app.state, .runningForeground, "and the app is still running")
+    }
+
     @MainActor
     func testLandscape() throws {
         XCUIDevice.shared.orientation = .landscapeLeft

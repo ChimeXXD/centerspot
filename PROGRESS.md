@@ -2,6 +2,20 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Crash opening a tactic on the iPad and Mac (Sun 8 Nov 2026, night)
+
+**Changed**
+- Cause (5 crash reports from Chime's iPad, iPadOS 26.6.1): SwiftUI's render thread (`com.apple.SwiftUI.AsyncRenderer`) built the iPad steps list's `ForEach` rows while measuring the `ViewThatFits`; the row closure was main-actor isolated (it read `Onboarding.shared` and called the view's methods), Swift's runtime isolation check failed (`_swift_task_checkIsolatedSwift`, EXC_BREAKPOINT) and the app closed. The Mac runs the iPad app, so the same.
+- Fix: those closures are `@Sendable` and build views with `nonisolated` inits from plain values (`StepRow`, `StepRows`, `StepRowsScroller`; `StepChip` for the strip; `CapsuleSegment`, whose `ViewThatFits` measures at AX sizes); the tip is read in `body`, on the main actor. The drag tip is read once in `BoardCanvas.body`.
+
+**Checked**
+- `IPadLayoutUITests.testLandscapeWithTipsOpensTheBoard` (new; tips on, landscape) plus landscape/portrait on iPadOS 27.0 and 26.5 simulators; BoardScreenshot, Onboarding, DynamicType AX5 on iPhone 18 Pro. The simulators never ran the rows on the render thread, so they didn't reproduce the crash: the proof is the device.
+- On the iPad: launched into the example board, up 25 s, no new crash report.
+- Code review (high) stopped part-way (its work-in-progress broke the build; finished by hand: `ScrollViewProxy` stored `nonisolated(unsafe)`, used only in main-actor actions).
+
+**Not verified**
+- The Mac (Designed for iPad) until it gets this build.
+
 ## The welcome on the iPad (Sun 8 Nov 2026, night)
 
 **Changed**

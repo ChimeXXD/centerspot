@@ -60,6 +60,8 @@ struct BoardCanvas: View {
     @State var bendTouch: (start: CGPoint, grab: CGSize, moved: Bool)?
 
     var body: some View {
+        // Read on the main actor, outside the closures SwiftUI may call later (as `StepsList`, Chime's iPad, 8 Nov).
+        let dragTip = dragTipToken == nil ? nil : Onboarding.shared.current(DragTip.self)
         GeometryReader { proxy in
             let rect = CGRect(origin: .zero, size: proxy.size)
             let geometry = BoardGeometry(kind: tactic.pitch.kind, fitting: rect)
@@ -67,7 +69,7 @@ struct BoardCanvas: View {
             ZStack(alignment: .topLeading) {
                 // Under the pitch, so the drag it asks for reaches the pitch (an anchor that ignores touches never
                 // shows its popover).
-                dragTipAnchor(centres)
+                dragTipAnchor(dragTip, centres)
                 Canvas { context, size in
                     context.withCGContext { cg in
                         BoardRenderer.draw(state: state, crossfadingTo: crossfade?.state, mix: crossfade?.mix ?? 0,
@@ -192,8 +194,8 @@ struct BoardCanvas: View {
     /// The "Move a player" tip's anchor (D-82): its own 44 pt view on the player, under the pitch. Hung on the token
     /// element, `position` stretched the anchor over the whole board and the arrow pointed at the bottom middle, where
     /// the keeper stands.
-    @ViewBuilder private func dragTipAnchor(_ centres: [String: CGPoint]) -> some View {
-        if let id = dragTipToken, let tip = Onboarding.shared.current(DragTip.self), let centre = centres[id] {
+    @ViewBuilder private func dragTipAnchor(_ tip: DragTip?, _ centres: [String: CGPoint]) -> some View {
+        if let id = dragTipToken, let tip, let centre = centres[id] {
             Color.clear
                 .frame(width: Tokens.Size.touch, height: Tokens.Size.touch)
                 .agmenTip(tip, arrowEdge: .top)

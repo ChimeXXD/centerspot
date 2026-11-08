@@ -24,6 +24,7 @@
 - Draw panel "Shape" label is a one-off 13 pt size.
 
 ### Working rules learned this session
+- **iPadOS 26 hardware builds lazy view content off the main thread** (`com.apple.SwiftUI.AsyncRenderer`, under `ViewThatFits`/`ScrollView` measuring). A `ForEach` closure that touches main-actor state there crashes the app (runtime isolation check). Make such closures `@Sendable` and build views with `nonisolated` inits from plain values. The simulators (26.5, 27) don't reproduce it; test on the device, and run UI tests with tips on too.
 - **Never let two test runs share a simulator.** The gate runs at every turn end; a background UI suite on the same simulator made it fail (signal kill, fuzz timeouts). Wait for UI runs to finish (Monitor/until-loop) before ending a turn, and tell review agents not to run xcodebuild.
 - **The commit gate refuses a command that edits files and commits in one go.** Edit in one step, `git add … && git commit …` in the next.
 - **TipKit's popover modifier breaks `ImageRenderer`** (parity test) and steals taps: attach it only when a tip is due (`agmenTip`).
