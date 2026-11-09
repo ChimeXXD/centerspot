@@ -48,6 +48,24 @@ struct ScenarioMoveTests {
         }
     }
 
+    /// D-97: attacking ends in a goal (3v1 keep the ball: the ball kept); defending ends with our side winning the ball,
+    /// by an outfield player, or the keeper only at a penalty or a 1v1 with him.
+    @Test(arguments: ["4-3-3", "3-5-2", "7-2-3-1", "5-2-2"])
+    func attackingScoresAndDefendingWinsTheBall(shape: String) throws {
+        let formation = try #require(Presets.shared.formation(shape))
+        for scenario in Scenario.available(for: formation.pitch) {
+            let attack = try #require(ScenarioMotion.build(scenario, formation: formation, attacking: true))
+            #expect(attack.last?.note == (scenario.id == "3v1-rondo" ? "Kept it, into space" : "Goal"), "\(scenario.id)")
+            let defend = try #require(ScenarioMotion.build(scenario, formation: formation, attacking: false))
+            #expect(defend.last?.note == "Ball won", "\(scenario.id)")
+            let won = try #require(defend.dropLast().last?.note)
+            let keeperOnly = ["penalty", "1v1-keeper"].contains(scenario.id)
+            #expect(won.hasSuffix(keeperOnly ? "saves it" : "wins the ball"), "\(scenario.id): \(won)")
+            #expect(defend.allSatisfy { !$0.note.hasPrefix("They score") && $0.ball.y > 0.001 }, "\(scenario.id): no goal")
+            #expect((3...5).contains(defend.count) && (3...5).contains(attack.count), "\(scenario.id): steps")
+        }
+    }
+
     @Test func everyMoveIsBuiltAsTheMockupBuildsIt() throws {
         let moves = try Self.file().moves
         #expect(moves.count == 158)

@@ -2,6 +2,17 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Defending scenarios end with the ball won (Mon 9 Nov 2026, evening, D-97)
+
+**Changed**
+- Spec and app: on Defending nobody on our side is beaten and the opponent's last action (the shot) is replaced by our nearest outfield player winning the ball (press arrow, "4 wins the ball", then "Ball won"); the keeper takes it only at a penalty (`winner: "K"` in the script) and in the 1v1 with the keeper. Attacking unchanged. Fixtures and `presets/scenario-moves.json` regenerated; the design system's Scenarios section updated and redeployed.
+
+**Checked**
+- Spec: all 1,112 moves build; every 4-3-3 defending note read through. Unit: `ScenarioMoveTests` (158 moves equal the spec; new `attackingScoresAndDefendingWinsTheBall` on four shapes), `ScenarioApplyTests`, `ScenarioTests`; full suite by the commit gate.
+
+**Not verified**
+- On the devices.
+
 ## Every scenario is a move (Mon 9 Nov 2026, evening, D-96)
 
 **Changed**

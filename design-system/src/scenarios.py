@@ -69,7 +69,9 @@ def catalogue_table(d):
         rows += f'<tr class="grp"><th colspan="4">{E(g)} <span class="muted">· {len(items)}</span></th></tr>'
         for c in items:
             sizes = " · ".join(SIZE_NAME[s] for s in c["sizes"]) + "-a-side" + (" only" if len(c["sizes"]) == 1 else "")
-            move = f'{c["steps"]} steps · {E(c["end"])}' if c["steps"] else '<span class="muted">No move yet</span>'
+            # Defending runs as many steps and always ends "Ball won"; the cell says who wins it.
+            move = (f'{c["steps"]} steps · {E(c["end"])}<br><span class="muted">Defending: {E(c["won"])}</span>'
+                    if c["steps"] else '<span class="muted">No move yet</span>')
             rows += (f'<tr><td><b>{E(c["name"])}</b><br><span class="muted">{E(c["line"])}</span><br><code>scenario.{c["id"]}</code></td>'
                      f'<td>{players(c)}</td><td>{sizes}</td><td>{move}</td></tr>')
     return (f'<div class="scroll-x"><table class="sizes scn-cat"><thead><tr><th>Scenario</th><th>Players</th><th>Sizes</th>'
@@ -78,11 +80,12 @@ def catalogue_table(d):
 
 def legend():
     aw, ah = 300, 96
-    kinds = (("run", .78), ("pass", .5), ("dribble", .22))
+    kinds = (("run", .82), ("pass", .61), ("dribble", .4), ("press", .18))
     a = "".join(arrow({"kind": k, "points": [{"x": .08, "y": y}, {"x": .9, "y": y}]}, aw, ah, {}) for k, y in kinds)
-    return (f'<svg class="board" width="{aw}" height="{ah}" viewBox="0 0 {aw} {ah}" role="img" aria-label="Run, pass or shot, dribble">'
+    return (f'<svg class="board" width="{aw}" height="{ah}" viewBox="0 0 {aw} {ah}" role="img" aria-label="Run, pass or shot, dribble, press">'
             f'<rect width="{aw}" height="{ah}" fill="{C["bcPitchA"]}"/>{a}</svg>'
-            '<div class="legend"><span>Run · white solid</span><span>Pass or shot · lime dashed</span><span>Dribble · yellow wavy</span></div>')
+            '<div class="legend"><span>Run · white solid</span><span>Pass or shot · lime dashed</span><span>Dribble · yellow wavy</span>'
+            '<span>Press · coral chevrons</span></div>')
 
 
 def notes_table(d):
@@ -119,7 +122,7 @@ def script(d):
     data = {"W": W, "H": H, "steps": {"attacking": d["example"]["attacking"], "defending": d["example"]["defending"]},
             "help": d["help"],
             "c": {"home": home, "homeInk": home_ink, "away": KITS["coral"][0], "awayInner": C["bg"], "awayInk": C["awayInk"],
-                  "outline": C["discOutline"], "ball": C["ball"], "run": C["run"], "pass": C["pass"], "dribble": C["dribble"]}}
+                  "outline": C["discOutline"], "ball": C["ball"], "run": C["run"], "pass": C["pass"], "dribble": C["dribble"], "press": C["press"]}}
     js = open(os.path.join(HERE, "scenario_live.js")).read()
     return "<script>" + js.replace("__DATA__", json.dumps(data, separators=(",", ":")).replace("</", "<\\/")) + "</script>"
 
@@ -134,6 +137,9 @@ def section(head):
     ex = d["example"]["id"]
     ex_name = next(c["name"] for c in d["catalogue"] if c["id"] == ex)
     rondo = next(c for c in d["catalogue"] if c["id"] == "3v1-rondo")
+    pen = next(c for c in d["catalogue"] if c["id"] == "penalty")
+    one = next(c for c in d["catalogue"] if c["id"] == "1v1-keeper")
+    won = next(c for c in d["catalogue"] if c["id"] == ex)["won"]
     first = d["example"]["attacking"][0]["note"]
     no_keeper = " and ".join(E(c["name"]) for c in d["catalogue"] if c["kind"] == "small" and not c["keeper"])
 
@@ -188,10 +194,14 @@ def section(head):
                       "so a 3-5-2 plays it with its wing-back where a 4-3-3 uses its full-back."),
         ("The other side", "Reacts by rule after every beat: the nearest player presses, one tracks each runner, the keeper sets on the ball's side, "
                            "the rest slide across and up with the ball. At set pieces they hold their zones. A beaten defender stays beaten."),
-        ("How it ends", f"In a goal, except {E(rondo['name'])}, which ends “{E(rondo['end'])}”."),
-        ("Defending", "The opponent runs the same move down the board and your team reacts. Notes start “Their”; the end is “They score” (3v1: “They kept it, into space”)."),
+        ("How it ends", f"Attacking: in a goal, except {E(rondo['name'])}, which ends “{E(rondo['end'])}”. Defending: your team wins the ball, “{E(pen['endDefending'])}”."),
+        ("Defending", "The opponent runs the same move down the board and your team reacts, but nobody on your side is beaten and their last action "
+                      "(the shot) never comes. Instead your nearest outfield player wins the ball: a press arrow onto it and the note "
+                      f"“{E(won)}”. The keeper takes it only at a {E(pen['name'].lower())} or when there is no outfield defender "
+                      f"({E(one['name'])}): “{E(one['won'])}”. Their notes start “Their”; the last step is “{E(pen['endDefending'])}”."),
         ("Notes", f"Each step's note says what happens next, in shirt numbers, in the coach's handwriting: “{E(first)}”."),
-        ("Arrows", "Shown on the step they start from, fading as the players move. Run, pass or shot, dribble (below); no presses."),
+        ("Arrows", "Shown on the step they start from, fading as the players move. Run, pass or shot, dribble (below); "
+                   "a press only for the player who wins the ball on Defending."),
     ]
     motion_html = ('<div class="scroll-x"><table class="a11y scn-stack"><tbody>' +
                    "".join(f'<tr><td class="scn-rule"><b>{a}</b></td><td>{b}</td></tr>' for a, b in motion_rows) + "</tbody></table></div>")
@@ -203,7 +213,8 @@ def section(head):
         ("Confirm", f"Set up {E(ex_name)}?<br>This replaces the move on the board. You can undo.", "When there's anything to replace: players, more than one step, or arrows, runs, marks or a note on the one step. Cancel · Set up (D-96)"),
         ("Toast", f"{E(toast)} · Undo", "4 s. When a full board can't take everyone: “… set up. 2 players didn't fit”"),
         ("Undo name", f"Set up {E(ex_name.lower())}", "One undoable edit"),
-        ("Ends", f"Goal · {E(rondo['end'])}<br>They score · {E(rondo['endDefending'])}", "The last step's note: attacking, then defending"),
+        ("Wins the ball", f"{E(won)} · {E(one['won'])}", "Defending, the step before the end: an outfield player, or the keeper at a penalty or 1v1"),
+        ("Ends", f"Goal · {E(rondo['end'])}<br>{E(pen['endDefending'])}", "The last step's note: attacking, then defending"),
     ]
     copy_html = ('<div class="scroll-x"><table class="a11y scn-stack"><thead><tr><th>Where</th><th>Copy</th><th>Note</th></tr></thead><tbody>' +
                  "".join(f'<tr><td><b>{a}</b></td><td>{b}</td><td class="muted">{c}</td></tr>' for a, b, c in copy_rows) + "</tbody></table></div>")
@@ -212,9 +223,9 @@ def section(head):
                  '<div class="btns"><div>Cancel</div><div>Set up</div></div></div>'
                  f'<div class="toast" style="flex:1;min-width:240px">{E(toast)}<button>Undo</button></div></div></div>')
 
-    return (f'<section class="sec" id="scenarios">{head("scenarios", "08", "Scenarios", "A ready-made start for a move, on the Formation sheet. Pick your shape, a situation and who has the ball: the board is set up with both teams and the ball, and plays out as a short move that ends in a goal (3v1 keep the ball ends with the ball kept).")}'
+    return (f'<section class="sec" id="scenarios">{head("scenarios", "08", "Scenarios", "A ready-made start for a move, on the Formation sheet. Pick your shape, a situation and who has the ball: the board is set up with both teams and the ball, and plays out as a short move. Attacking, it ends in a goal (3v1 keep the ball ends with the ball kept); defending, your team wins the ball before they shoot.")}'
             '<div class="principles p3"><div><h3>Built from your shape</h3><p>Your players keep their numbers and roles; the opponent stands in the size\'s most common shape. Rules place everyone, not hand-drawn boards (D-94).</p></div>'
-            '<div><h3>Lime is always your team</h3><p>Attacking or Defending only says who has the ball. On Defending the other side runs the move.</p></div>'
+            '<div><h3>Lime is always your team</h3><p>Attacking or Defending only says who has the ball. On Defending the other side runs the move and your team wins the ball.</p></div>'
             f'<div><h3>Every scenario is a move</h3><p>{lo} to {hi} steps with arrows and a note on each, so Play works the moment it is set up (D-96).</p></div></div>'
             f'{sheet_comp}{tile_comp}'
             f'<div class="sub" id="scn-catalogue"><h3>Catalogue</h3><p class="lead">{n["full"]} scenarios on 11-a-side, {n["sevenASide"]} on 7-a-side, {n["fiveASide"]} on 5-a-side. '
@@ -223,6 +234,6 @@ def section(head):
             f'<div class="sub" id="scn-motion"><h3>Moves</h3><p class="lead">How a scenario plays out. The script is the same for every shape; who plays each part comes from the shape.</p>'
             f'{motion_html}<div style="margin-top:20px">{legend()}</div></div>'
             f'<div class="sub" id="scn-copy"><h3>Copy</h3><p class="lead">What the sheet, the confirm and the toast say.</p>{copy_demo}<div style="margin-top:16px">{copy_html}</div></div>'
-            f'<div class="sub" id="scn-live-sub"><h3>Live example</h3><p class="lead">{E(ex_name)} from a {d["shape"]}, as built by the move rules. Switch sides to see the same move run by them.</p>'
+            f'<div class="sub" id="scn-live-sub"><h3>Live example</h3><p class="lead">{E(ex_name)} from a {d["shape"]}, as built by the move rules. Switch sides to see the same move run by them, until your team wins the ball.</p>'
             f'<div class="grid scn-live-grid">{live(d)}<div>{notes_table(d)}</div></div></div>'
             "</section>"), script(d)

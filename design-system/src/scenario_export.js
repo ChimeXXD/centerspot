@@ -39,7 +39,9 @@ const catalogue = SCENARIOS.map(sc => {
     sizes: sizes.filter(s => offered[s].includes(sc.id)),
     kind: sc.team ? "team" : sc.n !== undefined ? "small" : sc.set ? "set" : "kickOff",
     n: sc.n ?? null, m: sc.m ?? null, keeper: !!sc.keeper, players: board.home.length + board.away.length,
-    steps: att ? att.length : null, end: att ? att.at(-1).note : null, endDefending: def ? def.at(-1).note : null,
+    steps: att ? att.length : null, end: att ? att.at(-1).note : null,
+    // Defending (D-97): the step before the end says who wins the ball ("4 wins the ball", the keeper "1 saves it").
+    won: def ? def.at(-2).note : null, endDefending: def ? def.at(-1).note : null,
     hasMotion: !!MOTIONS[sc.id],
   };
 });

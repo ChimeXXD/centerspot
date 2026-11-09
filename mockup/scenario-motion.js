@@ -1,4 +1,5 @@
-// Scenario motion (D-96): every scenario becomes a move of 3 to 5 steps, ending in a goal (but 3v1, kept), played out
+// Scenario motion (D-96, D-97): every scenario becomes a move of 3 to 5 steps. Attacking ends in a goal (3v1: the
+// ball kept); Defending ends with our side winning the ball. Played out
 // from the board `buildScenario` sets up. Load after scenario-data.js and scenarios.js.
 //
 // How it works, so it fits every shape:
@@ -140,7 +141,6 @@ const MOTIONS = {
       { note: "{A2} carries it forward into space", acts: [["dribble", "A2", [0.4, 0.7]], ["beat", "D0", [0.52, 0.6]]] },
     ],
     end: "Kept it, into space",
-    endDefending: "They kept it, into space",
   },
   "3v2-counter": {
     beats: [
@@ -231,6 +231,7 @@ const MOTIONS = {
     end: "Goal",
   },
   penalty: {
+    winner: "K",  // nobody else may be in the box: on Defending the keeper saves it
     beats: [
       { note: "{S0} steps up", acts: [["run", "S0", [0.5, 0.875]]] },
       { note: "{S0} sends {K} the wrong way", acts: [["beat", "K", [0.6, 0.985]], ["shot", "S0", 0.42]] },
@@ -329,7 +330,10 @@ function buildMotion(id, formationId, attacking) {
   // A defender beaten once stays beaten: they chase from behind the ball, never back goal-side of it.
   const outOfIt = new Set();
   let carrier = sc.team ? cast.CAR || carrierNow() : carrierNow();
-  for (const beat of script.beats) {
+  // On Defending (D-97) the opponent runs the move but nobody on our side is beaten, and their last action (the shot)
+  // never comes: our nearest player steps in and wins the ball instead (the keeper at a penalty or a 1v1 with him).
+  const beats = attacking ? script.beats : script.beats.slice(0, -1);
+  for (const beat of beats) {
     const before = snapshot();
     const arrows = [];
     const start = new Map([...att, ...def].map(s => [s, { ...s.p }]));
@@ -339,6 +343,7 @@ function buildMotion(id, formationId, attacking) {
     const beaten = new Set();
     let through = false;  // a carry past the presser: nobody else steps in this beat
     for (const [kind, alias, target] of beat.acts) {
+      if (!attacking && (kind === "beat" || kind === "beatPresser")) continue;
       if (kind === "beatPresser") {
         // The defender nearest the ball as the beat starts is left where they were: the carrier goes past them.
         const near = def.filter(s => s.group !== "GK" && !outOfIt.has(s));
@@ -420,7 +425,29 @@ function buildMotion(id, formationId, attacking) {
     const duration = shot ? 0.8 : beat.acts.some(a => a[0] === "pass") ? 1.0 : 1.2;
     steps.push({ ...before, arrows: arrows.map(a => ({ kind: a.kind, points: a.points.map(unframe) })), note: say(beat.note), duration });
   }
-  const end = attacking ? script.end : script.endDefending || "They score";
-  steps.push({ ...snapshot(), arrows: [], note: end, duration: 1.2 });
+  if (!attacking) {
+    const before = snapshot();
+    const keeper = def.find(s => s.group === "GK");
+    const field = def.filter(s => s.group !== "GK");
+    const winner = script.winner === "K" || !field.length ? keeper
+      : field.reduce((best, s) => (gap(s.p, ball) < gap(best.p, ball) - 1e-9 ? s : best));
+    if (winner) {  // no keeper to take it (a penalty with nobody in goal): no win step, as ScenarioMotion.swift
+      // A keeper saves the shot on his line; an outfield player steps in goal-side and takes the ball onto his feet.
+      const shotAct = script.beats[script.beats.length - 1].acts.find(a => a[0] === "shot");
+      let arrows;
+      if (winner.group === "GK" && shotAct) {
+        const save = onPitch(shotAct[2], winner.p.y);
+        arrows = [{ kind: "pass", points: [{ ...ball }, save] }];
+        winner.p = save;
+      } else {
+        arrows = [{ kind: "press", points: [{ ...winner.p }, { ...ball }] }];
+        winner.p = toward(ball, MOTION_GOAL, 0.03);
+      }
+      ball = { ...winner.p };
+      const note = `${winner.number} ${winner.group === "GK" ? "saves it" : "wins the ball"}`;
+      steps.push({ ...before, arrows: arrows.map(a => ({ kind: a.kind, points: a.points.map(unframe) })), note, duration: 1.0 });
+    }
+  }
+  steps.push({ ...snapshot(), arrows: [], note: attacking ? script.end : "Ball won", duration: 1.2 });
   return steps;
 }

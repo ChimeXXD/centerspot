@@ -48,9 +48,10 @@ extension ScenarioMotion {
         let cast: [(alias: String, entry: Cast)]
         let beats: [Beat]
         let end: String
-        let endDefending: String?
+        /// Who wins the ball on Defending when it isn't the nearest outfield player: "K", the keeper (a penalty).
+        let winner: String?
 
-        private enum Keys: String, CodingKey { case cast, beats, end, endDefending }
+        private enum Keys: String, CodingKey { case cast, beats, end, winner }
 
         init(from decoder: any Decoder) throws {
             let c = try decoder.container(keyedBy: Keys.self)
@@ -72,7 +73,7 @@ extension ScenarioMotion {
             self.cast = cast
             beats = try c.decode([Beat].self, forKey: .beats)
             end = try c.decode(String.self, forKey: .end)
-            endDefending = try c.decodeIfPresent(String.self, forKey: .endDefending)
+            winner = try c.decodeIfPresent(String.self, forKey: .winner)
         }
     }
 

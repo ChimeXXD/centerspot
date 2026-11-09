@@ -975,8 +975,7 @@
      ]
     }
    ],
-   "end": "Kept it, into space",
-   "endDefending": "They kept it, into space"
+   "end": "Kept it, into space"
   },
   "3v2-counter": {
    "cast": [],
@@ -1579,7 +1578,8 @@
      ]
     }
    ],
-   "end": "Goal"
+   "end": "Goal",
+   "winner": "K"
   },
   "kick-off": {
    "cast": [

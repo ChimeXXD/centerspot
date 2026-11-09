@@ -27,6 +27,13 @@
       len -= cut;
     }
     var col = c[a.kind], d = 'M' + n(p0[0]) + ' ' + n(p0[1]);
+    var g = '<g opacity="' + n(opacity) + '" fill="none" stroke="' + col + '" stroke-width="' + n(2.6 * k) + '" stroke-linecap="round" stroke-linejoin="round">';
+    if (a.kind === 'press') {  // the board's press mark: two heads at the end, no line (Defending, the player who wins the ball)
+      var pa = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]), gp = 6 * k;
+      return g + [0, 1].map(function (i) {
+        return '<path d="' + head(p1[0] - Math.cos(pa) * gp * i, p1[1] - Math.sin(pa) * gp * i, pa, 8 * k, 0.75) + '"/>';
+      }).join('') + '</g>';
+    }
     if (a.kind === 'dribble') {
       var m = Math.max(2, Math.round(len / (9 * k))), nx = -(p1[1] - p0[1]) / len, ny = (p1[0] - p0[0]) / len;
       for (var j = 1; j <= m; j++) {
@@ -36,8 +43,7 @@
     } else d += ' L' + n(p1[0]) + ' ' + n(p1[1]);
     var dash = a.kind === 'pass' ? ' stroke-dasharray="' + n(7 * k) + ' ' + n(5 * k) + '"' : '';
     var ang = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
-    return '<g opacity="' + n(opacity) + '" fill="none" stroke="' + col + '" stroke-width="' + n(2.6 * k) +
-      '" stroke-linecap="round" stroke-linejoin="round"><path d="' + d + '"' + dash + '/><path d="' + head(p1[0], p1[1], ang, 9 * k, 0.45) + '"/></g>';
+    return g + '<path d="' + d + '"' + dash + '/><path d="' + head(p1[0], p1[1], ang, 9 * k, 0.45) + '"/></g>';
   }
   function disc(p, home, number) {
     var x = n(P(p)[0]), y = n(P(p)[1]), out;

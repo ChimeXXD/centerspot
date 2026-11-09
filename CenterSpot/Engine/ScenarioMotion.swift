@@ -152,7 +152,9 @@ enum ScenarioMotion {
         }()
         let slide: (x: Double, y: Double) = if case .setPiece = scenario.build { (0.1, 0.1) } else { (0.45, 0.5) }
 
-        for beat in script.beats {
+        // On Defending (D-97) the opponent runs the move but nobody on our side is beaten, and their last action (the
+        // shot) never comes: our nearest player steps in and wins the ball (the keeper at a penalty or a 1v1 with him).
+        for beat in attacking ? script.beats : Array(script.beats.dropLast()) {
             let before = (att: att, def: def, ball: ball)
             var arrows: [Arrow] = []
             let ballStart = ball
@@ -163,6 +165,7 @@ enum ScenarioMotion {
             func startPoint(_ r: Ref) -> Point { r.attacker ? before.att[r.index].p : before.def[r.index].p }
 
             for act in beat.acts {
+                if !attacking, act.kind == "beat" || act.kind == "beatPresser" { continue }
                 if act.kind == "beatPresser" {
                     let near = def.indices.filter { def[$0].group != "GK" && !outOfIt.contains(Ref(attacker: false, index: $0)) }
                     if var best = near.first {
@@ -257,8 +260,37 @@ enum ScenarioMotion {
             steps.append(snapshot(arrows: arrows, note: say(beat.note), duration: duration))
             (att, def, ball) = snap
         }
-        let end = attacking ? script.end : script.endDefending ?? "They score"
-        steps.append(snapshot(arrows: [], note: end, duration: 1.2))
+        if !attacking {
+            let field = def.indices.filter { def[$0].group != "GK" }
+            var winner = keeper
+            if script.winner != "K", var best = field.first {
+                for i in field.dropFirst() where gap(def[i].p, ball) < gap(def[best].p, ball) - 1e-9 { best = i }
+                winner = Ref(attacker: false, index: best)
+            }
+            if let winner {
+                // A keeper saves the shot on his line; an outfield player steps in goal-side and takes the ball onto his
+                // feet, so the opponent stays in sight.
+                let man = def[winner.index]
+                let number = shirts[.home]?[man.number] ?? man.number
+                let shotX = script.beats.last?.acts.first { $0.kind == "shot" }.flatMap { act -> Double? in
+                    if case let .goalX(x) = act.target { return x }
+                    return nil
+                }
+                let arrow: Arrow, to: Point
+                if man.group == "GK", let shotX {
+                    to = onPitch(shotX, man.p.y)
+                    arrow = Arrow(kind: .pass, points: [ball, to])
+                } else {
+                    to = toward(ball, goal, 0.03)
+                    arrow = Arrow(kind: .press, points: [man.p, ball])
+                }
+                steps.append(snapshot(arrows: [arrow], note: "\(number) \(man.group == "GK" ? "saves it" : "wins the ball")",
+                                      duration: 1.0))
+                def[winner.index].p = to
+                ball = to
+            }
+        }
+        steps.append(snapshot(arrows: [], note: attacking ? script.end : "Ball won", duration: 1.2))
         return steps
     }
 }
