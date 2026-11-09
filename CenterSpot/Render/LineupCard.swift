@@ -90,7 +90,7 @@ struct LineupCard {
             ExportText.draw(ExportText.frame(row.name, face: .title, size: nameSize, colour: Tokens.Colour.text.cgColor, in: box),
                             in: box, ctx: ctx)
         }
-        text(ExportFrame.mark, box: Self.markBox, colour: Tokens.Colour.muted, ctx: ctx, alignment: .right)
+        text(ExportFrame.mark, face: .mark, box: Self.markBox, colour: Tokens.Colour.muted, ctx: ctx, alignment: .right)
     }
 
     func image() -> CGImage? {
@@ -99,10 +99,10 @@ struct LineupCard {
         return ctx.makeImage()
     }
 
-    private func text(_ string: String, box: ExportLayout.TextBox, colour: RGBA, ctx: CGContext,
-                      alignment: CTTextAlignment = .left) {
-        let size = ExportText.fittedSize(string, face: .title, in: box)
-        ExportText.draw(ExportText.frame(string, face: .title, size: size, colour: colour.cgColor, in: box.rect,
+    private func text(_ string: String, face: ExportText.Face = .title, box: ExportLayout.TextBox, colour: RGBA,
+                      ctx: CGContext, alignment: CTTextAlignment = .left) {
+        let size = ExportText.fittedSize(string, face: face, in: box)
+        ExportText.draw(ExportText.frame(string, face: face, size: size, colour: colour.cgColor, in: box.rect,
                                          alignment: alignment), in: box.rect, ctx: ctx)
     }
 }

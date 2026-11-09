@@ -36,7 +36,7 @@ BOARD_COLOURS = [
 ]
 TYPE = [  # token, family, size, weight, dynamic type, sample, use
     ("largeTitle", "Nunito", 34, 700, ".largeTitle", "Draw the move, not just the shape", "Welcome titles"),
-    ("wordmark", "Nunito", 34, 800, ".largeTitle", "CenterSpot", "The library's name; the one heavy word"),
+    ("wordmark", "Nunito", 34, 900, ".largeTitle", "CenterSpot", "The library's name; the one 900 word, as in the logo"),
     ("title", "Nunito", 22, 700, ".title2", "Formation", "Sheet titles, Video ready, step numbers in rows"),
     ("headline", "Nunito", 17, 700, ".headline", "Up to 4 MB · 8 s · 1080 × 1920", "Nav titles, buttons, tip titles, step chip numbers"),
     ("body", "Nunito", 15, 500, ".body", "Players run from step to step, and the Broadcast camera follows the ball.", "Reading text, fields, toasts; semibold 600 on segments and tiles"),
@@ -318,7 +318,7 @@ def main():
 <div class="specimen"><div class="big">CenterSpot</div><div class="t-note" style="font:400 30px/1.3 Kalam;color:#93A0AD;margin-top:8px">8 finds the winger · 11 drives inside · 3 overlaps</div>
 <div class="glyphs">Aa Bb Cc 0123456789 · 4-3-3 · 1.2 s · ½× 1× · 1080 × 1920</div></div>
 <div style="margin-top:16px">{type_rows()}</div>
-<div class="grid g2" style="margin-top:24px"><div class="card"><h4>Weights</h4><p>800 only for the wordmark and shirt numbers. 700 for titles and buttons, 600 for segment and tile labels, 500 for reading text (D-80).</p></div>
+<div class="grid g2" style="margin-top:24px"><div class="card"><h4>Weights</h4><p>900 only for the wordmark (as in the logo), 800 for shirt numbers. 700 for titles and buttons, 600 for segment and tile labels, 500 for reading text (D-80).</p></div>
 <div class="card"><h4>Handwriting</h4><p>Kalam is the coach's voice: step notes, draw hints, the tagline. Never for buttons, labels or anything you tap.</p></div></div>
 </section>'''
 

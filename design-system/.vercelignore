@@ -1,0 +1,6 @@
+# Never publish local Vercel or env files, or the page's build source
+.env*
+.vercel
+.gitignore
+.vercelignore
+src

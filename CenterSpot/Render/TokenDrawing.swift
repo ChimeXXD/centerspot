@@ -9,6 +9,8 @@ import Foundation
 enum TokenDrawing {
     /// Shirt numbers: heavy Nunito (D-44), sized to the disc rather than Dynamic Type.
     static let numberWeight: CGFloat = 800
+    /// The exports' corner mark: the wordmark's 900, as in the logo (D-88).
+    static let wordmarkWeight: CGFloat = 900
     /// D-67's outline, in disc radii: thin, just outside the disc's edge.
     static let outlineWidth: CGFloat = 0.1
     /// A number's point size, in disc radii.
@@ -156,12 +158,13 @@ enum TokenDrawing {
         ctx.restoreGState()
     }
 
-    /// Heavy Nunito from the bundled variable font (weight axis 800), falling back to the system's heavy rounded face.
-    static func numberFont(size: CGFloat) -> CTFont {
+    /// Heavy Nunito from the bundled variable font (weight axis 800 unless given), falling back to the system's heavy
+    /// rounded face.
+    static func numberFont(size: CGFloat, weight: CGFloat = numberWeight) -> CTFont {
         let wght = 0x7767_6874  // 'wght'
         let descriptor = CTFontDescriptorCreateWithAttributes([
             kCTFontNameAttribute: Tokens.Typeface.uiName,
-            kCTFontVariationAttribute: [wght: numberWeight],
+            kCTFontVariationAttribute: [wght: weight],
         ] as CFDictionary)
         let font = CTFontCreateWithFontDescriptor(descriptor, size, nil)
         if (CTFontCopyFamilyName(font) as String).hasPrefix(Tokens.Typeface.uiName) { return font }

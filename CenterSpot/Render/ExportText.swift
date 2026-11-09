@@ -11,8 +11,10 @@ enum ExportText {
 
     static func font(_ face: Face, size: CGFloat) -> CTFont {
         switch face {
-        case .title, .mark:
+        case .title:
             return TokenDrawing.numberFont(size: size)
+        case .mark:
+            return TokenDrawing.numberFont(size: size, weight: TokenDrawing.wordmarkWeight)
         case .note:
             let font = CTFontCreateWithName(Tokens.Typeface.noteFullName as CFString, size, nil)
             if (CTFontCopyFamilyName(font) as String).hasPrefix(Tokens.Typeface.noteName) { return font }

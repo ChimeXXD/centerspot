@@ -64,7 +64,7 @@ enum Tokens {
     }
 
     /// Nunito for numbers and interface, Kalam for handwritten step notes (D-44). Both scale with Dynamic Type.
-    /// D-80: heavy (800) only for the wordmark and shirt numbers; titles and buttons 700, reading text 500.
+    /// D-80: heavy only for the wordmark (900, D-88) and shirt numbers (800); titles and buttons 700, reading text 500.
     enum Typeface {
         static let uiName = "Nunito"
         static let noteName = "Kalam"
@@ -76,8 +76,8 @@ enum Tokens {
         static let headline = Font.custom(uiName, size: 17, relativeTo: .headline).weight(.bold)
         static let body = Font.custom(uiName, size: 15, relativeTo: .body).weight(.medium)
         static let caption = Font.custom(uiName, size: 12, relativeTo: .caption).weight(.medium)
-        /// The CenterSpot wordmark: the one heavy word in the interface.
-        static let wordmark = Font.custom(uiName, size: 34, relativeTo: .largeTitle).weight(.heavy)
+        /// The CenterSpot wordmark: the one heavy word in the interface, at the logo's 900 (D-88).
+        static let wordmark = Font.custom(uiName, size: 34, relativeTo: .largeTitle).weight(.black)
         static let note = Font.custom(noteName, size: 18, relativeTo: .body)
         /// Interface icons (D-81): one weight, two sizes. Bar icons sit in the toolbar, nav and playback bars; inline
         /// icons (×, ✓, +) sit next to text or alone in a small button. A disclosure chevron stays small, in the caption font.

@@ -331,7 +331,7 @@ def build():
            f'<span style="width:44px;height:44px;display:grid;place-items:center">{I("more", 26, "ic bar-ic")}</span></div>'
            f'<div style="margin:24px 0"><button class="cap-primary">{I("plus", 20, "ic in-ic")}New tactic</button></div><div class="t-headline mut" style="margin-bottom:12px">Recent</div>'
            f'<div class="libgrid">{cards}</div><p class="t-caption mut" style="margin-top:24px">Saved on this iPhone. Find them in Files › On My iPhone › CenterSpot.</p></div>',
-           [("Wordmark", "Typeface.wordmark: Nunito 34 heavy (800); the logo lockup uses 900"), ("Card", "surface2, radius 16; thumbnail radius 16 − inset; name 13/15 bold, meta 11/12 medium"),
+           [("Wordmark", "Typeface.wordmark: Nunito 34 black (900), the logo's weight"), ("Card", "surface2, radius 16; thumbnail radius 16 − inset; name 13/15 bold, meta 11/12 medium"),
             ("Grid", "Compact: 24 pt margins, cards ≥ 100 pt, 10 pt gaps (3 a row on iPhone). Wide: 32 pt margins, cards ≥ 201 pt, 16 pt gaps, up to 6"),
             ("Empty", "“Your tactics show up here.”"), ("Card menu", "Rename · Duplicate · Share · Delete"),
             ("VoiceOver", "“Overlap down the left, 5 steps”, actions in the rotor"),
