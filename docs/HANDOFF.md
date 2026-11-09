@@ -1,9 +1,18 @@
 # Handoff: read this first when you pick the project back up
 
-## Latest: broadcast camera, onboarding and the unslop pass built and shipped (Sun 8 Nov 2026, evening Lagos). Next: Chime on the phone, then "fix everything", then the iPad check, then Day 7.
+## Latest: renamed to CenterSpot, app icon, design system (Mon 9 Nov 2026, early Lagos). Next: Chime on the devices, the iPad check, then Day 7.
 
 ### Where it stands
-- **App: CenterSpot** (D-42), private repo `ChimeXXD/centerspot`. Folder on disk is still `Tactics Board`. Last code commit `61e71d1`.
+- **App: CenterSpot** (D-85): bundle ID `dev.chime.centerspot`, UTType `dev.chime.centerspot.tactic`, links `centerspot://`, repo `ChimeXXD/centerspot` (private), folder `CenterSpot`. Every old-name mention was replaced, history included (Chime's choice). Last commit `c2d2f69`.
+- **Devices:** iPhone 14 Pro and Chime's iPad have CenterSpot with its icon (D-86); the old app is uninstalled and its tactics were copied across. Signing for the new ID was made 9 Nov, so it expires about **16 Nov**; reinstall before then.
+- **Design system** (D-87): `design-system/index.html`, rebuilt by `python3 design-system/src/build.py`. Unslopped; never coloured side-stripe cards (Chime's global rule). Not hosted yet: Chime's others are on Vercel, so ask before deploying.
+- **Open for Chime:** wordmark weight in the app (800) vs the logo (900); keep or drop the heavier small mark for 16–20 px; swap the app's SF Symbols for the custom icons (on hold); how they run the app on the Mac; the App Store name check (Apple's search was rate-limited on 9 Nov).
+- **Lesson:** a background agent stuck on a rate-limited API burned an hour while nothing else moved. Give agents a time box, check them within 10 minutes, and keep building in parallel.
+
+## Before: broadcast camera, onboarding and the unslop pass (Sun 8 Nov 2026, evening Lagos)
+
+### Where it stands
+- **App: CenterSpot** (D-42), private repo `ChimeXXD/centerspot`. Last code commit `61e71d1`.
 - **CI is paused until the repo is public (D-77):** November's free Actions minutes are used up; GitHub refuses jobs and charges nothing. Don't treat a billing-blocked run as red. On Day 7, once public, check the first run (Xcode 26.6) and fix what it finds.
 - **Chime's order (8 Nov):** broadcast camera → onboarding → **fix everything** → iPad check (Chime's brother lends the iPad again) → Day 7.
 - **Built today (8 Nov, afternoon and evening):**
