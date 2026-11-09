@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CenterSpot scenarios, iPad</title>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* Tokens as in Design/Tokens.swift (after the D-80/D-81 unslop passes: titles 700, selected tiles outlined in text). */
+  :root {
+    --bg: #0B0F14; --surface: #151B23; --surface-2: #1E2630; --surface-3: #27313D; --hairline: #2A3440;
+    --text: #F2F5F7; --muted: #93A0AD; --accent: #C6FF3D; --accent-ink: #0B0F14;
+    --home: #C6FF3D; --home-ink: #0B0F14; --away: #FF6B4A; --away-inner: #0B0F14; --away-ink: #FFFFFF; --ball: #FFFFFF;
+    --disc-outline: #0B0F14;
+    --bc-pitch-a: #0E1216; --bc-pitch-b: #13181D; --bc-line: rgba(255,255,255,.42);
+    --font-ui: Nunito, system-ui, sans-serif; --font-note: Kalam, cursive;
+    --t-title: 700 22px/1.2 var(--font-ui); --t-headline: 700 17px/1.3 var(--font-ui);
+    --t-body: 500 15px/1.4 var(--font-ui); --t-caption: 500 12px/1.3 var(--font-ui);
+    --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px;
+    --r-sheet: 20px; --r-item: 12px; --r-tile: 16px; --r-capsule: 999px;
+    --ease: cubic-bezier(0.2, 0, 0, 1); --d-select: 150ms; --d-step: 220ms; --d-sheet: 320ms; --d-toast: 200ms;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #E7E6E2; font: var(--t-body); color: var(--text); }
+  .page-head { max-width: 1900px; margin: 0 auto; padding: 32px 24px 0; color: #17181B; }
+  .page-head h1 { font: 700 28px/1.2 var(--font-ui); margin: 0 0 8px; }
+  .page-head p { margin: 0 0 6px; max-width: 900px; color: #4D5057; }
+  .gallery { max-width: 1900px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; gap: 40px 32px; align-items: flex-start; }
+  .cap { margin: 0 0 8px 4px; font: 700 13px var(--font-ui); color: #4D5057; }
+  .frame { position: relative; overflow: hidden; flex-shrink: 0; background: var(--bg); box-shadow: 0 0 0 9px #111, 0 20px 50px rgba(0,0,0,.25); }
+  .phone { width: 393px; height: 852px; border-radius: 44px; }
+  .ipad { width: 1376px; height: 1032px; border-radius: 28px; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+  .status { position: absolute; left: 0; right: 0; top: 0; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 14px 32px 0 44px; font: 700 16px var(--font-ui); z-index: 1; }
+  .ipad .status { height: 32px; padding: 8px 24px 0; font-size: 14px; }
+  .icon-btn { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-capsule); }
+  .home-bar { position: absolute; bottom: 9px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--text); opacity: .9; z-index: 6; }
+  .muted { color: var(--muted); }
+
+  /* Sheet */
+  .scrim { position: absolute; inset: 0; background: rgba(0,0,0,.55); z-index: 2; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; top: 120px; background: var(--surface); border-radius: var(--r-sheet) var(--r-sheet) 0 0; z-index: 3; display: flex; flex-direction: column; }
+  .grabber { position: absolute; top: 7px; left: 50%; margin-left: -20px; width: 40px; height: 5px; border-radius: 3px; background: var(--surface-3); }
+  .pinned { padding: 20px 24px 0; display: flex; flex-direction: column; gap: var(--s4); }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; }
+  .sheet-head h2 { margin: 0; font: var(--t-title); }
+  .close { background: var(--surface-2); }
+  .seg { display: flex; background: var(--surface-2); border-radius: var(--r-capsule); padding: 3px; gap: 2px; }
+  .seg button { flex: 1; height: 44px; border-radius: var(--r-capsule); font: 700 14px var(--font-ui); color: var(--muted); text-align: center; }
+  .seg button[aria-selected="true"] { background: var(--surface-3); color: var(--text); }
+  .body { flex: 1; overflow: hidden; padding: var(--s4) 24px 0; position: relative; }
+  .body .inner { display: flex; flex-direction: column; gap: var(--s4); }
+  .shape-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+  .shape-chip { height: 44px; padding: 0 14px 0 16px; border-radius: var(--r-capsule); background: var(--surface-2); display: flex; align-items: center; gap: 6px; font: 700 15px var(--font-ui); }
+  .shape-chip small { font: var(--t-caption); color: var(--muted); }
+  .side-help { font: var(--t-caption); color: var(--muted); margin: -8px 0 0 4px; }
+  .group h3 { margin: 4px 0 var(--s3); font: var(--t-headline); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
+  .ipad .grid { grid-template-columns: 1fr 1fr 1fr; }
+  .tile { border-radius: var(--r-tile); background: var(--surface-2); border: 2px solid transparent; padding: 8px 8px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .tile[aria-selected="true"] { border-color: var(--text); }
+  .tile svg { display: block; width: 100%; height: auto; border-radius: 8px; }
+  .tile b { font: 700 14px/1.25 var(--font-ui); padding: 0 4px; }
+  .tile span { font: var(--t-caption); color: var(--muted); padding: 0 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .shapes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s3); }
+  .shape { height: 128px; border-radius: var(--r-tile); background: var(--surface-2); border: 2px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font: 600 12px var(--font-ui); }
+  .shape[aria-selected="true"] { border-color: var(--text); }
+  .foot { padding: var(--s3) 24px 34px; background: var(--surface); box-shadow: 0 -12px 16px var(--surface); position: relative; z-index: 1; }
+  .capsule { height: 52px; border-radius: var(--r-capsule); background: var(--accent); color: var(--accent-ink); font: 700 17px var(--font-ui); width: 100%; text-align: center; }
+  .capsule[aria-disabled="true"] { background: var(--surface-2); color: var(--muted); }
+
+  /* Alert */
+  .alert { position: absolute; left: 50px; right: 50px; top: 330px; background: var(--surface-2); border-radius: 20px; z-index: 5; overflow: hidden; text-align: center; }
+  .alert .msg { padding: 20px 18px 16px; }
+  .alert h4 { margin: 0 0 6px; font: var(--t-headline); }
+  .alert p { margin: 0; font: var(--t-body); color: var(--muted); }
+  .alert .acts { display: flex; border-top: 1px solid var(--hairline); }
+  .alert .acts button { flex: 1; height: 48px; text-align: center; font: 600 17px var(--font-ui); }
+  .alert .acts button + button { border-left: 1px solid var(--hairline); }
+  .alert .acts .go { color: var(--accent); font-weight: 700; }
+
+  /* Board */
+  .nav { position: absolute; top: 50px; left: 8px; right: 8px; height: 46px; display: flex; align-items: center; gap: 4px; }
+  .nav .title { flex: 1; text-align: center; font: var(--t-headline); }
+  .pitch-wrap { position: absolute; top: 104px; left: 0; right: 0; display: flex; justify-content: center; }
+  .meta { position: absolute; top: 642px; left: 24px; right: 24px; height: 44px; display: flex; justify-content: space-between; align-items: center; }
+  .chip-tag { font: 600 12px var(--font-ui); background: var(--surface-2); border-radius: var(--r-capsule); padding: 6px 12px; }
+  .toolbar { position: absolute; left: 0; right: 0; bottom: 30px; height: 64px; display: flex; justify-content: space-around; align-items: center; padding: 0 12px; }
+  .tool { width: 64px; height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font: 600 11px var(--font-ui); color: var(--muted); text-align: center; }
+  .tool .disc { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; margin-top: -6px; color: var(--accent-ink); }
+  .toast { position: absolute; left: 16px; right: 16px; top: 576px; height: 52px; border-radius: 16px; background: var(--surface-3); display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 18px; box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 4; }
+  .toast span { font: 600 15px var(--font-ui); }
+  .toast button { height: 44px; padding: 0 16px; color: var(--accent); font: 700 15px var(--font-ui); }
+
+  /* iPad form sheet over the board */
+  .form { position: absolute; left: 50%; top: 64px; width: 640px; margin-left: -320px; bottom: 64px; border-radius: var(--r-sheet); background: var(--surface); z-index: 3; display: flex; flex-direction: column; overflow: hidden; }
+  .form .foot { padding-bottom: 24px; }
+</style>
+</head>
+<body>
+<div class="page-head">
+  <h1>Scenarios on the Formation sheet</h1>
+  <p>A ready-made start: pick your shape, then a situation (a team shape, a small-sided game or a set piece), say who has the ball, and the board is set up with both teams. Every picture below is built by <code>mockup/scenarios.js</code> from <code>presets/formations.json</code>, the same rules the app will run, so what you see is what you get.</p>
+  <p>Frames: Shapes tab · Scenarios tab, nothing picked · 3v2 counter picked · the same, defending · 7-a-side · replacing players on a board · the board after. The iPad sheet is in <a href="scenarios-ipad.html">scenarios-ipad.html</a>.</p>
+</div>
+<div class="gallery" id="gallery"></div>
+<script>window.IPAD = true;</script>
+<script src="scenario-data.js"></script>
+<script src="scenarios.js"></script>
+<script src="scenarios-screens.js"></script>
+</body>
+</html>

@@ -1,0 +1,867 @@
+{
+ "interactions": [
+  {
+   "element": "formation.close",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "close the sheet without changes",
+   "duration_ms": 320,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.tab.shapes",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "selected"
+   ],
+   "effect": "show the formation grid",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.tab.scenarios",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "selected"
+   ],
+   "effect": "show the scenarios for the chosen shape",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.size.full",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "selected"
+   ],
+   "effect": "show that size's shapes",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.size.seven",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "selected"
+   ],
+   "effect": "show that size's shapes",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.size.five",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "selected"
+   ],
+   "effect": "show that size's shapes",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-3-3",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-2-3-1",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-4-2",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-1-4-1",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-2-1-3",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-1-2-1-2",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-3-2-1",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-4-1-1",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-5-1",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-2-2-2",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.4-3-1-2",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.3-5-2",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.3-4-3",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.3-4-2-1",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.3-4-1-2",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.5-3-2",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.5-4-1",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.5-2-1-2",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose this shape; the Scenarios tab follows it",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.shape",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "switch to the Shapes tab to change the shape",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.side.attacking",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "selected"
+   ],
+   "effect": "scenarios with your team on the ball; tile pictures redraw",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.side.defending",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "selected"
+   ],
+   "effect": "scenarios with them on the ball; tile pictures redraw",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.build-up",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Build-up v press; the button reads Use Build-up v press",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.midfield",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Through midfield; the button reads Use Through midfield",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.final-third",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Final third v low block; the button reads Use Final third v low block",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.switch",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Switch of play; the button reads Use Switch of play",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.counter",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Counter-attack; the button reads Use Counter-attack",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.counter-press",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Counter-press; the button reads Use Counter-press",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.1v1-wing",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 1v1 on the wing; the button reads Use 1v1 on the wing",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.1v1-keeper",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 1v1 with the keeper; the button reads Use 1v1 with the keeper",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.2v1-overlap",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 2v1 overlap; the button reads Use 2v1 overlap",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.2v1-one-two",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 2v1 one-two; the button reads Use 2v1 one-two",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.2v2-box",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 2v2 in the box; the button reads Use 2v2 in the box",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.3v1-rondo",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 3v1 keep the ball; the button reads Use 3v1 keep the ball",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.3v2-counter",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 3v2 counter; the button reads Use 3v2 counter",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.3v3-midfield",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 3v3 in midfield; the button reads Use 3v3 in midfield",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.3v4-build-up",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 3v4 outnumbered; the button reads Use 3v4 outnumbered",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.4v3-overload",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 4v3 flank overload; the button reads Use 4v3 flank overload",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.1v3-surrounded",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose 1v3 surrounded; the button reads Use 1v3 surrounded",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.corner",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Corner; the button reads Use Corner",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.free-kick-edge",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Free kick, edge of the box; the button reads Use Free kick, edge of the box",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.free-kick-wide",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Free kick, wide; the button reads Use Free kick, wide",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.goal-kick",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Goal kick; the button reads Use Goal kick",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.throw-in",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Throw-in; the button reads Use Throw-in",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.penalty",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Penalty; the button reads Use Penalty",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.kick-off",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "selected"
+   ],
+   "effect": "choose Kick-off; the button reads Use Kick-off",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "formation.apply",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "disabled"
+   ],
+   "effect": "Shapes: apply the shape (as today). Scenarios: set up the board, after the confirm alert if it has players; disabled until a scenario is picked",
+   "duration_ms": 320,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.confirm.cancel",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "close the alert, keep the sheet",
+   "duration_ms": 200,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "scenario.confirm.go",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "set up the board (one undoable edit), close the sheet, show the toast",
+   "duration_ms": 320,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "toast.undo",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "undo the set-up",
+   "duration_ms": 200,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "nav.back",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "back to the library",
+   "duration_ms": 320,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "nav.undo",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed",
+    "disabled"
+   ],
+   "effect": "undo the last edit",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "nav.more",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "title menu",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "toolbar.formation",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "open the Formation sheet",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "toolbar.add",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "as today",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "toolbar.play",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "as today",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "toolbar.draw",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "as today",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  },
+  {
+   "element": "toolbar.export",
+   "trigger": "tap",
+   "states": [
+    "default",
+    "pressed"
+   ],
+   "effect": "as today",
+   "duration_ms": 150,
+   "easing": "cubic-bezier(0.2, 0, 0, 1)",
+   "delay_ms": 0,
+   "reduced_motion": "no scale; crossfade only"
+  }
+ ]
+}
