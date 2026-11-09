@@ -31,3 +31,6 @@ exports/
 
 # proof design-check screenshots
 .proof/
+
+# Chime's raw screen recordings and their edits (360 MB; the originals show private chats). Never committed.
+videos/
