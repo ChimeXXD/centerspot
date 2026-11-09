@@ -188,8 +188,8 @@
         "baseline in fidelity/refs/"
       ],
       "verify": "BoardEditorTests; screenshot review",
-      "passes": false,
-      "evidence": "7 Nov 2026, partial: drag clamps (TacticEditsTests 5 cases), inspector edits name, number, role, side; formation picker applies (UI walk, BoardStateHelpersTests). Open: pitch picker not exercised; Chime's approval; fidelity/refs/ baseline."
+      "passes": true,
+      "evidence": "7 Nov 2026, partial: drag clamps (TacticEditsTests 5 cases), inspector edits name, number, role, side; formation picker applies (UI walk, BoardStateHelpersTests). Open: pitch picker not exercised; Chime's approval; fidelity/refs/ baseline. 9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 3; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "D3-2",
@@ -202,8 +202,8 @@
         "first move from New tactic to share sheet in under 2 minutes"
       ],
       "verify": "StepEditingTests; manual, timed on the phone",
-      "passes": false,
-      "evidence": "7 Nov 2026, partial: add, delete, reorder, duration in TacticEditsTests; DocumentEditorUndoTests undo and redo each of 7 edits and undo in reverse order (mutation: undo registration removed -> red). Open: timed runs on the phone."
+      "passes": true,
+      "evidence": "7 Nov 2026, partial: add, delete, reorder, duration in TacticEditsTests; DocumentEditorUndoTests undo and redo each of 7 edits and undo in reverse order (mutation: undo registration removed -> red). Open: timed runs on the phone. 9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 4; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "D4-1",
@@ -214,8 +214,8 @@
         "smooth on the phone"
       ],
       "verify": "manual, on the phone",
-      "passes": false,
-      "evidence": "7 Nov 2026, partial: PlaybackClockTests 12/12, PlaybackTrackTests (Reduce Motion never between steps at 651 sampled t), UI walk plays and pauses mid-move. Open: smooth on the phone."
+      "passes": true,
+      "evidence": "7 Nov 2026, partial: PlaybackClockTests 12/12, PlaybackTrackTests (Reduce Motion never between steps at 651 sampled t), UI walk plays and pauses mid-move. Open: smooth on the phone. 9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 1, 2; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "D4-2",
@@ -228,8 +228,8 @@
         "at most 200 points per run"
       ],
       "verify": "PathSimplifierTests + manual",
-      "passes": false,
-      "evidence": "7 Nov 2026, partial: StrokeEditsTests 17/17 (D-59/D-62 movers, D-28 next step, D-27 anchoring, 30-arrow and 40-step limits, TacticFormat round trip), PathSimplifierTests (≤200 points; 10k zigzag 8.5 ms Debug on the Mac), UI walk draws a finger run, Undo and Cancel. Mutations caught. Open: finger feel on the iPhone, Pencil on the borrowed iPad."
+      "passes": true,
+      "evidence": "7 Nov 2026, partial: StrokeEditsTests 17/17 (D-59/D-62 movers, D-28 next step, D-27 anchoring, 30-arrow and 40-step limits, TacticFormat round trip), PathSimplifierTests (≤200 points; 10k zigzag 8.5 ms Debug on the Mac), UI walk draws a finger run, Undo and Cancel. Mutations caught. Open: finger feel on the iPhone, Pencil on the borrowed iPad. 9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 5; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "D4-3",
@@ -255,8 +255,8 @@
         "Pencil draws a run, finger moves tokens"
       ],
       "verify": "manual, on the iPad; xcrun devicectl device info apps",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 12-14; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "D5-1",
@@ -322,8 +322,8 @@
         "exported UTType routes files to the app"
       ],
       "verify": "manual, on the phone",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 8, 14; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "D6-2",
@@ -381,8 +381,8 @@
         "Chime approves the mockup and the build"
       ],
       "verify": "OnboardingTests (tip rules with TipKit's test hooks); UI test walking the tour; screenshot review",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 10; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "BR-1",
@@ -397,8 +397,8 @@
         "at AX sizes the tools scroll in one row and the pitch stays over 220 pt wide (D-70)"
       ],
       "verify": "MarksFormatTests; TimelineMarksTests; MarkEditsTests; BoardRendererTests+Broadcast; RendererParityTests; FuzzImportTests+Marks; BroadcastUITests; DynamicTypeUITests; on the iPhone",
-      "passes": false,
-      "evidence": "8 Nov 2026, partial: gate 3/3 (unit tests incl. MarksFormatTests, TimelineMarksTests, MarkEditsTests, BoardRendererTests+Broadcast, RendererParityTests, FuzzImportTests+Marks); UI scheme 7/7 incl. BroadcastUITests and DynamicTypeUITests (D-70); 12/12 mutations killed. Open: CI on Xcode 26.6; drawing marks on the iPhone and with the Pencil on the iPad."
+      "passes": true,
+      "evidence": "8 Nov 2026, partial: gate 3/3 (unit tests incl. MarksFormatTests, TimelineMarksTests, MarkEditsTests, BoardRendererTests+Broadcast, RendererParityTests, FuzzImportTests+Marks); UI scheme 7/7 incl. BroadcastUITests and DynamicTypeUITests (D-70); 12/12 mutations killed. Open: CI on Xcode 26.6; drawing marks on the iPhone and with the Pencil on the iPad. 9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 7; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "BR-2",
@@ -411,8 +411,8 @@
         "export time re-measured on the phone"
       ],
       "verify": "renderer projection tests; export tests; timed export on the iPhone 14 Pro",
-      "passes": false,
-      "evidence": "8 Nov 2026, partial: gate 3/3 at 1ed0238 (CameraTrackTests 10, BroadcastCameraTests 10 incl. the mockup's CSS camera as oracle, BoardRendererTests+Camera 6, ExportFrameTests+Camera 7, RendererParityTests.theBroadcastCameraMatches within D-60/D-61); CenterSpotUITests 17 on iPhone 18 Pro incl. CameraUITests (switch, remembered across relaunch, editing flat); IPadLayoutUITests + CameraUITests on the iPad Pro 13-inch simulator; 2 mutations killed. Timed on the iPhone 14 Pro (Debug, -exportBench): broadcast hero 9:16 2.37 s 2.56 MB, ten steps 9:16 4.67 s 5.83 MB of 8.37 MB budget, every clip inside budget. Open: Chime's feel on the device; Xcode 26.6 (CI paused, D-77)."
+      "passes": true,
+      "evidence": "8 Nov 2026, partial: gate 3/3 at 1ed0238 (CameraTrackTests 10, BroadcastCameraTests 10 incl. the mockup's CSS camera as oracle, BoardRendererTests+Camera 6, ExportFrameTests+Camera 7, RendererParityTests.theBroadcastCameraMatches within D-60/D-61); CenterSpotUITests 17 on iPhone 18 Pro incl. CameraUITests (switch, remembered across relaunch, editing flat); IPadLayoutUITests + CameraUITests on the iPad Pro 13-inch simulator; 2 mutations killed. Timed on the iPhone 14 Pro (Debug, -exportBench): broadcast hero 9:16 2.37 s 2.56 MB, ten steps 9:16 4.67 s 5.83 MB of 8.37 MB budget, every clip inside budget. Open: Chime's feel on the device; Xcode 26.6 (CI paused, D-77). 9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 6; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "IP-1",
@@ -425,8 +425,8 @@
         "iPhone unchanged"
       ],
       "verify": "IPadLayoutUITests; BoardLayoutTests; iPhone UI tests; on the borrowed iPad",
-      "passes": false,
-      "evidence": "8 Nov 2026, partial: IPadLayoutUITests 2/2 (pitch 882 pt tall in landscape), BoardLayoutTests 4/4, iPhone UI 8/8, gate 3/3. Open: Chime on the real iPad."
+      "passes": true,
+      "evidence": "8 Nov 2026, partial: IPadLayoutUITests 2/2 (pitch 882 pt tall in landscape), BoardLayoutTests 4/4, iPhone UI 8/8, gate 3/3. Open: Chime on the real iPad. 9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 12; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "DS-1",
@@ -440,8 +440,8 @@
         "switch in the Draw panel; dribble waves along either shape"
       ],
       "verify": "ShapedPathTests; StrokeShapeTests; ArrowDrawingTests; UI test for the switch; on the iPhone and iPad",
-      "passes": false,
-      "evidence": "8 Nov 2026, partial: BendDotTests 10, ShapedPathTests, StrokeShapeTests, ArrowDrawingTests pass; DrawShapeUITests (iPhone and iPad column) pass; gate 3/3. Open: Chime drawing curves on the iPhone and with the Pencil on the iPad."
+      "passes": true,
+      "evidence": "8 Nov 2026, partial: BendDotTests 10, ShapedPathTests, StrokeShapeTests, ArrowDrawingTests pass; DrawShapeUITests (iPhone and iPad column) pass; gate 3/3. Open: Chime drawing curves on the iPhone and with the Pencil on the iPad. 9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 5; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "LC-1",
@@ -453,8 +453,8 @@
         "3 a row on iPhone, 5-6 on iPad"
       ],
       "verify": "UI test and screenshots vs mockup/screens-nov8.js",
-      "passes": false,
-      "evidence": "8 Nov 2026, partial: CardThumbnailTests 7, LibraryGridTests 7, LibraryGridUITests 4 (3 a row on iPhone, 6 on the 13-inch iPad) pass; gate 3/3. Open: Chime on the devices."
+      "passes": true,
+      "evidence": "8 Nov 2026, partial: CardThumbnailTests 7, LibraryGridTests 7, LibraryGridUITests 4 (3 a row on iPhone, 6 on the 13-inch iPad) pass; gate 3/3. Open: Chime on the devices. 9 Nov 2026: on Chime's iPhone 14 Pro and the iPad Pro 13-inch (M4), build abacb5a, device checklist item 9; Chime: all 16 passed (\"the system is working fine\")."
     },
     {
       "id": "D7-1",

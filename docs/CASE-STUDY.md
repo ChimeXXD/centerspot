@@ -111,6 +111,4 @@ Broadcast takes about 1.5 times as long and makes files about twice the size, be
 
 The app runs on Chime's iPhone 14 Pro and a borrowed iPad Pro. The logs show these confirmed on the devices: the exported clip plays in WhatsApp and Discord; a `.tactic` AirDropped from the iPhone opens on the iPad; after the crash fix the iPad opened a board and stayed up; and the export timings above.
 
-On-device confirmation of several features is pending, from Chime's device checklist on 9 Nov. They pass their simulator tests, but the logs don't show them checked on a device yet: the Pencil in Draw mode, clean stacking, the new Broadcast lens, library v2, scenarios with motion, and the player tag ([D-98](DECISIONS.md)).
-
-_Device results: to be added_
+On 9 Nov Chime ran a 16-item checklist on both devices and every item passed: playback and Reduce Motion, editing players and steps, drawing runs with Straight and Curved arrows, Broadcast and its export, zones, lines and glows, saving and opening `.tactic` files through Files and AirDrop, the library, the tips, VoiceOver on the iPhone, the iPad layout, the Pencil only drawing in Draw mode, scenarios, and the player tag ([D-98](DECISIONS.md)). 29 of the 35 features in [`features.json`](features.json) pass; the rest are links and QR (after Day 7), CI (when the repo is public), VoiceOver on the iPad, and the Day 7 items.
