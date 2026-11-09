@@ -40,4 +40,4 @@
 - Names: propose only names verified unused. Never name the design reference library in the repo (D-52 gate).
 
 ### On hold
-- Custom icons and illustrations (D-51), until Chime says go.
+- Swapping the app's SF Symbols for the custom icon set (drawn in `design-system/`, D-87), until Chime says go.

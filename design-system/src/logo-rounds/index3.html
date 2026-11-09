@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CenterSpot logo options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=Kalam&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0F14; --surface: #151B23; --surface2: #1E2630; --hair: #2A3440;
+    --text: #F2F5F7; --muted: #93A0AD; --lime: #C6FF3D; --coral: #FF6B4A; --paper: #F2F5F7; --ink: #0B0F14;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: Nunito, system-ui, sans-serif; padding: 56px 48px 64px; }
+  header { max-width: 1320px; margin: 0 auto 40px; display: flex; align-items: baseline; justify-content: space-between; }
+  h1 { font-weight: 900; font-size: 40px; letter-spacing: -0.01em; }
+  header p { font-family: Kalam, cursive; color: var(--muted); font-size: 20px; }
+  .grid { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); row-gap: 28px; gap: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--hair); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .num { font-weight: 800; color: var(--muted); font-size: 13px; }
+  .hero { aspect-ratio: 1; background: var(--bg); border-radius: 14px; display: grid; place-items: center; }
+  .hero svg { width: 62%; height: 62%; color: var(--text); }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .icon { width: 64px; height: 64px; border-radius: 15px; background: var(--bg); display: grid; place-items: center; border: 1px solid var(--hair); }
+  .icon svg { width: 66%; height: 66%; color: var(--text); }
+  .icon.lime { background: var(--lime); border-color: var(--lime); }
+  .icon.lime svg { color: var(--ink); --accent: var(--ink); }
+  .small { width: 32px; height: 32px; background: var(--bg); border-radius: 7px; display: grid; place-items: center; border: 1px solid var(--hair); }
+  .small svg { width: 72%; height: 72%; color: var(--text); }
+  .tiny { width: 16px; height: 16px; color: var(--text); }
+  .paper { background: var(--paper); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; color: var(--ink); }
+  .paper svg { width: 34px; height: 34px; color: var(--ink); --accent: var(--ink); }
+  .lockup { display: flex; align-items: center; gap: 10px; padding: 4px 2px; }
+  .lockup svg { width: 34px; height: 34px; color: var(--text); }
+  .word { font-weight: 900; font-size: 28px; letter-spacing: -0.01em; }
+  .paper .word { color: var(--ink); }
+  h2 { font-weight: 800; font-size: 19px; }
+  .why { color: var(--muted); font-size: 14px; line-height: 1.45; font-weight: 500; }
+  svg { --accent: var(--lime); }
+</style>
+</head>
+<body>
+<header>
+  <h1>CenterSpot · ten simple options</h1>
+  <p>Draw the move, not just the shape.</p>
+</header>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="s1" viewBox="0 0 100 100">
+      <path d="M24 80 C 28 50, 46 32, 72 27" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round"/>
+      <path d="M58 16 L 75 27 L 62 42" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <mask id="cut2"><rect width="100" height="100" fill="white"/>
+      <path d="M37 63 L 61 39 M45 37 H 63 V 55" stroke="black" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/></mask>
+    <symbol id="s2" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="34" fill="var(--accent)" mask="url(#cut2)"/>
+    </symbol>
+    <symbol id="s3" viewBox="0 0 100 100">
+      <path d="M10 50 H 90" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="7"/>
+      <circle cx="50" cy="50" r="7" fill="var(--accent)"/>
+    </symbol>
+    <symbol id="s4" viewBox="0 0 100 100">
+      <path d="M33 62 Q 42 30, 66 32" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-dasharray="8 9"/>
+      <circle cx="25" cy="73" r="12" fill="currentColor"/>
+      <circle cx="76" cy="31" r="12" fill="var(--accent)"/>
+    </symbol>
+    <symbol id="s5" viewBox="0 0 100 100">
+      <circle cx="44" cy="58" r="21" fill="none" stroke="currentColor" stroke-width="11"/>
+      <path d="M76 34 V 80" stroke="var(--accent)" stroke-width="11" stroke-linecap="round"/>
+    </symbol>
+    <clipPath id="cone6"><path d="M50 14 L 78 80 H 22 Z"/></clipPath>
+    <symbol id="s6" viewBox="0 0 100 100">
+      <path d="M50 14 L 78 80 H 22 Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+      <rect x="0" y="44" width="100" height="13" fill="var(--accent)" clip-path="url(#cone6)"/>
+      <path d="M14 86 H 86" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="s7" viewBox="0 0 100 100">
+      <path d="M34 14 V 86" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M38 16 L 76 30 L 38 44 Z" fill="var(--accent)" stroke="var(--accent)" stroke-width="4" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="s8" viewBox="0 0 100 100">
+      <rect x="24" y="10" width="52" height="80" rx="9" fill="none" stroke="currentColor" stroke-width="7"/>
+      <path d="M24 50 H 76" stroke="currentColor" stroke-width="7"/>
+      <circle cx="50" cy="30" r="8" fill="var(--accent)"/>
+    </symbol>
+    <symbol id="s9" viewBox="0 0 100 100">
+      <path d="M22 84 L 50 58 L 78 84" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M22 50 L 50 24 L 78 50" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="s10" viewBox="0 0 100 100">
+      <path d="M42 86 V 30" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M66 86 C 66 56, 22 64, 22 26" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round"/>
+      <path d="M13 34 L 22 22 L 31 34" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="grid" id="grid"></main>
+
+<script>
+  const options = [
+    { id: 's1', name: 'The run', why: 'One curved arrow: a player\'s run, the first thing anyone draws on a tactics board.' },
+    { id: 's2', name: 'The token', why: 'A player disc with the move cut out of it. One shape, the arrow is the empty space.' },
+    { id: 's3', name: 'Centre circle', why: 'The halfway line and the centre circle: the most recognisable marking on a pitch.' },
+    { id: 's4', name: 'The pass', why: 'Two players and a dashed pass between them. The move is the line, not the dots.' },
+    { id: 's5', name: 'The a', why: 'A lowercase a: the bowl is a player disc, the stem a straight run. Pairs with the wordmark.' },
+    { id: 's6', name: 'The cone', why: 'A training cone: drills, sessions, the coach\'s kit. Unexpected for a tactics app, easy to own.' },
+    { id: 's7', name: 'Corner flag', why: 'The corner flag: football in one line and one triangle, recognisable at any size.' },
+    { id: 's8', name: 'The pitch', why: 'A pitch from above with one player on it: the board itself, as simple as it gets.' },
+    { id: 's9', name: 'On the march', why: 'Two chevrons pointing up the pitch: forward, in steps, an army on the march.' },
+    { id: 's10', name: 'The overlap', why: 'A straight run and a curved one going round it: the overlap, the app\'s own example move.' },
+  ];
+  const use = id => `<svg viewBox="0 0 100 100"><use href="#${id}"/></svg>`;
+  document.getElementById('grid').innerHTML = options.map((o, i) => `
+    <section class="card">
+      <span class="num">${i + 1}</span>
+      <div class="hero">${use(o.id)}</div>
+      <div class="row">
+        <div class="icon">${use(o.id)}</div>
+        <div class="icon lime">${use(o.id)}</div>
+        <div class="small">${use(o.id)}</div>
+        <svg class="tiny" viewBox="0 0 100 100"><use href="#${o.id}"/></svg>
+      </div>
+      <div class="lockup">${use(o.id)}<span class="word">CenterSpot</span></div>
+      <div class="paper">${use(o.id)}<span class="word">CenterSpot</span></div>
+      <h2>${o.name}</h2>
+      <p class="why">${o.why}</p>
+    </section>`).join('');
+</script>
+</body>
+</html>

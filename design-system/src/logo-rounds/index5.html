@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CenterSpot logo options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=Kalam&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0F14; --surface: #151B23; --surface2: #1E2630; --hair: #2A3440;
+    --text: #F2F5F7; --muted: #93A0AD; --lime: #C6FF3D; --coral: #FF6B4A; --paper: #F2F5F7; --ink: #0B0F14;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: Nunito, system-ui, sans-serif; padding: 56px 48px 64px; }
+  header { max-width: 1100px; margin: 0 auto 40px; display: flex; align-items: baseline; justify-content: space-between; }
+  h1 { font-weight: 900; font-size: 40px; letter-spacing: -0.01em; }
+  header p { font-family: Kalam, cursive; color: var(--muted); font-size: 20px; }
+  .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); row-gap: 28px; gap: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--hair); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .num { font-weight: 800; color: var(--muted); font-size: 13px; }
+  .hero { aspect-ratio: 1; background: var(--bg); border-radius: 14px; display: grid; place-items: center; }
+  .hero svg { width: 62%; height: 62%; color: var(--text); }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .icon { width: 64px; height: 64px; border-radius: 15px; background: var(--bg); display: grid; place-items: center; border: 1px solid var(--hair); }
+  .icon svg { width: 66%; height: 66%; color: var(--text); }
+  .icon.lime { background: var(--lime); border-color: var(--lime); }
+  .icon.lime svg { color: var(--ink); --accent: var(--ink); }
+  .small { width: 32px; height: 32px; background: var(--bg); border-radius: 7px; display: grid; place-items: center; border: 1px solid var(--hair); }
+  .small svg { width: 72%; height: 72%; color: var(--text); }
+  .tiny { width: 16px; height: 16px; color: var(--text); }
+  .paper { background: var(--paper); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; color: var(--ink); }
+  .paper svg { width: 34px; height: 34px; color: var(--ink); --accent: var(--ink); }
+  .lockup { display: flex; align-items: center; gap: 10px; padding: 4px 2px; }
+  .lockup svg { width: 34px; height: 34px; color: var(--text); }
+  .word { font-weight: 900; font-size: 28px; letter-spacing: -0.01em; }
+  .paper .word { color: var(--ink); }
+  h2 { font-weight: 800; font-size: 19px; }
+  .why { color: var(--muted); font-size: 14px; line-height: 1.45; font-weight: 500; }
+  svg { --accent: var(--lime); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Centre circle · elevated (1, 2, 3, 7)</h1>
+  <p>Draw the move, not just the shape.</p>
+</header>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- 1a classic, the spot floats in a clear gap -->
+    <mask id="k1a" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="white"/><circle cx="50" cy="50" r="13" fill="black"/></mask>
+    <symbol id="e1a" viewBox="0 0 100 100">
+      <g mask="url(#k1a)">
+        <path d="M11 50 H 89" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+      </g>
+      <circle cx="50" cy="50" r="26" fill="none" stroke="currentColor" stroke-width="7"/>
+      <circle cx="50" cy="50" r="7.5" fill="var(--accent)"/>
+    </symbol>
+    <!-- 1b classic, a lighter line under a heavier circle -->
+    <symbol id="e1b" viewBox="0 0 100 100">
+      <path d="M12 50 H 88" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="26" fill="none" stroke="currentColor" stroke-width="8.5"/>
+      <circle cx="50" cy="50" r="8.5" fill="var(--accent)"/>
+    </symbol>
+    <!-- 2a chalk, even rhythm: four arcs with matching gaps, short line ends -->
+    <symbol id="e2a" viewBox="0 0 100 100">
+      <path d="M50 23 A 27 27 0 0 1 74.2 38 M74.2 62 A 27 27 0 0 1 50 77 A 27 27 0 0 1 25.8 62 M25.8 38 A 27 27 0 0 1 50 23" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M10 50 H 21 M79 50 H 90" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="8" fill="var(--accent)"/>
+    </symbol>
+    <!-- 2b chalk, woven: the line runs under the circle -->
+    <mask id="k2b" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="white"/>
+      <circle cx="50" cy="50" r="27" fill="none" stroke="black" stroke-width="14"/><circle cx="50" cy="50" r="11.5" fill="black"/></mask>
+    <symbol id="e2b" viewBox="0 0 100 100">
+      <g mask="url(#k2b)"><path d="M10 50 H 90" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></g>
+      <circle cx="50" cy="50" r="27" fill="none" stroke="currentColor" stroke-width="7"/>
+      <circle cx="50" cy="50" r="7.5" fill="var(--accent)"/>
+    </symbol>
+    <!-- 3a bold, the gap round the spot cut out (works on any background) -->
+    <mask id="k3a" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="white"/><circle cx="50" cy="50" r="15.5" fill="black"/></mask>
+    <symbol id="e3a" viewBox="0 0 100 100">
+      <g mask="url(#k3a)"><path d="M12 50 H 88" stroke="currentColor" stroke-width="9.5" stroke-linecap="round"/></g>
+      <circle cx="50" cy="50" r="27" fill="none" stroke="currentColor" stroke-width="9.5"/>
+      <circle cx="50" cy="50" r="10" fill="var(--accent)"/>
+    </symbol>
+    <!-- 3b bold, icon-first: a bigger spot, a shorter line -->
+    <mask id="k3b" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="white"/><circle cx="50" cy="50" r="18" fill="black"/></mask>
+    <symbol id="e3b" viewBox="0 0 100 100">
+      <g mask="url(#k3b)"><path d="M16 50 H 84" stroke="currentColor" stroke-width="10" stroke-linecap="round"/></g>
+      <circle cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="10"/>
+      <circle cx="50" cy="50" r="12.5" fill="var(--accent)"/>
+    </symbol>
+    <!-- 7a broadcast, depth: the near side of the circle is thicker, as a camera sees it -->
+    <mask id="k7a" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="white"/><ellipse cx="50" cy="53.5" rx="26" ry="10.5" fill="black"/></mask>
+    <symbol id="e7a" viewBox="0 0 100 100">
+      <path d="M8 55 H 92" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+      <ellipse cx="50" cy="56" rx="33" ry="17" fill="currentColor" mask="url(#k7a)"/>
+      <ellipse cx="50" cy="55" rx="9" ry="5.5" fill="var(--accent)"/>
+    </symbol>
+    <!-- 7b broadcast, from the stands: the near touchline frames it -->
+    <mask id="k7b" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="white"/><ellipse cx="50" cy="45.5" rx="25" ry="10" fill="black"/></mask>
+    <symbol id="e7b" viewBox="0 0 100 100">
+      <path d="M14 47 H 86" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+      <ellipse cx="50" cy="48" rx="32" ry="16" fill="currentColor" mask="url(#k7b)"/>
+      <ellipse cx="50" cy="47" rx="9" ry="5.5" fill="var(--accent)"/>
+      <path d="M6 82 H 94" stroke="currentColor" stroke-width="6" stroke-linecap="round" opacity="0.45"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="grid" id="grid"></main>
+
+<script>
+  const options = [
+    { id: 'e1a', name: '1 · Floating spot', why: 'Your first pick, tuned: the line stops short of the spot, so it floats in its own clear space. Calmer centre, same mark.' },
+    { id: 'e1b', name: '1 · Hierarchy', why: 'The circle leads, the line follows: a heavier circle over a lighter line, so the eye goes circle, spot, line.' },
+    { id: 'e2a', name: '2 · Even chalk', why: 'The circle in four arcs with matching gaps, the line only at its ends: a rhythm, like chalk lifted off the board.' },
+    { id: 'e2b', name: '2 · Woven', why: 'The line runs under the circle and breaks round the spot: the circle sits on top, crafted rather than drawn.' },
+    { id: 'e3a', name: '3 · Bold, cut', why: 'Bolder, with the gap round the spot cut out of the shape, so it works on lime, white or dark without a painted ring.' },
+    { id: 'e3b', name: '3 · Bold, icon-first', why: 'Built for the app icon: a big lime spot, a shorter line, heavier strokes. Strongest at 16 px.' },
+    { id: 'e7a', name: '7 · Depth', why: 'The circle seen by the Broadcast camera: its near side thicker than its far side, as perspective really draws it.' },
+    { id: 'e7b', name: '7 · From the stands', why: 'The tilted circle with the near touchline below it: the pitch from the stands, a broadcast frame in three lines.' },
+  ];
+  const use = id => `<svg viewBox="0 0 100 100"><use href="#${id}"/></svg>`;
+  document.getElementById('grid').innerHTML = options.map((o, i) => `
+    <section class="card">
+      <span class="num">${i + 1}</span>
+      <div class="hero">${use(o.id)}</div>
+      <div class="row">
+        <div class="icon">${use(o.id)}</div>
+        <div class="icon lime">${use(o.id)}</div>
+        <div class="small">${use(o.id)}</div>
+        <svg class="tiny" viewBox="0 0 100 100"><use href="#${o.id}"/></svg>
+      </div>
+      <div class="lockup">${use(o.id)}<span class="word">CenterSpot</span></div>
+      <div class="paper">${use(o.id)}<span class="word">CenterSpot</span></div>
+      <h2>${o.name}</h2>
+      <p class="why">${o.why}</p>
+    </section>`).join('');
+</script>
+</body>
+</html>

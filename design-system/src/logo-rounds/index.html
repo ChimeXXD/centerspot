@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CenterSpot logo options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=Kalam&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0F14; --surface: #151B23; --surface2: #1E2630; --hair: #2A3440;
+    --text: #F2F5F7; --muted: #93A0AD; --lime: #C6FF3D; --coral: #FF6B4A; --paper: #F2F5F7; --ink: #0B0F14;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: Nunito, system-ui, sans-serif; padding: 56px 48px 64px; }
+  header { max-width: 1320px; margin: 0 auto 40px; display: flex; align-items: baseline; justify-content: space-between; }
+  h1 { font-weight: 900; font-size: 40px; letter-spacing: -0.01em; }
+  header p { font-family: Kalam, cursive; color: var(--muted); font-size: 20px; }
+  .grid { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--hair); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .num { font-weight: 800; color: var(--muted); font-size: 13px; }
+  .hero { aspect-ratio: 1; background: var(--bg); border-radius: 14px; display: grid; place-items: center; }
+  .hero svg { width: 62%; height: 62%; color: var(--text); }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .icon { width: 64px; height: 64px; border-radius: 15px; background: var(--bg); display: grid; place-items: center; border: 1px solid var(--hair); }
+  .icon svg { width: 66%; height: 66%; color: var(--text); }
+  .icon.lime { background: var(--lime); border-color: var(--lime); }
+  .icon.lime svg { color: var(--ink); --accent: var(--ink); }
+  .small { width: 32px; height: 32px; background: var(--bg); border-radius: 7px; display: grid; place-items: center; border: 1px solid var(--hair); }
+  .small svg { width: 72%; height: 72%; color: var(--text); }
+  .tiny { width: 16px; height: 16px; color: var(--text); }
+  .paper { background: var(--paper); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; color: var(--ink); }
+  .paper svg { width: 34px; height: 34px; color: var(--ink); --accent: var(--ink); }
+  .lockup { display: flex; align-items: center; gap: 10px; padding: 4px 2px; }
+  .lockup svg { width: 34px; height: 34px; color: var(--text); }
+  .word { font-weight: 900; font-size: 28px; letter-spacing: -0.01em; }
+  .paper .word { color: var(--ink); }
+  h2 { font-weight: 800; font-size: 19px; }
+  .why { color: var(--muted); font-size: 14px; line-height: 1.45; font-weight: 500; }
+  svg { --accent: var(--lime); }
+</style>
+</head>
+<body>
+<header>
+  <h1>CenterSpot · five logo options</h1>
+  <p>Draw the move, not just the shape.</p>
+</header>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- 1 · The run: a player and the run they make, as a coach chalks it -->
+    <symbol id="m1" viewBox="0 0 100 100">
+      <path d="M30 70 C 34 46, 52 34, 72 30" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-dasharray="0.1 13"/>
+      <path d="M60 22 L 75 29 L 66 43" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="27" cy="74" r="13" fill="var(--accent)"/>
+    </symbol>
+    <!-- 2 · Monogram: an A whose legs are two runs, the ball where the crossbar would be -->
+    <symbol id="m2" viewBox="0 0 100 100">
+      <path d="M22 86 L 50 16 L 78 86" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="50" cy="63" r="8.5" fill="var(--accent)"/>
+    </symbol>
+    <!-- 3 · Us and them: the app's own rule, filled disc for our side, ring for theirs -->
+    <symbol id="m3" viewBox="0 0 100 100">
+      <circle cx="66" cy="36" r="17" fill="none" stroke="currentColor" stroke-width="7"/>
+      <circle cx="38" cy="62" r="22" fill="var(--accent)"/>
+    </symbol>
+    <!-- 4 · The clip: a 9:16 frame with the move running up it -->
+    <symbol id="m4" viewBox="0 0 100 100">
+      <rect x="25" y="7" width="50" height="86" rx="11" fill="none" stroke="currentColor" stroke-width="6"/>
+      <path d="M40 72 C 41 56, 50 46, 60 38" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/>
+      <path d="M50 34 L 61 37 L 58 48" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <!-- 5 · On the march: one disc, three keyframes, the move in steps -->
+    <symbol id="m5" viewBox="0 0 100 100">
+      <circle cx="26" cy="74" r="12" fill="currentColor" opacity="0.28"/>
+      <circle cx="47" cy="53" r="12" fill="currentColor" opacity="0.55"/>
+      <circle cx="69" cy="31" r="14" fill="var(--accent)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="grid" id="grid"></main>
+
+<script>
+  const options = [
+    { id: 'm1', name: 'The run', why: 'A player and the run they make, chalked the way a coach draws it: a dotted line and an arrowhead. The app\'s first idea in one mark: draw the move.' },
+    { id: 'm2', name: 'The A', why: 'A monogram: the A\'s legs are two lines of attack meeting at the top, and the ball sits where the crossbar would be. Strongest as a letter, least about movement.' },
+    { id: 'm3', name: 'Us and them', why: 'The app\'s own grammar: our side is a filled disc, theirs a ring, so sides never rely on colour alone. Two shapes, instantly a football board.' },
+    { id: 'm4', name: 'The clip', why: 'A 9:16 frame with the move running up it: the one-tap vertical video that sets CenterSpot apart. Reads as a phone screen at small sizes.' },
+    { id: 'm5', name: 'On the march', why: 'The earlier name was Latin for an army on the march. One player in three keyframes, faint to solid: the move in steps, the way the timeline plays it.' },
+  ];
+  const use = id => `<svg viewBox="0 0 100 100"><use href="#${id}"/></svg>`;
+  document.getElementById('grid').innerHTML = options.map((o, i) => `
+    <section class="card">
+      <span class="num">${i + 1}</span>
+      <div class="hero">${use(o.id)}</div>
+      <div class="row">
+        <div class="icon">${use(o.id)}</div>
+        <div class="icon lime">${use(o.id)}</div>
+        <div class="small">${use(o.id)}</div>
+        <svg class="tiny" viewBox="0 0 100 100"><use href="#${o.id}"/></svg>
+      </div>
+      <div class="lockup">${use(o.id)}<span class="word">CenterSpot</span></div>
+      <div class="paper">${use(o.id)}<span class="word">CenterSpot</span></div>
+      <h2>${o.name}</h2>
+      <p class="why">${o.why}</p>
+    </section>`).join('');
+</script>
+</body>
+</html>

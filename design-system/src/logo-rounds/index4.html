@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CenterSpot logo options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=Kalam&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0F14; --surface: #151B23; --surface2: #1E2630; --hair: #2A3440;
+    --text: #F2F5F7; --muted: #93A0AD; --lime: #C6FF3D; --coral: #FF6B4A; --paper: #F2F5F7; --ink: #0B0F14;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: Nunito, system-ui, sans-serif; padding: 56px 48px 64px; }
+  header { max-width: 1100px; margin: 0 auto 40px; display: flex; align-items: baseline; justify-content: space-between; }
+  h1 { font-weight: 900; font-size: 40px; letter-spacing: -0.01em; }
+  header p { font-family: Kalam, cursive; color: var(--muted); font-size: 20px; }
+  .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); row-gap: 28px; gap: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--hair); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .num { font-weight: 800; color: var(--muted); font-size: 13px; }
+  .hero { aspect-ratio: 1; background: var(--bg); border-radius: 14px; display: grid; place-items: center; }
+  .hero svg { width: 62%; height: 62%; color: var(--text); }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .icon { width: 64px; height: 64px; border-radius: 15px; background: var(--bg); display: grid; place-items: center; border: 1px solid var(--hair); }
+  .icon svg { width: 66%; height: 66%; color: var(--text); }
+  .icon.lime { background: var(--lime); border-color: var(--lime); }
+  .icon.lime svg { color: var(--ink); --accent: var(--ink); --bgc: var(--lime); }
+  .small { width: 32px; height: 32px; background: var(--bg); border-radius: 7px; display: grid; place-items: center; border: 1px solid var(--hair); }
+  .small svg { width: 72%; height: 72%; color: var(--text); }
+  .tiny { width: 16px; height: 16px; color: var(--text); }
+  .paper { background: var(--paper); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; color: var(--ink); }
+  .paper svg { width: 34px; height: 34px; color: var(--ink); --accent: var(--ink); --bgc: var(--paper); }
+  .lockup { display: flex; align-items: center; gap: 10px; padding: 4px 2px; }
+  .lockup svg { width: 34px; height: 34px; color: var(--text); }
+  .word { font-weight: 900; font-size: 28px; letter-spacing: -0.01em; }
+  .paper .word { color: var(--ink); }
+  h2 { font-weight: 800; font-size: 19px; }
+  .why { color: var(--muted); font-size: 14px; line-height: 1.45; font-weight: 500; }
+  svg { --accent: var(--lime); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Centre circle · refinements</h1>
+  <p>Draw the move, not just the shape.</p>
+</header>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="c0" viewBox="0 0 100 100">
+      <path d="M10 50 H 90" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="7"/>
+      <circle cx="50" cy="50" r="7" fill="var(--accent)"/>
+    </symbol>
+    <symbol id="c1" viewBox="0 0 100 100">
+      <path d="M8 50 H 18 M82 50 H 92" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M50 22 A 28 28 0 0 1 77 45 M77 55 A 28 28 0 0 1 50 78 A 28 28 0 0 1 23 55 M23 45 A 28 28 0 0 1 50 22" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="8" fill="var(--accent)"/>
+    </symbol>
+    <symbol id="c2" viewBox="0 0 100 100">
+      <path d="M12 50 H 88" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="26" fill="none" stroke="currentColor" stroke-width="9"/>
+      <circle cx="50" cy="50" r="10" fill="var(--accent)" stroke="var(--bgc, #0B0F14)" stroke-width="5"/>
+    </symbol>
+    <symbol id="c3" viewBox="0 0 100 100">
+      <path d="M10 62 H 90" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
+      <path d="M22 62 A 28 28 0 0 1 78 62" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="50" cy="62" r="9" fill="var(--accent)"/>
+    </symbol>
+    <symbol id="c4" viewBox="0 0 100 100">
+      <path d="M10 50 H 90" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="26" fill="none" stroke="var(--accent)" stroke-width="9"/>
+      <circle cx="50" cy="50" r="7" fill="currentColor"/>
+    </symbol>
+    <symbol id="c5" viewBox="0 0 100 100">
+      <path d="M0 50 H 100" stroke="currentColor" stroke-width="8"/>
+      <circle cx="50" cy="50" r="24" fill="none" stroke="currentColor" stroke-width="8"/>
+      <circle cx="50" cy="50" r="8" fill="var(--accent)"/>
+    </symbol>
+    <symbol id="c6" viewBox="0 0 100 100">
+      <path d="M6 56 H 94" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <ellipse cx="50" cy="56" rx="32" ry="16" fill="none" stroke="currentColor" stroke-width="8"/>
+      <ellipse cx="50" cy="56" rx="9" ry="6" fill="var(--accent)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="grid" id="grid"></main>
+
+<script>
+  const options = [
+    { id: 'c0', name: 'As picked', why: 'Your choice from the last round, for comparison.' },
+    { id: 'c1', name: 'Chalk gaps', why: 'The circle breaks where the halfway line would cross it, and the line only shows at the ends: lighter, more drawn, like chalk on a board.' },
+    { id: 'c2', name: 'Bolder', why: 'Heavier lines and a bigger spot with a dark keyline, so it holds as an app icon and at 16 px. The same mark, better proportions.' },
+    { id: 'c3', name: 'Half circle', why: 'Only the top half of the circle over the line, the spot on the line: a kick-off, a move about to start. Reads like a sunrise too.' },
+    { id: 'c4', name: 'Lime ring', why: 'The circle carries the lime and the spot goes white: the colour sits on the biggest shape, so it reads from across a room.' },
+    { id: 'c5', name: 'Edge to edge', why: 'The halfway line runs right off both sides, as it does on a pitch; in the app icon it cuts the tile in two.' },
+    { id: 'c6', name: 'Broadcast', why: 'The centre circle as the app\'s Broadcast camera sees it, tilted into an ellipse: the pitch from the stands, CenterSpot\'s own view.' },
+  ];
+  const use = id => `<svg viewBox="0 0 100 100"><use href="#${id}"/></svg>`;
+  document.getElementById('grid').innerHTML = options.map((o, i) => `
+    <section class="card">
+      <span class="num">${i + 1}</span>
+      <div class="hero">${use(o.id)}</div>
+      <div class="row">
+        <div class="icon">${use(o.id)}</div>
+        <div class="icon lime">${use(o.id)}</div>
+        <div class="small">${use(o.id)}</div>
+        <svg class="tiny" viewBox="0 0 100 100"><use href="#${o.id}"/></svg>
+      </div>
+      <div class="lockup">${use(o.id)}<span class="word">CenterSpot</span></div>
+      <div class="paper">${use(o.id)}<span class="word">CenterSpot</span></div>
+      <h2>${o.name}</h2>
+      <p class="why">${o.why}</p>
+    </section>`).join('');
+</script>
+</body>
+</html>
