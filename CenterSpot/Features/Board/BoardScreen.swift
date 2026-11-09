@@ -7,6 +7,10 @@ struct BoardScreen: View {
     @Binding var document: TacticDocument
     /// The board's own undo history (D-56), held by `TacticEditorHost`.
     let undoManager: UndoManager?
+    /// Opened from the library's Export video (D-89): starts on the export sheet.
+    var opensExport = false
+    /// The export sheet `opensExport` asks for has been shown, so it opens once.
+    @State private var openedExport = false
 
     @State var stepIndex = 0
     @State var selection: String?
@@ -108,6 +112,13 @@ struct BoardScreen: View {
             .onAppear {
                 refreshUndo()
                 if tactic.tokens.isEmpty { sheet = .formation }
+            }
+            // Export video from the library: the sheet once the pitch has its width, which sizes the step PNG.
+            .onChange(of: boardWidth > 0, initial: true) { _, measured in
+                guard measured, opensExport, !openedExport, !tactic.tokens.isEmpty else { return }
+                openedExport = true
+                Onboarding.shared.done(ExportTip())
+                sheet = .export
             }
     }
 

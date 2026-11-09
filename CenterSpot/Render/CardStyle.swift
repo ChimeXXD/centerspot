@@ -20,6 +20,9 @@ struct CardStyle: Sendable, Equatable {
     var minimumOutline: CGFloat = 0.6
 
     static let card = CardStyle()
+    /// The library's tall card (D-89): the pitch upright, the shape of the 9:16 video; it is taller than the old
+    /// sideways card, so its discs need less help (1.1 times the board's).
+    static let upright = CardStyle(sideways: false, tokenScale: 1.1)
 
     /// Whether a disc of radius `r` (already scaled) gets its number.
     func showsNumbers(radius r: CGFloat) -> Bool {

@@ -7,6 +7,8 @@ struct OpenTactic: Hashable {
     let tactic: Tactic
     /// Made by New tactic just now; closed untouched, it's discarded.
     var isNew = false
+    /// Opened from the library's Export video (D-89): the board opens on the export sheet.
+    var opensExport = false
 }
 
 /// The library's state (D-56): the tactics on disk, the navigation path, and a plain message to show when
@@ -22,12 +24,24 @@ final class LibraryStore {
     var alert: String?
 
     static let failedMessage = "That didn't work. Try again."
+    /// The file name of the move opened last, which the library plays at the top (D-89).
+    nonisolated static let lastOpenedKey = "library.lastOpened"
+
+    /// The example move's id (D-29), to tell when it is the only move.
+    let exampleID: String?
+    /// The file name of the move opened last (D-89). Stored here so the library redraws when it changes; kept in
+    /// `lastOpenedKey` across launches.
+    private(set) var lastOpened: String? {
+        didSet { library.defaults.set(lastOpened, forKey: Self.lastOpenedKey) }
+    }
 
     /// Saves the open board now; set by the board while it's on screen.
     private var flusher: (board: UUID, flush: () -> Void)?
 
     init(library: TacticLibrary) {
         self.library = library
+        exampleID = library.exampleURL.flatMap { try? library.load($0) }?.id
+        lastOpened = library.defaults.string(forKey: Self.lastOpenedKey)
         library.seedExampleIfFirstLaunch()
         refresh()
     }
@@ -54,19 +68,33 @@ final class LibraryStore {
         }
     }
 
-    func open(_ url: URL, isNew: Bool = false) {
+    func open(_ url: URL, isNew: Bool = false, opensExport: Bool = false) {
         do {
-            path.append(OpenTactic(url: url, tactic: try library.load(url), isNew: isNew))
+            path.append(OpenTactic(url: url, tactic: try library.load(url), isNew: isNew, opensExport: opensExport))
+            lastOpened = url.lastPathComponent
         } catch {
             alert = error.message
             refresh()
         }
     }
 
+    /// The move the library plays at the top (D-89): the one opened last, or the newest.
+    var resumeEntry: TacticLibrary.Entry? { lastOpenedEntry ?? entries.first }
+
+    /// The move opened last, if it's still in the library.
+    var lastOpenedEntry: TacticLibrary.Entry? {
+        entries.first { $0.url.lastPathComponent == lastOpened }
+    }
+
+    /// Only the example is in the library: the top says "Example" and the grid says what to do.
+    var onlyExample: Bool {
+        entries.count == 1 && entries[0].tactic.id == exampleID
+    }
+
     func rename(_ entry: TacticLibrary.Entry, to title: String) {
         // An unchanged title would rewrite the file and move it to the top of the library.
         guard TacticLibrary.cleanTitle(title) != entry.tactic.title else { return }
-        perform { try library.rename(entry.url, to: title) }
+        perform { try follow(entry.url, to: library.rename(entry.url, to: title)) }
     }
 
     func duplicate(_ entry: TacticLibrary.Entry) {
@@ -83,6 +111,7 @@ final class LibraryStore {
     func save(_ tactic: Tactic, to url: URL) -> URL? {
         do {
             let saved = try library.save(tactic, to: url)
+            follow(url, to: saved)
             if path.isEmpty { refresh() }
             return saved
         } catch {
@@ -125,6 +154,11 @@ final class LibraryStore {
         } catch {
             alert = error.message
         }
+    }
+
+    /// A new title renames the file: if it was the move opened last, the library keeps playing it at the top.
+    private func follow(_ old: URL, to new: URL) {
+        if new != old, lastOpened == old.lastPathComponent { lastOpened = new.lastPathComponent }
     }
 
     @discardableResult

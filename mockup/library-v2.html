@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CenterSpot library v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* Tokens as in app.html and Design/Tokens.swift. */
+  :root {
+    --bg: #0B0F14; --surface: #151B23; --surface-2: #1E2630; --surface-3: #27313D; --hairline: #2A3440;
+    --text: #F2F5F7; --muted: #93A0AD; --accent: #C6FF3D; --accent-ink: #0B0F14;
+    --pitch-a: #0F241B; --pitch-b: #112A1F; --chalk: rgba(255,255,255,.55);
+    --home: #C6FF3D; --home-ink: #0B0F14; --away: #FF6B4A; --away-inner: rgba(11,15,20,.85); --away-ink: #FFFFFF; --ball: #FFFFFF;
+    --run: #FFFFFF; --pass: #C6FF3D; --dribble: #FFD84A; --press: #FF6B4A;
+    --font-ui: Nunito, system-ui, sans-serif; --font-note: Kalam, cursive;
+    --bc-pitch-a: #0E1216; --bc-pitch-b: #13181D; --bc-line: rgba(255,255,255,.42);
+    --zone-fill: rgba(198,255,61,.13); --zone-stroke: rgba(198,255,61,.72); --heat: #FF5A2E; --heat-core: #FFB547; --glow-fill-opacity: .18;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #E7E6E2; font: 500 15px/1.4 var(--font-ui); color: var(--text); }
+  .page-head { max-width: 1900px; margin: 0 auto; padding: 32px 24px 0; color: #17181B; }
+  .page-head h1 { font: 700 28px/1.2 var(--font-ui); margin: 0 0 8px; }
+  .page-head p { margin: 0; max-width: 860px; color: #4D5057; }
+  .gallery { max-width: 1900px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; gap: 40px 32px; align-items: flex-start; }
+  .cap { margin: 0 0 8px 4px; font: 700 13px var(--font-ui); color: #4D5057; }
+  .frame { position: relative; overflow: hidden; flex-shrink: 0; background: var(--bg); box-shadow: 0 0 0 9px #111, 0 20px 50px rgba(0,0,0,.25); }
+  .phone { width: 393px; height: 852px; border-radius: 44px; }
+  .ipad { width: 1376px; height: 1032px; border-radius: 28px; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+  .status { position: absolute; left: 0; right: 0; top: 0; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 14px 32px 0 44px; font: 700 16px var(--font-ui); z-index: 3; }
+  .ipad .status { height: 32px; padding: 8px 24px 0; font-size: 14px; }
+  .icon-btn { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 999px; color: var(--text); }
+  .mark { color: var(--text); }
+  .wordmark { font: 900 22px/1 var(--font-ui); letter-spacing: 0; }
+  .muted { color: var(--muted); }
+  .note { font: 400 17px/1.25 var(--font-note); color: var(--text); }
+  .board, .board .pitch, .board svg { display: block; position: static; }
+  .board .pitch svg { border-radius: 12px; }
+
+  /* Broadcast camera, as in app.html */
+  .bc3d { position: relative; overflow: hidden; }
+  .bc3d .plane { position: absolute; transform-style: flat; }
+  .bc3d .plane svg { display: block; }
+  .bc3d .mk { position: absolute; width: 10px; height: 10px; }
+  .bc3d .figs { position: absolute; left: 0; top: 0; }
+
+  /* Phone */
+  .p-top { position: absolute; top: 50px; left: 16px; right: 8px; height: 52px; display: flex; align-items: center; gap: 8px; }
+  .p-top .wordmark { flex: 1; }
+  .scroll { position: absolute; top: 102px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0 16px; }
+  .hero { display: block; width: 100%; border-radius: 20px; overflow: hidden; background: var(--surface); }
+  .hero .view { position: relative; height: 236px; background: var(--bc-pitch-a); }
+  .hero .badge { position: absolute; left: 12px; top: 12px; z-index: 2; font: 600 12px var(--font-ui); background: rgba(11,15,20,.72); color: var(--text); padding: 4px 8px; border-radius: 999px; }
+  .scrub { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; display: flex; gap: 4px; }
+  .scrub i { flex: 1; height: 4px; border-radius: 2px; background: rgba(242,245,247,.28); }
+  .scrub i.done { background: var(--text); }
+  .scrub i.now { background: linear-gradient(90deg, var(--text) 55%, rgba(242,245,247,.28) 55%); }
+  .hero .info { padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .hero h2 { margin: 0; font: 700 20px/1.2 var(--font-ui); }
+  .hero .meta { font: 600 13px var(--font-ui); color: var(--muted); }
+  .hero .note { margin-top: 4px; }
+  .sec { display: flex; align-items: baseline; gap: 8px; margin: 24px 0 12px; }
+  .sec h3 { margin: 0; font: 700 17px var(--font-ui); }
+  .sec .count { font: 600 13px var(--font-ui); color: var(--muted); flex: 1; }
+  .sort { height: 32px; display: flex; align-items: center; gap: 4px; font: 600 13px var(--font-ui); color: var(--muted); padding: 0 8px; border-radius: 999px; background: var(--surface-2); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 12px; }
+  .card { display: flex; flex-direction: column; gap: 8px; }
+  .thumb { position: relative; border-radius: 12px; overflow: hidden; }
+  .dur { position: absolute; right: 8px; bottom: 8px; font: 700 12px var(--font-ui); font-variant-numeric: tabular-nums; background: rgba(11,15,20,.78); padding: 2px 6px; border-radius: 6px; }
+  .card .t { font: 700 15px/1.25 var(--font-ui); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card .m { font: 600 12px var(--font-ui); color: var(--muted); margin-top: -4px; }
+  .fab-wrap { position: absolute; left: 0; right: 0; bottom: 0; height: 120px; background: linear-gradient(rgba(11,15,20,0), var(--bg) 45%); display: flex; justify-content: center; align-items: flex-start; padding-top: 36px; z-index: 3; }
+  .fab { height: 52px; padding: 0 24px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font: 700 17px var(--font-ui); display: flex; align-items: center; gap: 8px; }
+  .menu { position: absolute; right: 12px; top: 98px; width: 250px; background: var(--surface-2); border-radius: 14px; z-index: 4; padding: 4px 0; box-shadow: 0 12px 40px rgba(0,0,0,.5); }
+  .menu button { width: 100%; height: 44px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; font: 500 15px var(--font-ui); }
+  .menu hr { border: 0; border-top: 1px solid var(--hairline); margin: 4px 0; }
+  .menu p { margin: 0; padding: 8px 16px 10px; font: 500 12px/1.35 var(--font-ui); color: var(--muted); }
+  .empty { margin-top: 24px; padding: 24px 16px; border-radius: 20px; border: 1px dashed var(--hairline); text-align: center; color: var(--muted); font: 500 15px/1.4 var(--font-ui); }
+
+  /* iPad */
+  .side { position: absolute; left: 0; top: 0; bottom: 0; width: 280px; padding: 48px 16px 24px; border-right: 1px solid var(--hairline); display: flex; flex-direction: column; gap: 4px; }
+  .side .brand { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 8px; margin-bottom: 12px; }
+  .side .new { height: 48px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font: 700 15px var(--font-ui); display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; }
+  .nav-row { height: 40px; padding: 0 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; font: 600 15px var(--font-ui); color: var(--muted); }
+  .nav-row.on { background: var(--surface-2); color: var(--text); }
+  .nav-row span:last-child { font: 600 13px var(--font-ui); font-variant-numeric: tabular-nums; color: var(--muted); }
+  .side .foot { margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
+  .side .foot p { margin: 8px 12px 0; font: 500 12px/1.4 var(--font-ui); color: var(--muted); }
+  .main { position: absolute; left: 280px; right: 0; top: 0; bottom: 0; padding: 48px 32px 0; overflow: hidden; }
+  .main-head { display: flex; align-items: center; gap: 12px; height: 44px; margin-bottom: 20px; }
+  .main-head h1 { margin: 0; font: 700 28px var(--font-ui); flex: 1; }
+  .seg { display: flex; background: var(--surface-2); border-radius: 999px; padding: 2px; }
+  .seg button { width: 40px; height: 32px; display: grid; place-items: center; border-radius: 999px; color: var(--muted); }
+  .seg button.on { background: var(--surface-3); color: var(--text); }
+  .resume { display: grid; grid-template-columns: 620px 1fr; gap: 0; background: var(--surface); border-radius: 20px; overflow: hidden; height: 349px; }
+  .resume .view { position: relative; background: var(--bc-pitch-a); }
+  .resume .side-info { padding: 20px 24px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .resume .kicker { font: 600 12px var(--font-ui); color: var(--muted); }
+  .resume h2 { margin: 0; font: 700 22px/1.2 var(--font-ui); }
+  .resume .meta { font: 600 13px var(--font-ui); color: var(--muted); margin-bottom: 8px; }
+  .steps { display: flex; flex-direction: column; gap: 2px; }
+  .srow { display: grid; grid-template-columns: 24px 36px 1fr; align-items: baseline; gap: 8px; padding: 4px 8px; border-radius: 8px; }
+  .srow b { font: 700 15px var(--font-ui); } .srow small { font: 600 12px var(--font-ui); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .srow .note { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+  .srow.on { background: var(--surface-2); } .srow.on .note { color: var(--text); }
+  .actions { margin-top: auto; display: flex; gap: 8px; }
+  .qbtn { height: 44px; padding: 0 16px; border-radius: 999px; background: var(--surface-2); font: 700 15px var(--font-ui); display: flex; align-items: center; gap: 8px; }
+  .grid5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px 16px; }
+</style>
+</head>
+<body>
+<header class="page-head">
+  <h1>Library v2: your moves first</h1>
+  <p>Phone from Chime's pick (Sora Drafts: tall two-column cards), iPad from Descript (sidebar, then a card grid). The top shows your last move playing in the Broadcast camera, with the step it is on and its handwritten note. Cards are upright pitches, the same shape as the 9:16 video. One lime lead per screen: New tactic.</p>
+</header>
+<main class="gallery" id="gallery"></main>
+
+<script src="hero.js"></script>
+<script src="board.js"></script>
+<script src="broadcast.js"></script>
+<script>
+const ic = (name, s = 24) => {
+  const p = {
+    plus: '<path d="M12 5v14M5 12h14"/>', more: '<circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/>',
+    down: '<path d="m7 10 5 5 5-5"/>', right: '<path d="m10 7 5 5-5 5"/>', grid: '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+    list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>', play: '<path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/>', share: '<path d="M12 4v11M8 8l4-4 4 4M5 13v6h14v-6"/>',
+    tips: '<circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/>', import: '<path d="M12 4v11M8 11l4 4 4-4M5 19h14"/>', search: '<circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/>',
+  }[name];
+  return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+};
+// The CenterSpot mark (D-86), at any size.
+const mark = s => `<svg class="mark" width="${s}" height="${s}" viewBox="0 0 100 100" aria-hidden="true"><defs><mask id="mk${s}" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="white"/><ellipse cx="50" cy="53.5" rx="26" ry="10.5" fill="black"/></mask></defs><path d="M8 55 H 92" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><ellipse cx="50" cy="56" rx="33" ry="17" fill="currentColor" mask="url(#mk${s})"/><ellipse cx="50" cy="55" rx="9" ry="5.5" fill="#C6FF3D"/></svg>`;
+
+const pos = i => STEPS[i].positions;
+const flip = p => Object.fromEntries(Object.entries(p).map(([k, v]) => [k, { x: 1 - v.x, y: v.y }]));
+const flipA = as => (as || []).map(a => ({ ...a, points: a.points.map(q => ({ x: 1 - q.x, y: q.y })) }));
+const thumb = (w, i, mirrored) => Board.html(w, mirrored ? flip(pos(i)) : pos(i), mirrored ? flipA(STEPS[i].arrows) : STEPS[i].arrows, { look: "bc", hits: false, testid: "x" }).replace(' data-testid="x"', "");
+const CAM_PHONE = { pw: 380, tilt: 54, focus: .3, cx: .36, persp: 640, horizon: 0 };
+const CAM_IPAD = { pw: 560, tilt: 54, focus: .3, cx: .38, persp: 940, horizon: 0 };
+const secs = s => `0:${String(Math.round(s)).padStart(2, "0")}`;
+const total = STEPS.reduce((a, s) => a + (s.duration || 1.2), 0);
+
+// Plausible library: the example move first (last opened), then moves from the app's seed titles. Each card draws a
+// real step of the example, mirrored for variety, as the card in the app draws step 1 of its own move.
+const MOVES = [
+  { t: HERO.title, steps: STEPS.length, s: total, when: "Today", i: 0, m: false },
+  { t: "Third-man run through the middle", steps: 4, s: 5.2, when: "Today", i: 2, m: true },
+  { t: "Press their keeper", steps: 3, s: 3.8, when: "Yesterday", i: 1, m: true },
+  { t: "Switch to the far side", steps: 6, s: 7.4, when: "Sat", i: 3, m: false },
+  { t: "Near-post corner flick", steps: 2, s: 2.6, when: "Thu", i: 4, m: true },
+  { t: "Full-backs step inside", steps: 5, s: 6.0, when: "2 Nov", i: 1, m: false },
+  { t: "Low block after we score", steps: 3, s: 4.2, when: "1 Nov", i: 3, m: true },
+  { t: "Cut-back from the byline", steps: 4, s: 5.0, when: "30 Oct", i: 4, m: false },
+  { t: "Long ball, win the second", steps: 3, s: 3.6, when: "28 Oct", i: 2, m: false },
+  { t: "Goal kick: play out short", steps: 5, s: 6.4, when: "27 Oct", i: 0, m: true },
+];
+const card = (mv, n, w) => `<button class="card" data-testid="library.card.${n}" aria-label="${mv.t}, ${mv.steps} steps, ${Math.round(mv.s)} seconds, edited ${mv.when}">
+  <div class="thumb">${thumb(w, mv.i, mv.m)}<span class="dur" data-testid="library.card.${n}.length">${secs(mv.s)}</span></div>
+  <span class="t" data-testid="library.card.${n}.title">${mv.t}</span><span class="m" data-testid="library.card.${n}.meta">${mv.steps} steps · ${mv.when}</span></button>`;
+const scrub = (n, cur) => `<div class="scrub" aria-hidden="true">${Array.from({ length: n }, (_, k) => `<i class="${k < cur ? "done" : k === cur ? "now" : ""}"></i>`).join("")}</div>`;
+
+const phoneTop = () => `<div class="status">9:41<span style="font-size:14px">100%</span></div>
+  <div class="p-top">${mark(28)}<span class="wordmark" data-testid="library.title">CenterSpot</span>${`<button class="icon-btn" data-testid="library.more" aria-label="More">${ic("more")}</button>`}</div>`;
+const phoneHero = () => `<button class="hero" data-testid="library.resume" aria-label="${HERO.title}, playing step 3 of ${STEPS.length}. Opens the move">
+  <div class="view"><span class="badge">Last opened</span>${BC.tilted(361, 236, pos(2), STEPS[2].arrows, {}, CAM_PHONE, "library.resume.board")}${scrub(STEPS.length, 2)}</div>
+  <div class="info"><h2 data-testid="library.resume.title">${HERO.title}</h2>
+  <span class="meta" data-testid="library.resume.meta">Step 3 of ${STEPS.length} · ${STEPS.length} steps · ${secs(total)}</span>
+  <span class="note" data-testid="library.resume.note">${STEPS[2].note}</span></div></button>`;
+const fab = () => `<div class="fab-wrap"><button class="fab" data-testid="library.new">${ic("plus", 22)}New tactic</button></div>`;
+
+const FRAMES = [
+  ["library-v2--phone", "Phone · your last move plays at the top; every move below as a tall card", "phone", () => `${phoneTop()}
+    <div class="scroll">${phoneHero()}
+      <div class="sec"><h3>Your moves</h3><span class="count" data-testid="library.count">${MOVES.length}</span><button class="sort" data-testid="library.sort">Recent${ic("down", 16)}</button></div>
+      <div class="grid2">${MOVES.slice(0, 4).map((m, n) => card(m, n + 1, 170)).join("")}</div></div>${fab()}`],
+  ["library-v2--phone-scrolled", "Phone · scrolled: the grid carries on, New tactic stays in reach", "phone", () => `${phoneTop()}
+    <div class="scroll" style="top:102px"><div class="grid2" style="margin-top:-150px">${MOVES.slice(2, 10).map((m, n) => card(m, n + 3, 170)).join("")}</div></div>${fab()}`],
+  ["library-v2--phone-more", "Phone · More: tips, import, and where the files are (the footer line moves here)", "phone", () => `${phoneTop()}
+    <div class="scroll" style="opacity:.35">${phoneHero()}</div>
+    <div class="menu" data-testid="library.menu"><button data-testid="library.menu.import">Import a .tactic file${ic("import", 20)}</button><button data-testid="library.menu.tips">Show tips again${ic("tips", 20)}</button><hr>
+    <p data-testid="library.menu.where">Saved on this iPhone. Find them in Files › On My iPhone › CenterSpot</p></div>${fab()}`],
+  ["library-v2--phone-first", "Phone · only the example: it plays at the top, and the empty grid says what to do", "phone", () => `${phoneTop()}
+    <div class="scroll">${phoneHero().replace("Last opened", "Example")}
+      <div class="empty" data-testid="library.empty">Your moves will show here. Start one with New tactic, or open the example to see how it's made</div></div>${fab()}`],
+  ["library-v2--ipad", "iPad landscape · sidebar, your last move playing with its steps, then every move", "ipad", () => `<div class="status">01:12  Mon 9 Nov<span>77%</span></div>
+    <aside class="side"><div class="brand">${mark(32)}<span class="wordmark" data-testid="library.title">CenterSpot</span></div>
+      <button class="new" data-testid="library.new">${ic("plus", 20)}New tactic</button>
+      <button class="nav-row on" data-testid="library.filter.all"><span>All moves</span><span>${MOVES.length}</span></button>
+      <button class="nav-row" data-testid="library.filter.week"><span>This week</span><span>5</span></button>
+      <button class="nav-row" data-testid="library.filter.earlier"><span>Earlier</span><span>5</span></button>
+      <div class="foot"><button class="nav-row" data-testid="library.menu.import"><span>Import a .tactic file</span>${ic("import", 18)}</button>
+      <button class="nav-row" data-testid="library.menu.tips"><span>Show tips again</span>${ic("tips", 18)}</button>
+      <p data-testid="library.menu.where">Saved on this iPad. Find them in Files › On My iPad › CenterSpot</p></div></aside>
+    <section class="main"><div class="main-head"><h1>All moves</h1><button class="sort" data-testid="library.sort">Recent${ic("down", 16)}</button>
+      <div class="seg" role="radiogroup" aria-label="View"><button class="on" data-testid="library.view.grid" aria-label="Grid">${ic("grid", 18)}</button><button data-testid="library.view.list" aria-label="List">${ic("list", 18)}</button></div></div>
+      <div class="resume"><div class="view"><span class="badge" style="position:absolute;left:12px;top:12px;z-index:2;font:600 12px Nunito;background:rgba(11,15,20,.72);padding:4px 8px;border-radius:999px">Last opened</span>${BC.tilted(620, 349, pos(2), STEPS[2].arrows, {}, CAM_IPAD, "library.resume.board")}${scrub(STEPS.length, 2)}</div>
+        <div class="side-info"><span class="kicker">Pick up where you left off</span><h2 data-testid="library.resume.title">${HERO.title}</h2>
+        <span class="meta" data-testid="library.resume.meta">${STEPS.length} steps · ${secs(total)} · Edited today, 01:04</span>
+        <div class="steps">${STEPS.map((s, k) => `<div class="srow${k === 2 ? " on" : ""}" data-testid="library.resume.step.${k + 1}"><b>${k + 1}</b><small>${s.duration.toFixed(1)} s</small><span class="note">${s.note}</span></div>`).join("")}</div>
+        <div class="actions"><button class="qbtn" data-testid="library.resume.open">Open</button><button class="qbtn" data-testid="library.resume.export">${ic("share", 18)}Export video</button></div></div></div>
+      <div class="sec" style="margin-top:28px"><h3>Every move</h3><span class="count">${MOVES.length}</span></div>
+      <div class="grid5">${MOVES.slice(0, 10).map((m, n) => card(m, n + 1, 193)).join("")}</div></section>`],
+];
+
+const g = document.getElementById("gallery");
+FRAMES.forEach(([id, caption, kind, render]) => {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `<p class="cap">${caption}</p><section class="frame ${kind}" data-screen="${id}">${render()}</section>`;
+  g.appendChild(wrap);
+});
+document.fonts.ready.then(() => placeDiscs());
+</script>
+</body>
+</html>

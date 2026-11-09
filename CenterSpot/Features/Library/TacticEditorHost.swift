@@ -27,7 +27,7 @@ struct TacticEditorHost: View {
     }
 
     var body: some View {
-        BoardScreen(document: $document, undoManager: undoManager)
+        BoardScreen(document: $document, undoManager: undoManager, opensExport: open.opensExport)
             .task(id: document.tactic) {
                 // Restarted by every change, so a burst of edits saves once.
                 try? await Task.sleep(for: Self.saveDelay)

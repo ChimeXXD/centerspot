@@ -2,6 +2,22 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Library v2: your moves first (Mon 9 Nov 2026, D-89)
+
+**Changed**
+- Chime picked Sora's Drafts (phone) and Descript's Recents (iPad) from a 21-screen sample from the reference library; mockup `mockup/library-v2.html` (5 frames) approved.
+- New: `ResumeCard` + `MoveLoop` (the last-opened move looping in the Broadcast camera, steps beside it on wide screens, Open / Export video), `LibraryItem` (card or row, render-thread-safe `nonisolated` init), `LibrarySidebar`, `LibraryQuery` (All moves · This week · Earlier, Recent · Name), `LibraryFormat` ("0:08", "Today", "5 steps"), `BrandMark` / `BrandLockup` (the logo drawn from its 100-unit grid). `TacticCard` is a tall upright card (`CardStyle.upright`, discs 1.1x); `LibraryGrid` is two a row on a phone, sidebar + at least 176 pt cards from 744 pt. The board can open straight onto Export (`OpenTactic.opensExport`). The old `LaunchArt` is gone.
+
+**Checked**
+- Unit: `LibraryFormatTests` (new), `LibraryGridTests` (rewritten for D-89), `CardThumbnailTests`: 18 passed.
+- UI on iPhone 18 Pro (27.0): `LibraryGridUITests` (rewritten), `OnboardingUITests`, `BoardScreenshotUITests` passed. On iPad Pro 13-inch (27.0): `LibraryGridUITests` (landscape 5 a row, sidebar, filters, list; portrait), `IPadLayoutUITests` passed. Screens compared with the mockup frames.
+
+**Not verified**
+- On the devices (next). Import a .tactic file through the Files picker on a device.
+
+**Next**
+- Install on the iPhone and iPad; Chime to look.
+
 ## Renamed to CenterSpot (Mon 9 Nov 2026, early, D-85)
 
 **Changed**

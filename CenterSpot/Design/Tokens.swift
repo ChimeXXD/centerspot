@@ -78,6 +78,10 @@ enum Tokens {
         static let caption = Font.custom(uiName, size: 12, relativeTo: .caption).weight(.medium)
         /// The CenterSpot wordmark: the one heavy word in the interface, at the logo's 900 (D-88).
         static let wordmark = Font.custom(uiName, size: 34, relativeTo: .largeTitle).weight(.black)
+        /// The wordmark beside the mark at the top of the library (D-89).
+        static let wordmarkSmall = Font.custom(uiName, size: 22, relativeTo: .title2).weight(.black)
+        /// A move's name under its library card (D-89).
+        static let cardTitle = Font.custom(uiName, size: 15, relativeTo: .subheadline).weight(.bold)
         static let note = Font.custom(noteName, size: 18, relativeTo: .body)
         /// Interface icons (D-81): one weight, two sizes. Bar icons sit in the toolbar, nav and playback bars; inline
         /// icons (×, ✓, +) sit next to text or alone in a small button. A disclosure chevron stays small, in the caption font.

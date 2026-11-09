@@ -24,6 +24,9 @@ enum BoardDebugLaunch {
         let items = (try? FileManager.default.contentsOfDirectory(at: library.folder, includingPropertiesForKeys: nil)) ?? []
         for item in items { try? FileManager.default.removeItem(at: item) }
         library.defaults.removeObject(forKey: TacticLibrary.seededKey)
+        library.defaults.removeObject(forKey: LibraryStore.lastOpenedKey)
+        // Grid, not a List left over from a run that stopped mid-test.
+        UserDefaults.standard.removeObject(forKey: LibraryScreen.showsListKey)
     }
 
     /// With `-seedLibrary N` (after `-resetLibrary YES`), N more tactics in different formations, so the library's
