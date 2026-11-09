@@ -71,8 +71,18 @@
     a.home.forEach(function (p, j) { people.push({ p: lerp(p, b.home[j]), home: true, number: p.number }); });
     people.sort(function (m, q) { return q.p.y - m.p.y; });  // far end first, as the board stacks them (D-93)
     var ball = lerp(a.ball, b.ball), bp = P(ball);
-    var carried = people.some(function (o) { var x = P(o.p); return Math.hypot(x[0] - bp[0], x[1] - bp[1]) < R * 1.2; });
-    if (carried) { bp = [bp[0] + R * 0.95, bp[1] + R * 0.95]; }
+    // At a player's feet the ball sits down and to the right. How much (the app's Possession.carryWeight: whole up to
+    // 0.8 disc radii from a player, none from 1.2, smoothstepped) is worked out at this step and the next and eased
+    // between with the move, as the app's Timeline does, so a pass from feet to feet keeps its offset the whole way and
+    // a shot loses it over the flight: the ball never jumps.
+    function carry(step) {
+      var b = P(step.ball);
+      var near = step.home.concat(step.away).reduce(function (m, p) { var x = P(p); return Math.min(m, Math.hypot(x[0] - b[0], x[1] - b[1])); }, Infinity);
+      var v = Math.min(1, Math.max(0, (1.2 - near / R) / 0.4));
+      return v * v * (3 - 2 * v);
+    }
+    var w = carry(a) + (carry(b) - carry(a)) * e;
+    bp = [bp[0] + R * 0.95 * w, bp[1] + R * 0.95 * w];
     var ends = b.home.concat(b.away);
     layer.innerHTML = a.arrows.map(function (ar) { return arrow(ar, moving ? 1 - u : 1, ends); }).join('') +
       people.map(function (o) { return disc(o.p, o.home, o.number); }).join('') +
