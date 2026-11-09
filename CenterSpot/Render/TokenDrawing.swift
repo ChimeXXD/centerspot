@@ -5,7 +5,8 @@ import Foundation
 /// Players, the ball and cones (SPEC §4, D-15): home filled discs with kit-ink numbers, away rings with a dark
 /// centre and a white number, the ball a small white disc with a dark outline, the selection a white chalk ring.
 /// D-67: every disc has a thin dark outline. D-93 (supersedes D-67's numbers-on-top): the board draws each token
-/// whole, body then number, back to front, so a disc on top of a neighbour covers it cleanly, number included.
+/// whole, body then number, back to front, so a disc on top of a neighbour lies over it like a coin: the number
+/// underneath stays, clipped where the top disc covers it.
 enum TokenDrawing {
     /// Shirt numbers: heavy Nunito (D-44), sized to the disc rather than Dynamic Type.
     static let numberWeight: CGFloat = 800
@@ -93,19 +94,6 @@ enum TokenDrawing {
             case .player:
                 player(token, at: c, kit: kit, radius: r, style: style, in: ctx)
             }
-        }
-    }
-
-    /// How far a token's body reaches from its centre, in disc radii, its dark outline included (not the selection
-    /// ring): what `BoardRenderer.coveredNumbers` measures a disc on top by. Matches `drawBody`.
-    static func reach(of token: Token, kit: Tokens.Kit?) -> CGFloat {
-        switch token.kind {
-        case .ball: return 0.42 + 0.07
-        case .cone, .marker: return 0.8  // the triangle's corners (0.74 r) and half its outline
-        case .player:
-            let kit = kit ?? Tokens.kit(token.side == .away ? .coral : .lime)
-            let edge: CGFloat = token.side != .away ? 1 : kit.outline == nil ? 1.02 : 1.1
-            return edge + outlineWidth
         }
     }
 

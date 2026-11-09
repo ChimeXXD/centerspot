@@ -3,8 +3,8 @@ import Foundation
 
 /// The board through the tilted broadcast camera (D-65, D-66, D-67, BR-2), for playback and export. Everything on the
 /// grass (pitch, marks, arrows) is drawn on the camera's plane and projected; each disc lies flat in the projection's
-/// shape where it stands, far to near so nearer discs cover farther ones; every number is drawn last, upright, sized to
-/// its disc's distance. One renderer still (D-07): the screen and the video both come through here.
+/// shape where it stands, far to near so nearer discs cover farther ones, each with its number upright on it, sized to
+/// its disc's distance (D-93: a nearer disc clips a farther one's number). One renderer still (D-07): the screen and the video both come through here.
 extension BoardRenderer {
     /// The camera `options` ask for in `rect`, or nil for the flat board (and library cards).
     static func camera(for options: Options, in rect: CGRect, kind: Pitch.Kind) -> BroadcastCamera? {
@@ -34,21 +34,15 @@ extension BoardRenderer {
                               in: ctx, camera: camera)
         }
 
-        // Far to near, each token whole (D-93): a nearer player covers a farther one, and a number shows whole or not
-        // at all (measured where the camera draws them).
+        // Far to near, each token whole (D-93): a nearer player lies over a farther one, number clipped, not hidden.
         let discs = farToNear(tactic.tokens, centres: centres).compactMap { token in
-            centres[token.id].map { Disc(token, at: $0, radius: g.tokenRadius, kit: kit(for: token, in: tactic)) }
+            centres[token.id].map { Disc(token, at: $0, kit: kit(for: token, in: tactic)) }
         }
-        let covered = coveredNumbers(discs.map {
-            Disc(token: $0.token, centre: camera.project($0.centre), radius: $0.radius * camera.depthScale(at: $0.centre),
-                 kit: $0.kit, reach: $0.reach)
-        })
         for disc in discs {
             let token = disc.token, c = disc.centre, kit = disc.kit, style = style(of: token, options)
             var flat = style
             flat.grass = camera
             TokenDrawing.drawBody(token, at: c, kit: kit, radius: g.tokenRadius, style: flat, in: ctx)
-            guard !covered.contains(token.id) else { continue }
             TokenDrawing.drawNumber(token, at: camera.project(c), kit: kit, radius: g.tokenRadius * camera.depthScale(at: c),
                                     style: style, in: ctx)
         }

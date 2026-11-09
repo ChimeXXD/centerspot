@@ -4,7 +4,7 @@ import Testing
 @testable import CenterSpot
 
 /// The broadcast restyle in `BoardRenderer` (D-65, D-67): marks lie on the grass under the discs in the mockup's order,
-/// every disc has a thin dark outline, and every number is drawn after every disc.
+/// every disc has a thin dark outline, and each token is drawn whole, body then number, back to front (D-93).
 extension BoardRendererTests {
     typealias T = TestTactics
 
@@ -20,8 +20,9 @@ extension BoardRendererTests {
         return count
     }
 
-    /// D-93 (supersedes D-67 rule 1, which looked glitched on Chime's phone): players stack. A disc drawn after a
-    /// neighbour covers it whole, number included, and its dark outline cuts across the disc underneath.
+    /// D-93 (supersedes D-67 rule 1, which looked glitched on Chime's phone): players stack like coins. A disc drawn
+    /// after a neighbour lies over it, number included, and its dark outline cuts across the disc underneath; the
+    /// number underneath stays, clipped where the disc on top covers it.
     @Test func aDiscOnTopCoversTheOneUnderneathNumberAndAll() throws {
         let hero = try Fixtures.tactic("overlap-left")
         var state = Timeline.restingState(step: 0, in: hero)
@@ -39,24 +40,15 @@ extension BoardRendererTests {
         var alone = state
         alone.positions["h7"] = Point(x: 0.95, y: 0.05)
         #expect(Self.darkPixels(in: try Self.render(hero, state: alone), covered) > 10, "9's number is in the band")
+        // Chime, 9 Nov: the number underneath stays, clipped where 7 lies over it. The left of the "9", clear of 7's
+        // disc and outline, still shows.
+        let clear = CGRect(x: c.x - 0.34 * r, y: band.minY, width: 0.12 * r, height: band.height)
+        #expect(Self.darkPixels(in: frame, clear) > 6, "the uncovered part of 9's number shows")
         // 7's dark outline runs across 9's disc, above and below the number, so they read as two discs.
         let dy = 0.55 * r, half = (r * r - dy * dy).squareRoot()  // 7's half-width 0.55 r below its centre
         let edge = c.x + 0.9 * r - half - TokenDrawing.outlineWidth * r / 2
         let outline = frame.colour(at: CGPoint(x: edge, y: c.y + dy))
         #expect(Self.close(outline, Tokens.Colour.discOutline, within: 40), "7's outline over 9: \(outline)")
-    }
-
-    /// D-93: a number shows whole or not at all. Mostly under a later disc, a player keeps their disc but not their
-    /// number; just touching, both numbers show; the ball never hides its carrier's number.
-    @Test func aNumberShowsWholeOrNotAtAll() {
-        func disc(_ id: String, _ kind: Token.Kind = .player, x: CGFloat) -> BoardRenderer.Disc {
-            var token = Token(id: id, kind: kind)
-            if kind == .player { token.side = .home; token.number = 9 }
-            return BoardRenderer.Disc(token: token, centre: CGPoint(x: x, y: 100), radius: 10)
-        }
-        #expect(BoardRenderer.coveredNumbers([disc("under", x: 100), disc("over", x: 109)]) == ["under"])
-        #expect(BoardRenderer.coveredNumbers([disc("under", x: 100), disc("over", x: 119)]).isEmpty, "touching edges")
-        #expect(BoardRenderer.coveredNumbers([disc("carrier", x: 100), disc("ball", .ball, x: 106)]).isEmpty)
     }
 
     /// D-93: the selected player is drawn on top of the others (tap a stacked player to bring them forward); the ball

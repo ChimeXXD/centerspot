@@ -78,12 +78,21 @@ struct BroadcastCameraTests {
     }
 
     @Test func itFollowsItsTarget() {
-        let target = Point(x: 0.5, y: 0.6)
+        // D-95: the camera centres on the ball (the player with it) and follows it up the pitch: wherever it is, it
+        // sits in the middle of the view, and the camera moves up with it. (D-91's lens put these at 0.53, 0.43 and
+        // 0.37 of the height; a camera that stood still would too.)
+        var focus = -Double.infinity
+        for y in [0.3, 0.45, 0.6] {
+            let camera = BroadcastCamera(view: view, kind: .full, target: Point(x: 0.5, y: y))
+            let at = camera.project(camera.plane.point(Point(x: 0.5, y: y)))
+            #expect(abs(at.x - view.midX) < 1e-6)
+            #expect(abs(at.y / view.height - 0.5) < 0.02, "target \(y): \(at.y / view.height)")
+            #expect(camera.focus > focus, "the camera moves up with the ball")
+            focus = camera.focus
+        }
+        let target = Point(x: 0.5, y: 0.45)
         let camera = BroadcastCamera(view: view, kind: .full, target: target)
         let at = camera.project(camera.plane.point(target))
-        #expect(abs(at.x - view.midX) < 1e-6)
-        // The target sits about where the mockup put the ball: a little over a third of the way down.
-        #expect(abs(at.y / view.height - 0.37) < 0.03, "\(at.y / view.height)")
         // In a rect away from the origin it still centres on the target.
         let offset = view.offsetBy(dx: 40, dy: 100)
         let moved = BroadcastCamera(view: offset, kind: .full, target: target)
@@ -112,11 +121,15 @@ struct BroadcastCameraTests {
         }
     }
 
-    /// D-91 in a tall view: the pitch is drawn bigger rather than leave dark above it, and still fills the width.
+    /// D-91 in a tall view: the pitch is drawn bigger than the lens's own width rather than leave dark above it.
+    /// The view is tall enough that even the lens's 2.2 view widths (D-95) would show the whole pitch with sky.
     @Test func aTallViewDrawsThePitchBiggerRatherThanShowSky() {
-        let view = CGRect(x: 0, y: 0, width: 402, height: 700)
+        let view = CGRect(x: 0, y: 0, width: 300, height: 1000)
+        let lensWidth = BroadcastCamera.Lens.fitting(view.size).widthPerViewWidth * view.width
         let camera = BroadcastCamera(view: view, kind: .full, target: Point(x: 0.5, y: 0.3))
-        #expect(camera.plane.pitchRect.width > 1.1 * view.width, "\(camera.plane.pitchRect.width)")
+        #expect(camera.plane.pitchRect.width > lensWidth * 1.02, "\(camera.plane.pitchRect.width) vs \(lensWidth)")
+        let far = camera.project(camera.plane.point(Point(x: 0.5, y: 1)))
+        #expect(far.y <= BroadcastCamera.skyMargin * view.height + 0.5, "far line at \(far.y)")
     }
 
     private func expectNoSky(_ camera: BroadcastCamera, view: CGRect, _ label: String) {

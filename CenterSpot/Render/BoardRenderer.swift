@@ -46,7 +46,8 @@ enum BoardRenderer {
     /// Opacity of the other tokens while one is dimmed against (the mockup's 0.35).
     static let dimmedOpacity: CGFloat = 0.35
 
-    /// The pitch, then the marks on the grass (D-65), the arrows, every disc, and every number last (D-67).
+    /// The pitch, then the marks on the grass (D-65), the arrows, then each token whole, body then number, back to front
+    /// (D-93: a number under another disc is clipped by it, not hidden).
     /// A library card (`options.card`, D-74) turns the grass, marks and arrows a quarter clockwise; the discs are then
     /// drawn where the turn puts them, so numbers stay upright and the ball stays at its carrier's lower right.
     static func draw(state: BoardState, tactic: Tactic, in ctx: CGContext, rect: CGRect, options: Options = .init()) {
@@ -80,13 +81,12 @@ enum BoardRenderer {
         }
         ctx.restoreGState()
 
-        // Each token whole, body then number, in drawing order (D-93): one on top of another covers it, number and
-        // all, with its dark outline between them, so two players read as a stack, not one number over another disc.
+        // Each token whole, body then number, in drawing order (D-93): one on top of another lies over it like a coin,
+        // with its dark outline between them; the number underneath stays, clipped where the top disc covers it.
         let numbers = card?.showsNumbers(radius: g.tokenRadius) ?? true
         let discs = drawingOrder(tactic.tokens, selected: options.onTop ?? options.selection).compactMap { token in
-            discCentres[token.id].map { Disc(token, at: $0, radius: g.tokenRadius, kit: kit(for: token, in: tactic)) }
+            discCentres[token.id].map { Disc(token, at: $0, kit: kit(for: token, in: tactic)) }
         }
-        let covered = numbers ? coveredNumbers(discs) : []
         // The selection ring first, under every body, so it never crosses a neighbour's number.
         for disc in discs where disc.token.id == options.selection {
             TokenDrawing.drawSelection(disc.token, at: disc.centre, radius: g.tokenRadius, style: style(of: disc.token, options),
@@ -97,7 +97,7 @@ enum BoardRenderer {
             var style = style(of: token, options)
             style.ringDrawn = true
             TokenDrawing.drawBody(token, at: c, kit: kit, radius: g.tokenRadius, style: style, in: ctx)
-            guard numbers, !covered.contains(token.id) else { continue }
+            guard numbers else { continue }
             TokenDrawing.drawNumber(token, at: c, kit: kit, radius: g.tokenRadius, style: style, in: ctx)
         }
     }
@@ -146,48 +146,18 @@ enum BoardRenderer {
         return field.filter { $0.id != selected } + field.filter { $0.id == selected } + tokens.filter { $0.kind == .ball }
     }
 
-    /// A token where it is drawn, at its drawn size, with its kit worked out once.
+    /// A token where it is drawn, with its kit worked out once.
     struct Disc {
         let token: Token
         let centre: CGPoint
-        let radius: CGFloat
         let kit: Tokens.Kit?
-        /// How far its body reaches past the centre, in radii (`TokenDrawing.reach`).
-        let reach: CGFloat
 
-        init(token: Token, centre: CGPoint, radius: CGFloat, kit: Tokens.Kit? = nil,
-             reach: CGFloat = 1 + TokenDrawing.outlineWidth) {
+        init(_ token: Token, at centre: CGPoint, kit: Tokens.Kit?) {
             self.token = token
             self.centre = centre
-            self.radius = radius
             self.kit = kit
-            self.reach = reach
-        }
-
-        init(_ token: Token, at centre: CGPoint, radius: CGFloat, kit: Tokens.Kit?) {
-            self.init(token: token, centre: centre, radius: radius, kit: kit,
-                      reach: TokenDrawing.reach(of: token, kit: kit))
         }
     }
-
-    /// D-93: a number shows whole or not at all. A player whose number a disc drawn after them would cut into (the
-    /// number reaches about half a radius from the centre) keeps their disc but not their number. The ball cuts
-    /// nothing: it sits at its carrier's feet.
-    static func coveredNumbers(_ discs: [Disc]) -> Set<String> {
-        var covered: Set<String> = []
-        for (i, under) in discs.enumerated() where under.token.kind == .player {
-            let cut = discs[(i + 1)...].contains { over in
-                over.token.kind != .ball
-                    && hypot(over.centre.x - under.centre.x, over.centre.y - under.centre.y)
-                        < over.radius * over.reach + under.radius * numberReach
-            }
-            if cut { covered.insert(under.token.id) }
-        }
-        return covered
-    }
-
-    /// How far a two-digit number reaches from its disc's centre, in disc radii.
-    static let numberReach: CGFloat = 0.55
 
     static func kit(for token: Token, in tactic: Tactic) -> Tokens.Kit? {
         guard token.kind == .player, let side = token.side else { return nil }

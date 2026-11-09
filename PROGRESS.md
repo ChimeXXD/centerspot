@@ -2,6 +2,22 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Numbers clipped, not hidden; Broadcast like the library view (Mon 9 Nov 2026, later, D-93 amended, D-95)
+
+**Changed**
+- D-93: a player under another keeps their number, clipped where the one on top covers it (the first build hid it; Chime: "Don't make the number disappear"). `coveredNumbers` and `TokenDrawing.reach` are gone.
+- D-95: the tall Broadcast lens takes the library view's look: 58° tilt, the pitch 2.2 view widths across, about two-thirds of its length in view, centred on the ball and following it; every player stays. Chime picked "B" from renders of two framings on both devices. Supersedes D-91's steady wide shot; the no-dark-above-the-far-goal cap stays.
+
+**Checked**
+- Unit: full suite on the final code by the commit gate (iPhone 18 Pro, iOS 27.0). `aDiscOnTopCoversTheOneUnderneathNumberAndAll` now also checks the uncovered part of the number shows (failed first, as expected, against the hiding rule); `itFollowsItsTarget` now checks three targets up the pitch, each held at 50% ± 2% of the view's height with the camera moving up (D-91's lens gives 53%, 43%, 37% and fails it, as would a still camera). On the iPhone 18 Pro's Play board (about 402 × 527 pt, the size Chime's renders were made at) about 73% of the pitch's length is in view. Fresh-context verifier: the follow test was too loose (fixed as above); two stale comments fixed.
+- UI: Camera, Broadcast, BoardScreenshot, DrawShape on iPhone 18 Pro; IPadLayout and Camera on iPad Pro 13-inch. Play captured on both, portrait and landscape.
+
+**Not verified**
+- On the devices; how the follow feels on a real phone (the camera moves much more than D-91's).
+
+**Next**
+- Install; Chime to look at Broadcast and overlaps on both devices.
+
 ## Scenarios on the Formation sheet (Mon 9 Nov 2026, D-94)
 
 **Changed**

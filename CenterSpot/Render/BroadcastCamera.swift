@@ -17,12 +17,15 @@ struct BroadcastCamera: Sendable, Equatable {
         /// How far up the pitch (0…1 of its length) the target sits above the view's bottom edge.
         var lead: Double
 
-        /// Tall views (playback, the 9:16 frame): touchline to touchline across the middle of the view, the camera
-        /// steeper than the mockup's `CAM = { pw: 660, tilt: 54, persp: 1100 }` so the pitch still runs past the view
-        /// and the camera follows play (D-91, Chime picked "B" from renders on the iPhone and iPad). The plane is at
-        /// most 1.1 view widths, and narrower in a squarer view (0.84 view heights).
-        static let standard = Lens(tiltDegrees: 35, widthPerViewWidth: 1.1, widthPerViewHeight: 0.84,
-                                   eye: 1100 / 660, lead: 0.44)
+        /// Tall views (playback, the 9:16 frame): the library's Broadcast look (Chime picked "B", 9 Nov, D-95): the
+        /// wide lens's 58° tilt and eye, the pitch 2.2 view widths across (at most 1.68 view heights in a squarer view),
+        /// so about two-thirds of its length is in view, centred on the ball and following it, the touchlines
+        /// leaning in toward the far goal. Supersedes D-91's steady wide shot.
+        static let standard = Lens(tiltDegrees: wide.tiltDegrees, widthPerViewWidth: 2.2,
+                                   widthPerViewHeight: 2.2 * mockupPlayback.width / mockupPlayback.height, eye: wide.eye,
+                                   lead: 0.3)
+        /// The approved mockup's playback view, whose shape sets how squarer views are bounded.
+        private static let mockupPlayback = CGSize(width: 393, height: 516)
         /// Wide views (16:9): `{ pw: 320, tilt: 58, persp: 700 }` in a 393 × 221 view.
         static let wide = Lens(tiltDegrees: 58, widthPerViewWidth: 320 / 393, widthPerViewHeight: 320 / 221,
                                eye: 700 / 320, lead: 0.42)
