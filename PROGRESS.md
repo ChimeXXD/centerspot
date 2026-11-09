@@ -2,6 +2,23 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Player tag; Day 7 README and case study drafts (Mon 9 Nov 2026, night, D-98)
+
+**Changed**
+- D-98: a tapped player wears a tag above its ring, its name or else its position (CDM, CM, LB/RB, LW/RW, ST…; L or R from where it stands, mirrored for their side). Roles unchanged in the sheet and the line under the board. Editing only, never in Play or an export, hidden from VoiceOver. `Role.position`, `Token.tag(at:)`, `BoardCanvas.playerTag`.
+- README rewritten for the public repo (what it does, the measured export table, architecture diagram, folders, build and test commands). `docs/CASE-STUDY.md` first draft (problem, decisions, how it was built, honest numbers, what went wrong); device results to be added.
+- Installed on Chime's iPhone 14 Pro and iPad (signing now runs to about 16 Nov).
+
+**Checked**
+- `PlayerTagTests` (every role has a position; sides; a name wins) and `PlayerTagUITests` on iPhone 18 Pro and iPad Pro 13-inch (M5), screenshots read: "CDM" over 6, "LB" over 3, "Ade" after naming. Code review (medium, --fix): placement now measured from the tag's real size (large text, touchline, long names truncate); 4 notes left (tag shows in Draw, position map lives in code with a test, a wide player at x = 0.5 reads R, UI test is screenshot-only). Full gate at commit abacb5a.
+- README and case study numbers checked against this log; library-name check clean.
+
+**Not verified**
+- The tag on the devices; the 16-item device checklist (Chime).
+
+**Next**
+- Chime's checklist results into `docs/features.json` and the case study; demo video in the app; repo public and CI.
+
 ## Defending scenarios end with the ball won (Mon 9 Nov 2026, evening, D-97)
 
 **Changed**
