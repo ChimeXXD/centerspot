@@ -1,11 +1,11 @@
-# Build and test CenterSpot on GitHub's macOS runners.
-# While the repo is private this runs only on pushes to main and by hand, to stay inside the free minutes
-# (macOS minutes count 10x). On Day 7, when the repo goes public, add `pull_request:` (D-01).
+# Build and test CenterSpot on GitHub's macOS runners, on pushes to main, pull requests and by hand (public since
+# Nov 10, 2026, so macOS minutes are free; D-77).
 name: CI
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 concurrency:
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build-and-test:
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -25,11 +25,37 @@ jobs:
       - name: Generate the project
         run: xcodegen generate
 
+      # The runner's Xcode may come without an iOS simulator (Nov 10, 2026: none at all), so a fixed device name
+      # fails. Use the newest iPhone there is; with none, download the iOS platform and make one.
+      - name: Pick an iPhone simulator
+        id: sim
+        run: |
+          xcodebuild -version
+          pick() {
+            xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          for runtime in sorted(devices, reverse=True):
+              if "iOS" in runtime:
+                  for d in devices[runtime]:
+                      if d["name"].startswith("iPhone"):
+                          print(d["udid"]); sys.exit()'
+          }
+          UDID=$(pick)
+          if [ -z "$UDID" ]; then
+            xcodebuild -downloadPlatform iOS
+            RUNTIME=$(xcrun simctl list runtimes -j | python3 -c 'import json,sys; r=[x for x in json.load(sys.stdin)["runtimes"] if x["platform"]=="iOS" and x["isAvailable"]]; print(r[-1]["identifier"])')
+            TYPE=$(xcrun simctl list devicetypes -j | python3 -c 'import json,sys; t=[x for x in json.load(sys.stdin)["devicetypes"] if x["name"].startswith("iPhone") and "Pro" in x["name"]]; print(t[-1]["identifier"])')
+            UDID=$(xcrun simctl create "CI iPhone" "$TYPE" "$RUNTIME")
+          fi
+          xcrun simctl list devices | grep "$UDID"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
       - name: Build and test
         run: |
           set -o pipefail
           xcodebuild -scheme CenterSpot \
-            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
             CODE_SIGNING_ALLOWED=NO \
             test 2>&1 | tee xcodebuild.log | grep -E "✘|error:|Test run with|\*\* TEST" || true
           grep -q "\*\* TEST SUCCEEDED \*\*" xcodebuild.log
