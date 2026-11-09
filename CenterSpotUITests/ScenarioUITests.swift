@@ -75,6 +75,10 @@ final class ScenarioUITests: XCTestCase {
             XCTAssertTrue(A.element(app, "board.token.\(id)").waitForExistence(timeout: A.timeout), id)
         }
         for id in ["h9", "h3", "a2", "a7"] { XCTAssertFalse(A.element(app, "board.token.\(id)").exists, id) }
+        // D-96: the whole move, not just a position: the 3v2 counter's five steps replace the example's.
+        // Steps show as chips (iPhone, iPad portrait) or rows (iPad landscape).
+        XCTAssertTrue(A.element(app, "steps.chip.5").waitForExistence(timeout: A.timeout) || A.element(app, "steps.row.5").exists)
+        XCTAssertFalse(A.element(app, "steps.chip.6").exists || A.element(app, "steps.row.6").exists)
     }
 
     /// Scrolls the sheet until `element` is wholly above the Use button (a tile under it would take the button's tap).

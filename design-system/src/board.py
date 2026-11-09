@@ -7,7 +7,7 @@ SRC = os.path.join(os.path.dirname(__file__), "..", "..")  # the repo root: mock
 C = {  # Tokens.Colour
     "bg": "#0B0F14", "text": "#F2F5F7", "bcPitchA": "#0E1216", "bcPitchB": "#13181D", "bcLine": "rgba(255,255,255,.42)",
     "zoneFill": "rgba(198,255,61,.13)", "zoneStroke": "rgba(198,255,61,.72)", "heat": "#FF5A2E", "heatCore": "#FFB547",
-    "awayInner": "rgba(11,15,20,.85)", "awayInk": "#FFFFFF", "ball": "#FFFFFF", "discOutline": "#0B0F14",
+    "awayInner": "#0B0F14", "awayInk": "#FFFFFF", "ball": "#FFFFFF", "discOutline": "#0B0F14",
     "run": "#FFFFFF", "pass": "#C6FF3D", "dribble": "#FFD84A", "press": "#FF6B4A",
 }
 KITS = {  # Tokens.kit(_:)  fill, ink, outline

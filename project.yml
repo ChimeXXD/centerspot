@@ -32,6 +32,9 @@ targets:
         buildPhase: resources
       - path: presets/roles.json
         buildPhase: resources
+      # Scenario moves (D-96), generated from mockup/scenario-motion.js.
+      - path: presets/scenario-moves.json
+        buildPhase: resources
       # The hero move (D-29): added to the library on first launch (D-56); Debug -openExample opens it.
       - path: examples/overlap-left.tactic
         buildPhase: resources

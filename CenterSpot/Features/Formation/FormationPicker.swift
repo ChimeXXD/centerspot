@@ -77,7 +77,7 @@ struct FormationPicker: View {
             Button("Cancel", role: .cancel) {}
             Button("Set up") { applyScenario() }
         } message: {
-            Text("Players who aren't in it leave the board. You can undo.")
+            Text("This replaces the move on the board. You can undo.")
         }
         .presentationDetents([.fraction(0.8), .large])
         .centerSpotSheet()
@@ -214,7 +214,8 @@ struct FormationPicker: View {
         return Button { scenarioID = item.id } label: {
             VStack(alignment: .leading, spacing: 6) {
                 if let board = item.build(with: formation, attacking: attacking) {
-                    ScenarioPicture(board: board, kind: formation.pitch, framesThePlay: !isTeam)
+                    ScenarioPicture(board: board, kind: formation.pitch, framesThePlay: !isTeam,
+                                    move: ScenarioMotion.build(item, formation: formation, attacking: attacking), plays: on)
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.name)
@@ -258,7 +259,7 @@ struct FormationPicker: View {
                 }
             case .scenarios:
                 if let scenario {
-                    Button("Use \(scenario.name)") { anyPlayers ? (confirmingScenario = true) : applyScenario() }
+                    Button("Use \(scenario.name)") { hasMove ? (confirmingScenario = true) : applyScenario() }
                         .buttonStyle(PrimaryCapsuleStyle())
                 } else {
                     Button("Pick a scenario") {}
@@ -274,7 +275,14 @@ struct FormationPicker: View {
         .background(Tokens.Colour.surface.color)
     }
 
-    private var anyPlayers: Bool { editor.tactic.tokens.contains { $0.kind == .player } }
+    /// Something to replace (D-96: the scenario's move replaces it): players, more than one step, or anything drawn or
+    /// written on the one there is.
+    private var hasMove: Bool {
+        guard let steps = editor.tactic.phases.first?.steps else { return false }
+        let first = steps.first
+        return editor.tactic.tokens.contains { $0.kind == .player } || steps.count > 1
+            || first.map { !$0.arrows.isEmpty || !$0.runs.isEmpty || $0.marks != Marks() || !($0.note ?? "").isEmpty } ?? false
+    }
 
     private var extras: Int { formation.map { Formation.extraPlayers(in: editor.tactic, for: $0) } ?? 0 }
 

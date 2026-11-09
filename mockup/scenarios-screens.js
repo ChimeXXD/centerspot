@@ -145,7 +145,7 @@ add("formation--scenarios-seven", "5 · 7-a-side shape: the list fits the size",
 add("formation--scenario-confirm", "6 · A board with players: confirm first", "phone",
   boardScreen(behind) + formationSheet({ tab: "scenarios", chosen: "3v2-counter", from: "scenario.3v2-counter" }) +
   `<div class="alert" role="alertdialog"><div class="msg">${txt("scenario.confirm.title", "Set up 3v2 counter?", "", "h4")}
-    ${txt("scenario.confirm.message", "Players who aren't in it leave the board. You can undo.", "", "p")}</div>
+    ${txt("scenario.confirm.message", "This replaces the move on the board. You can undo.", "", "p")}</div>
     <div class="acts">${btn("scenario.confirm.cancel", "Cancel", "", "Cancel")}${btn("scenario.confirm.go", "Set up", "go", "Set up")}</div></div>`);
 add("board--scenario-applied", "7 · The board, set up: 10, 7 and 11 break on two centre-backs", "phone",
   boardScreen(buildScenario("3v2-counter", "4-3-3", true), { tag: "3v2 counter", toast: "3v2 counter set up" }));

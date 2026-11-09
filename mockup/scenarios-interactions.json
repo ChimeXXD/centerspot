@@ -377,7 +377,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Build-up v press; the button reads Use Build-up v press",
+   "effect": "choose Build-up v press; the button reads Use Build-up v press; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -391,7 +391,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Through midfield; the button reads Use Through midfield",
+   "effect": "choose Through midfield; the button reads Use Through midfield; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -405,7 +405,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Final third v low block; the button reads Use Final third v low block",
+   "effect": "choose Final third v low block; the button reads Use Final third v low block; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -419,7 +419,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Switch of play; the button reads Use Switch of play",
+   "effect": "choose Switch of play; the button reads Use Switch of play; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -433,7 +433,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Counter-attack; the button reads Use Counter-attack",
+   "effect": "choose Counter-attack; the button reads Use Counter-attack; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -447,7 +447,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Counter-press; the button reads Use Counter-press",
+   "effect": "choose Counter-press; the button reads Use Counter-press; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -461,7 +461,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 1v1 on the wing; the button reads Use 1v1 on the wing",
+   "effect": "choose 1v1 on the wing; the button reads Use 1v1 on the wing; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -475,7 +475,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 1v1 with the keeper; the button reads Use 1v1 with the keeper",
+   "effect": "choose 1v1 with the keeper; the button reads Use 1v1 with the keeper; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -489,7 +489,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 2v1 overlap; the button reads Use 2v1 overlap",
+   "effect": "choose 2v1 overlap; the button reads Use 2v1 overlap; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -503,7 +503,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 2v1 one-two; the button reads Use 2v1 one-two",
+   "effect": "choose 2v1 one-two; the button reads Use 2v1 one-two; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -517,7 +517,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 2v2 in the box; the button reads Use 2v2 in the box",
+   "effect": "choose 2v2 in the box; the button reads Use 2v2 in the box; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -531,7 +531,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 3v1 keep the ball; the button reads Use 3v1 keep the ball",
+   "effect": "choose 3v1 keep the ball; the button reads Use 3v1 keep the ball; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -545,7 +545,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 3v2 counter; the button reads Use 3v2 counter",
+   "effect": "choose 3v2 counter; the button reads Use 3v2 counter; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -559,7 +559,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 3v3 in midfield; the button reads Use 3v3 in midfield",
+   "effect": "choose 3v3 in midfield; the button reads Use 3v3 in midfield; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -573,7 +573,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 3v4 outnumbered; the button reads Use 3v4 outnumbered",
+   "effect": "choose 3v4 outnumbered; the button reads Use 3v4 outnumbered; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -587,7 +587,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 4v3 flank overload; the button reads Use 4v3 flank overload",
+   "effect": "choose 4v3 flank overload; the button reads Use 4v3 flank overload; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -601,7 +601,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose 1v3 surrounded; the button reads Use 1v3 surrounded",
+   "effect": "choose 1v3 surrounded; the button reads Use 1v3 surrounded; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -615,7 +615,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Corner; the button reads Use Corner",
+   "effect": "choose Corner; the button reads Use Corner; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -629,7 +629,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Free kick, edge of the box; the button reads Use Free kick, edge of the box",
+   "effect": "choose Free kick, edge of the box; the button reads Use Free kick, edge of the box; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -643,7 +643,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Free kick, wide; the button reads Use Free kick, wide",
+   "effect": "choose Free kick, wide; the button reads Use Free kick, wide; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -657,7 +657,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Goal kick; the button reads Use Goal kick",
+   "effect": "choose Goal kick; the button reads Use Goal kick; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -671,7 +671,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Throw-in; the button reads Use Throw-in",
+   "effect": "choose Throw-in; the button reads Use Throw-in; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -685,7 +685,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Penalty; the button reads Use Penalty",
+   "effect": "choose Penalty; the button reads Use Penalty; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -699,7 +699,7 @@
     "pressed",
     "selected"
    ],
-   "effect": "choose Kick-off; the button reads Use Kick-off",
+   "effect": "choose Kick-off; the button reads Use Kick-off; its picture loops the scenario's move (D-96), still with Reduce Motion",
    "duration_ms": 150,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -713,7 +713,7 @@
     "pressed",
     "disabled"
    ],
-   "effect": "Shapes: apply the shape (as today). Scenarios: set up the board, after the confirm alert if it has players; disabled until a scenario is picked",
+   "effect": "Shapes: apply the shape (as today). Scenarios: replace the move on the board with the scenario's whole move (D-96), after the confirm alert if the board has players or steps; disabled until a scenario is picked",
    "duration_ms": 320,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,
@@ -739,7 +739,7 @@
     "default",
     "pressed"
    ],
-   "effect": "set up the board (one undoable edit), close the sheet, show the toast",
+   "effect": "set up the scenario's move (one undoable edit), go to step 1, close the sheet, show the toast",
    "duration_ms": 320,
    "easing": "cubic-bezier(0.2, 0, 0, 1)",
    "delay_ms": 0,

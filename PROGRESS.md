@@ -2,6 +2,24 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Every scenario is a move (Mon 9 Nov 2026, evening, D-96)
+
+**Changed**
+- Spec: `mockup/scenario-motion.js` (24 role-based scripts and the reaction rules), `mockup/scenario-motion.html` (a playable page: any scenario, side and shape). A sample of six went to Chime first; after it, every move ends in a goal (not 3v1), and all small-sided games but 3v1 have a keeper. `gen_scenario_fixtures.js` now also writes `presets/scenario-moves.json` (the scripts, bundled) and `CenterSpotTests/Fixtures/scenario-moves.json` (158 moves: 4-3-3, 3-5-2, 2-3-1, 2-2, every scenario each offers, both sides).
+- App: `ScenarioMotion` (the engine, ported line for line; reads the bundled scripts), `Scenario.apply` replaces the move with the scenario's (names kept by shirt number via `Formation.place`, which now says which token took each place; cones stay), the board goes to step 1, the picked tile loops its move (`ScenarioPicture.plays`; every tile frames its whole move so it doesn't jump), the confirm reads "This replaces the move on the board. You can undo."
+
+**Checked**
+- Spec: all 1,112 shape × scenario × side moves build (no missing players, everything on the pitch); every attacking move reviewed step by step in 4-3-3, defending ones spot-checked; fixes from that review: beaten defenders stay beaten, a carry past the presser goes unpressed, set-piece defenders hold zones, the 3v1 presser is left stranded.
+- Unit: 476 passed, incl. `ScenarioMoveTests` (all 158 moves equal the mockup's steps, notes, positions and arrows) and the rewritten `ScenarioApplyTests` (the whole move lands; every token on every step; step ids unique; last note "Goal").
+- UI: `ScenarioUITests` on iPhone 18 Pro and iPad Pro 13-inch: set up the 3v2 counter, its 5 steps replace the example's, Undo restores.
+
+**Not verified**
+- On the devices; how the moves feel played at full size.
+- Fresh-context verifier: compiled the Swift port and compared all 1,112 moves with the spec (0 differences) and applied all 1,112 to the example (names, cones, unique steps, unchanged when no scripts). Its finds, fixed: notes now use the board's shirt numbers (`notesNameThePlayersOnTheBoard`); the penalty is 3 steps ("steps up"), so every move is 3–5; four design-system sentences. Code review (high, --fix): 8 findings, 3 fixed (tile loop starts at the set-up, a new ball placed in every phase, `ScenarioMotion+Script.swift` split out); then apply builds the move before changing anything, and the confirm also shows for a drawn-on or noted single step.
+
+**Next**
+- Chime to try the moves on both devices.
+
 ## Numbers clipped, not hidden; Broadcast like the library view (Mon 9 Nov 2026, later, D-93 amended, D-95)
 
 **Changed**

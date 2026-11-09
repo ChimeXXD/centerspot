@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenario Moves Sample</title>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* Tokens as in Design/Tokens.swift. */
+  :root {
+    --bg: #0B0F14; --surface: #151B23; --surface-2: #1E2630; --surface-3: #27313D; --hairline: #2A3440;
+    --text: #F2F5F7; --muted: #93A0AD; --accent: #C6FF3D; --accent-ink: #0B0F14;
+    --home: #C6FF3D; --home-ink: #0B0F14; --away: #FF6B4A; --away-inner: #0B0F14; --away-ink: #FFFFFF; --ball: #FFFFFF;
+    --disc-outline: #0B0F14; --run: #FFFFFF; --pass: #C6FF3D; --dribble: #FFD84A;
+    --bc-pitch-a: #0E1216; --bc-pitch-b: #13181D; --bc-line: rgba(255,255,255,.42);
+    --font-ui: Nunito, system-ui, sans-serif; --font-note: Kalam, cursive;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 500 15px/1.4 var(--font-ui); }
+  main { max-width: 1100px; margin: 0 auto; padding: 32px 16px 48px; display: grid; grid-template-columns: 1fr 420px; gap: 32px; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  h1 { font: 700 26px/1.2 var(--font-ui); margin: 0 0 6px; }
+  .lead { color: var(--muted); margin: 0 0 24px; max-width: 560px; }
+  .label { font: 600 12px var(--font-ui); color: var(--muted); margin: 20px 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  button { font: inherit; color: inherit; border: 0; cursor: pointer; }
+  .chip { min-height: 44px; padding: 0 16px; border-radius: 999px; background: var(--surface-2); color: var(--muted); font: 700 14px var(--font-ui); }
+  .chip[aria-pressed="true"] { background: var(--surface-3); color: var(--text); outline: 2px solid var(--text); outline-offset: -2px; }
+  .board { background: var(--surface); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  svg { display: block; width: 100%; height: auto; border-radius: 12px; }
+  .note { font: 400 19px/1.3 var(--font-note); min-height: 52px; }
+  .meta { font: 600 12px var(--font-ui); color: var(--muted); }
+  .bar { display: flex; gap: 4px; }
+  .bar i { flex: 1; height: 4px; border-radius: 2px; background: var(--surface-3); }
+  .bar i.done { background: var(--accent); }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  .play { height: 48px; padding: 0 22px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font: 700 16px var(--font-ui); }
+  .ghost { height: 48px; padding: 0 16px; border-radius: 999px; background: var(--surface-2); font: 700 14px var(--font-ui); }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font: 600 12px var(--font-ui); color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <h1>Scenario moves: a sample of six</h1>
+    <p class="lead">Each scenario now plays out as a move of 3 to 5 steps. The side on the ball follows the scenario's pattern; the other side presses, slides across and tracks runners. Lime is always your team. Pick a scenario, a side and a shape, then press Play.</p>
+    <div class="label">Scenario</div><div class="chips" id="scenario"></div>
+    <div class="label">Who has the ball</div><div class="chips" id="side"></div>
+    <div class="label">Your shape</div><div class="chips" id="shape"></div>
+    <div class="label">Lines</div>
+    <div class="legend"><span>White solid: run</span><span>Lime dashed: pass or shot</span><span>Yellow wavy: dribble</span></div>
+  </section>
+  <section class="board">
+    <div class="meta" id="meta"></div>
+    <svg id="pitch" viewBox="0 0 340 525" role="img" aria-label="The move on the board"></svg>
+    <div class="bar" id="bar"></div>
+    <div class="note" id="note"></div>
+    <div class="controls">
+      <button class="play" id="play">Play</button>
+      <button class="ghost" id="prev" aria-label="Previous step">Back</button>
+      <button class="ghost" id="next" aria-label="Next step">Next</button>
+    </div>
+  </section>
+</main>
+<script src="scenario-data.js"></script>
+<script src="scenarios.js"></script>
+<script src="scenario-motion.js"></script>
+<script>
+const W = 340, H = 525, R = 9, HOLD = 0.35;
+const IDS = Object.keys(MOTIONS);
+const SHAPES = ["4-3-3", "4-4-2", "3-5-2", "4-2-3-1", "5-4-1", "7-2-3-1"];
+const state = { id: IDS[0], attacking: true, shape: "4-3-3", steps: [], t: 0, playing: false };
+const P = p => [p.x * W, (1 - p.y) * H];
+
+function chips(el, items, current, set) {
+  el.innerHTML = items.map(([v, label]) => `<button class="chip" aria-pressed="${v === current}" data-v="${v}">${label}</button>`).join("");
+  el.querySelectorAll("button").forEach(b => b.onclick = () => set(b.dataset.v));
+}
+
+function pitch() {
+  const stripes = Array.from({ length: 8 }, (_, i) => `<rect x="0" y="${i * H / 8}" width="${W}" height="${H / 8}" fill="${i % 2 ? "var(--bc-pitch-b)" : "var(--bc-pitch-a)"}"/>`).join("");
+  const m = (x, y) => [x / 68 * W, (1 - y / 105) * H];
+  const box = (x0, y0, x1, y1) => { const [a, b] = m(x0, y0), [c, d] = m(x1, y1); return `<rect x="${Math.min(a, c)}" y="${Math.min(b, d)}" width="${Math.abs(c - a)}" height="${Math.abs(d - b)}" fill="none"/>`; };
+  return stripes + `<g stroke="var(--bc-line)" stroke-width="1.2" fill="none">${box(0, 0, 68, 105)}<line x1="0" y1="${H / 2}" x2="${W}" y2="${H / 2}"/><circle cx="${W / 2}" cy="${H / 2}" r="${9.15 / 68 * W}"/>
+    ${box(13.85, 0, 54.15, 16.5)}${box(13.85, 88.5, 54.15, 105)}${box(24.85, 0, 43.15, 5.5)}${box(24.85, 99.5, 43.15, 105)}${box(30.34, 105, 37.66, 107)}${box(30.34, -2, 37.66, 0)}</g>`;
+}
+
+function arrow(a, opacity) {
+  const [x1, y1] = P(a.points[0]), [x2, y2] = P(a.points[a.points.length - 1]);
+  const colour = a.kind === "run" ? "var(--run)" : a.kind === "pass" ? "var(--pass)" : "var(--dribble)";
+  let d = `M${x1},${y1} L${x2},${y2}`;
+  if (a.kind === "dribble") {
+    const len = Math.hypot(x2 - x1, y2 - y1), n = Math.max(4, Math.round(len / 10)), nx = -(y2 - y1) / len, ny = (x2 - x1) / len;
+    d = `M${x1},${y1}` + Array.from({ length: n }, (_, i) => { const t = (i + 1) / n, w = (i % 2 ? -1 : 1) * 3.5 * (i < n - 1 ? 1 : 0); return ` L${x1 + (x2 - x1) * t + nx * w},${y1 + (y2 - y1) * t + ny * w}`; }).join("");
+  }
+  const ang = Math.atan2(y2 - y1, x2 - x1), hx = x2 - Math.cos(ang) * 8, hy = y2 - Math.sin(ang) * 8;
+  const head = `M${hx + Math.cos(ang + Math.PI / 2) * 4.5},${hy + Math.sin(ang + Math.PI / 2) * 4.5} L${x2},${y2} L${hx - Math.cos(ang + Math.PI / 2) * 4.5},${hy - Math.sin(ang + Math.PI / 2) * 4.5}`;
+  return `<g opacity="${opacity}" stroke="${colour}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" ${a.kind === "pass" ? 'stroke-dasharray="6 5"' : ""}><path d="${d}"/><path d="${head}" stroke-dasharray="none"/></g>`;
+}
+
+function disc(p, home, number) {
+  const [x, y] = P(p);
+  const body = home
+    ? `<circle cx="${x}" cy="${y}" r="${R * 1.1}" fill="var(--disc-outline)"/><circle cx="${x}" cy="${y}" r="${R}" fill="var(--home)"/>`
+    : `<circle cx="${x}" cy="${y}" r="${R * 1.12}" fill="var(--disc-outline)"/><circle cx="${x}" cy="${y}" r="${R * 0.9}" fill="var(--away-inner)" stroke="var(--away)" stroke-width="${R * 0.24}"/>`;
+  return body + `<text x="${x}" y="${y + R * 0.38}" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="${R * 1.05}" fill="${home ? "var(--home-ink)" : "var(--away-ink)"}">${number}</text>`;
+}
+
+// The board at time t: hold each step, then move to the next (as Timeline does).
+function frame(t) {
+  const steps = state.steps;
+  let k = 0, start = 0;
+  while (k < steps.length - 1 && t >= start + HOLD + steps[k].duration) { start += HOLD + steps[k].duration; k++; }
+  const local = t - start, moving = k < steps.length - 1 && local > HOLD;
+  const u = moving ? Math.min(1, (local - HOLD) / steps[k].duration) : 0;
+  const e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+  const a = steps[k], b = steps[Math.min(k + 1, steps.length - 1)];
+  const lerp = (p, q) => ({ x: p.x + (q.x - p.x) * e, y: p.y + (q.y - p.y) * e });
+  const side = (list, next, home) => list.map((p, i) => ({ p: lerp(p, next[i]), home, number: p.number }));
+  // Back to front: nearer our goal end on top, as the board draws them (D-93).
+  const players = [...side(a.away, b.away, false), ...side(a.home, b.home, true)].sort((m, n) => n.p.y - m.p.y);
+  const ball = lerp(a.ball, b.ball);
+  const [bx, by] = P(ball);
+  document.getElementById("pitch").innerHTML = pitch() + a.arrows.map(ar => arrow(ar, moving ? 1 - u : 1)).join("")
+    + players.map(o => disc(o.p, o.home, o.number)).join("")
+    + `<circle cx="${bx + R * 0.7}" cy="${by + R * 0.7}" r="${R * 0.48}" fill="var(--ball)" stroke="var(--disc-outline)" stroke-width="1.4"/>`;
+  document.getElementById("note").textContent = `${k + 1}. ${a.note}`;
+  document.getElementById("bar").innerHTML = steps.map((_, i) => `<i class="${i <= k ? "done" : ""}"></i>`).join("");
+  return k;
+}
+
+const total = () => state.steps.reduce((s, st, i) => s + HOLD + (i < state.steps.length - 1 ? st.duration : 0), 0);
+const stepStart = k => state.steps.slice(0, k).reduce((s, st) => s + HOLD + st.duration, 0);
+
+function load() {
+  state.steps = buildMotion(state.id, state.shape, state.attacking) || [];
+  state.t = 0;
+  const sc = SCENARIOS.find(s => s.id === state.id);
+  document.getElementById("meta").textContent = `${sc.name} · ${formation(state.shape).name} · ${state.attacking ? "Attacking" : "Defending"} · ${state.steps.length} steps`;
+  render();
+  frame(0);
+}
+
+function render() {
+  chips(document.getElementById("scenario"), IDS.map(id => [id, SCENARIOS.find(s => s.id === id).name]), state.id, v => { state.id = v; load(); });
+  chips(document.getElementById("side"), [["att", "Attacking"], ["def", "Defending"]], state.attacking ? "att" : "def", v => { state.attacking = v === "att"; load(); });
+  chips(document.getElementById("shape"), SHAPES.map(s => [s, formation(s).name]), state.shape, v => { state.shape = v; load(); });
+}
+
+let last = null;
+function tick(now) {
+  if (!state.playing) return;
+  if (last !== null) state.t += (now - last) / 1000;
+  last = now;
+  if (state.t >= total()) { state.t = total(); state.playing = false; document.getElementById("play").textContent = "Play again"; }
+  frame(state.t);
+  if (state.playing) requestAnimationFrame(tick);
+}
+document.getElementById("play").onclick = () => {
+  if (state.t >= total()) state.t = 0;
+  state.playing = !state.playing; last = null;
+  document.getElementById("play").textContent = state.playing ? "Pause" : "Play";
+  if (state.playing) requestAnimationFrame(tick);
+};
+const jump = d => { state.playing = false; document.getElementById("play").textContent = "Play"; const k = frame(state.t); const to = Math.max(0, Math.min(state.steps.length - 1, k + d)); state.t = stepStart(to); frame(state.t); };
+document.getElementById("prev").onclick = () => jump(-1);
+document.getElementById("next").onclick = () => jump(1);
+load();
+</script>
+</body>
+</html>

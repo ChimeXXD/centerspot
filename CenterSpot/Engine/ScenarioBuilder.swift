@@ -13,33 +13,59 @@ extension Scenario {
 }
 
 extension Scenario {
-    /// "Use <scenario>" (D-94): the pitch takes the shape's size, both sides take their places on `stepIndex` as
-    /// `Formation.place` does (names stay by shirt number; others leave from every step, with their arrows), and the
-    /// ball goes to its spot, added if there is none. The step starts clean: its arrows and runs began where the old
-    /// players stood. Unchanged when the opponent's shape is missing.
+    /// "Use <scenario>" (D-94, D-96): the scenario's whole move replaces the move on the board, as one edit. The pitch
+    /// takes the shape's size; both sides take their places as `Formation.place` does (names stay by shirt number;
+    /// others leave, with their arrows) and the ball is added if there is none; then the steps are the move's: where
+    /// everyone stands, its arrows and its notes. Cones and markers stay where they stood on `stepIndex`. Unchanged
+    /// when the opponent's shape or the move is missing.
     func apply(to tactic: Tactic, formation: Formation, attacking: Bool, stepIndex: Int, phaseIndex: Int = 0) -> Tactic {
+        // Both built before anything changes: without a move (no script bundled), the board stays as it was.
         guard tactic.phases.indices.contains(phaseIndex), tactic.phases[phaseIndex].steps.indices.contains(stepIndex),
-              let board = build(with: formation, attacking: attacking) else { return tactic }
+              let board = build(with: formation, attacking: attacking),
+              let move = ScenarioMotion.build(self, formation: formation, attacking: attacking) else { return tactic }
         var result = tactic
+        // One clean step, everything where it stood on the step shown; the move's steps replace it below.
+        let standing = Timeline.restingState(step: stepIndex, in: tactic, phaseIndex: phaseIndex).positions
+        let firstID = tactic.phases[phaseIndex].steps[0].id
+        result.phases[phaseIndex].steps = [Step(id: firstID, positions: standing)]
         result.pitch.kind = formation.pitch
-        result.phases[phaseIndex].steps[stepIndex].arrows = []
-        result.phases[phaseIndex].steps[stepIndex].runs = [:]
         // The side that loses the most players goes first, so its leavers free room under the token cap before the
         // other side's newcomers need it.
         func surplus(_ side: Side.ID, _ players: [ScenarioBoard.Player]) -> Int {
             result.tokens.count(where: { $0.kind == .player && $0.side == side }) - players.count
         }
         let sides = [(Side.ID.home, board.home), (.away, board.away)].sorted { surplus($0.0, $0.1) > surplus($1.0, $1.1) }
+        var tokenFor: [Side.ID: [Int: String]] = [:]
         for (side, players) in sides {
-            Formation.place(players.map { ($0.number, $0.roleID, $0.point) }, side: side, in: &result, stepIndex: stepIndex,
-                            phaseIndex: phaseIndex)
+            tokenFor[side] = Formation.place(players.map { ($0.number, $0.roleID, $0.point) }, side: side, in: &result,
+                                             stepIndex: 0, phaseIndex: phaseIndex)
         }
-        if let ball = result.tokens.first(where: { $0.kind == .ball }) {
-            result.phases[phaseIndex].steps[stepIndex].positions[ball.id] = board.ball
-        } else if let id = TacticEdits.addToken(.ball, in: &result) {
+        var ballID = result.tokens.first(where: { $0.kind == .ball })?.id
+        if ballID == nil, let id = TacticEdits.addToken(.ball, in: &result) {
+            // A new ball goes to its spot in every step of every phase, as new players do (`Formation.place`).
             for p in result.phases.indices {
                 for s in result.phases[p].steps.indices { result.phases[p].steps[s].positions[id] = board.ball }
             }
+            ballID = id
+        }
+        if let ballID { result.phases[phaseIndex].steps[0].positions[ballID] = board.ball }
+
+        // The notes name the board's players by their own shirt numbers.
+        var shirts: [Side.ID: [Int: Int]] = [:]
+        for (side, places) in tokenFor {
+            for (number, id) in places { shirts[side, default: [:]][number] = result.tokens.first { $0.id == id }?.number ?? number }
+        }
+        let named = ScenarioMotion.build(self, formation: formation, attacking: attacking, shirts: shirts) ?? move
+        let fixed = result.phases[phaseIndex].steps[0].positions
+        var taken = Set(result.phases.enumerated().filter { $0.offset != phaseIndex }.flatMap(\.element.steps).map(\.id))
+        result.phases[phaseIndex].steps = named.enumerated().map { k, step in
+            var positions = fixed
+            for p in step.home { if let id = tokenFor[.home]?[p.number] { positions[id] = p.point } }
+            for p in step.away { if let id = tokenFor[.away]?[p.number] { positions[id] = p.point } }
+            if let ballID { positions[ballID] = step.ball }
+            let id = k == 0 && !taken.contains(firstID) ? firstID : (1...).lazy.map { "s\($0)" }.first { !taken.contains($0) }!
+            taken.insert(id)
+            return Step(id: id, duration: step.duration, positions: positions, arrows: step.arrows, note: step.note)
         }
         return result
     }

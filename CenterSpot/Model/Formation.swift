@@ -47,9 +47,10 @@ struct Formation: Codable, Sendable, Hashable, Identifiable {
     /// One side's players onto `places` (number, role, point) at one step, as `apply` does for the home side: matched
     /// by shirt number first, then in board order; names stay, roles follow the place; places left over get new
     /// players (placed in every step), players left over are removed with their arrows. Scenarios use it for both
-    /// sides (D-94).
+    /// sides (D-94). Returns which token took each place, by the place's shirt number.
+    @discardableResult
     static func place(_ places: [(number: Int, roleID: String, point: Point)], side: Side.ID, in result: inout Tactic,
-                      stepIndex: Int, phaseIndex: Int = 0) {
+                      stepIndex: Int, phaseIndex: Int = 0) -> [Int: String] {
         let team = result.tokens.indices.filter { result.tokens[$0].kind == .player && result.tokens[$0].side == side }
         var free = places
         var placed: [(token: Int, place: (number: Int, roleID: String, point: Point))] = []
@@ -62,9 +63,11 @@ struct Formation: Codable, Sendable, Hashable, Identifiable {
             guard !free.isEmpty else { break }
             placed.append((i, free.removeFirst()))
         }
+        var tokenFor: [Int: String] = [:]
         for (i, place) in placed {
             result.tokens[i].roleID = place.roleID
             result.phases[phaseIndex].steps[stepIndex].positions[result.tokens[i].id] = place.point
+            tokenFor[place.number] = result.tokens[i].id
         }
         let leftover = team.filter { i in !placed.contains { $0.token == i } }.map { result.tokens[$0].id }
         if !leftover.isEmpty { removeArrows(from: Set(leftover), in: &result) }
@@ -77,7 +80,9 @@ struct Formation: Codable, Sendable, Hashable, Identifiable {
             for p in result.phases.indices {
                 for s in result.phases[p].steps.indices { result.phases[p].steps[s].positions[id] = place.point }
             }
+            tokenFor[place.number] = id
         }
+        return tokenFor
     }
 
     /// How many home players a switch to `formation` removes (D-83): those beyond its slots.

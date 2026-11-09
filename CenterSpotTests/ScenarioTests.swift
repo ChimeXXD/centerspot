@@ -57,7 +57,8 @@ struct ScenarioTests {
 
 private final class ScenarioBundleToken {}
 
-/// D-94: "Use <scenario>" sets up the current step with both sides and the ball, keeping names by shirt number.
+/// D-94, D-96: "Use <scenario>" replaces the move on the board with the scenario's whole move: both sides and the ball,
+/// names kept by shirt number, every step's places, arrows and notes the move's.
 struct ScenarioApplyTests {
     private static let shape = Presets.shared.formation("4-3-3")!
     private static func scenario(_ id: String) -> Scenario { Scenario.all.first { $0.id == id }! }
@@ -77,6 +78,22 @@ struct ScenarioApplyTests {
         }
         let ball = try #require(tactic.tokens.first { $0.kind == .ball })
         #expect(step.positions[ball.id] == board.ball)
+
+        // Then the move: as many steps as it has, each with its places, arrows and note.
+        let move = try #require(ScenarioMotion.build(Self.scenario("3v2-counter"), formation: Self.shape, attacking: true))
+        #expect(tactic.phases[0].steps.count == move.count)
+        for (applied, wanted) in zip(tactic.phases[0].steps, move) {
+            #expect(applied.note == wanted.note)
+            #expect(applied.arrows == wanted.arrows)
+            #expect(applied.duration == wanted.duration)
+            #expect(applied.positions[ball.id] == wanted.ball)
+            for player in wanted.home {
+                let token = try #require(tactic.tokens.first { $0.side == .home && $0.number == player.number })
+                #expect(applied.positions[token.id] == player.point, "\(wanted.note): \(player.number)")
+            }
+        }
+        #expect(Set(tactic.phases[0].steps.map(\.id)).count == move.count, "step ids are unique")
+        #expect(tactic.phases[0].steps.last?.note == "Goal")
     }
 
     @Test func onTheExampleNamesStayAndOthersLeaveFromEveryStep() throws {
@@ -88,15 +105,27 @@ struct ScenarioApplyTests {
         #expect(home.count == 1)
         #expect(home.first?.name == "Osimhen", "9 is the striker through on goal and keeps their name")
         #expect(applied.tokens.filter { $0.kind == .player && $0.side == .away }.map(\.number) == [1])
-        #expect(applied.phases[0].steps.count == hero.phases[0].steps.count, "steps stay")
+        // The example's five steps are replaced by the scenario's move (D-96): nothing of the old move stays.
+        let move = try #require(ScenarioMotion.build(Self.scenario("1v1-keeper"), formation: Self.shape, attacking: true))
+        #expect(applied.phases[0].steps.map(\.note) == move.map(\.note))
+        #expect(applied.phases[0].steps.allSatisfy { $0.runs.isEmpty && $0.marks == Marks() })
         let ids = Set(applied.tokens.map(\.id))
         for step in applied.phases[0].steps {
-            #expect(Set(step.positions.keys).isSubset(of: ids), "no one left behind in a step")
+            #expect(Set(step.positions.keys) == ids, "every token placed on every step, and no one left behind")
         }
         #expect(applied.tokens.filter { $0.kind == .ball }.count == 1, "the ball is kept, not doubled")
-        // The step it sets up starts clean: lines drawn there began where the old players stood.
-        #expect(!hero.phases[0].steps[2].arrows.isEmpty || !hero.phases[0].steps[2].runs.isEmpty, "the example draws on step 3")
-        #expect(applied.phases[0].steps[2].arrows.isEmpty && applied.phases[0].steps[2].runs.isEmpty)
+    }
+
+    /// A board player whose number the shape doesn't have takes a place by board order; the notes then name them by
+    /// the number on their shirt, not the shape's (verifier, 9 Nov).
+    @Test func notesNameThePlayersOnTheBoard() throws {
+        var tactic = TacticDocument.blank()
+        tactic.tokens.append(Token(id: "h23", kind: .player, side: .home, number: 23))
+        tactic.phases[0].steps[0].positions["h23"] = Point(x: 0.5, y: 0.5)
+        let applied = Self.scenario("1v1-keeper").apply(to: tactic, formation: Self.shape, attacking: true, stepIndex: 0)
+        let notes = applied.phases[0].steps.map(\.note)
+        #expect(notes.first == "23 runs at 1", "\(notes)")
+        #expect(notes.allSatisfy { $0.map { !$0.contains("9 ") } ?? true }, "no note names the shape's 9: \(notes)")
     }
 
     @Test func aSmallerSizeTurnsThePitch() throws {

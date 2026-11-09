@@ -3,13 +3,68 @@ import SwiftUI
 /// A scenario tile's picture (D-94, mockup `pitchSVG`): the pitch turned with our attack to the right, both sides and
 /// the ball where the scenario puts them. Team shapes show the whole pitch; small-sided games and set pieces are framed
 /// on the play (the players and ball with a margin, at least half the pitch long, kept on the pitch). Discs keep one
-/// size on screen however the picture is framed.
+/// size on screen however the picture is framed, which takes in the scenario's whole `move` (D-96), so a tile doesn't
+/// jump when it starts playing. With `plays` (the picked tile) it loops the move: each step held, then eased to the
+/// next, a pause on the last; with Reduce Motion it stays on the set-up.
 struct ScenarioPicture: View {
     let board: ScenarioBoard
     let kind: Pitch.Kind
     var framesThePlay = false
+    var move: [ScenarioMotion.Step]? = nil
+    var plays = false
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// When the loop started: picking the tile (or changing its move) plays from the set-up, as the mockup's `load()`.
+    @State private var started: Date?
+
+    /// Where everyone stands at one moment: home, away, ball.
+    private struct Scene {
+        let home: [Point]
+        let away: [Point]
+        let ball: Point
+    }
+
+    /// The pause on the last step before the loop starts again.
+    private static let endPause = 1.0
 
     var body: some View {
+        Group {
+            if plays, let move, move.count > 1, !reduceMotion {
+                TimelineView(.animation) { timeline in
+                    canvas(scene(of: move, at: started.map { timeline.date.timeIntervalSince($0) } ?? 0))
+                }
+                .onAppear { started = .now }
+                .onChange(of: move) { started = .now }
+            } else {
+                canvas(Scene(home: board.home.map(\.point), away: board.away.map(\.point), ball: board.ball))
+            }
+        }
+        .aspectRatio(CGFloat(kind.size.length / kind.size.width), contentMode: .fit)
+        .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.item * 2 / 3))
+        .accessibilityHidden(true)
+    }
+
+    /// The move at `time` on a loop: as `Timeline` plays a move, each step held, then eased to the next.
+    private func scene(of move: [ScenarioMotion.Step], at time: TimeInterval) -> Scene {
+        let lengths = move.dropLast().map { Timeline.hold + $0.duration }
+        let total = lengths.reduce(0, +) + Timeline.hold + Self.endPause
+        var t = time.truncatingRemainder(dividingBy: total), k = 0
+        while k < lengths.count, t >= lengths[k] {
+            t -= lengths[k]
+            k += 1
+        }
+        guard k < lengths.count, t > Timeline.hold else {
+            let step = move[k]
+            return Scene(home: step.home.map(\.point), away: step.away.map(\.point), ball: step.ball)
+        }
+        let u = min(1, (t - Timeline.hold) / move[k].duration), e = u < 0.5 ? 2 * u * u : 1 - pow(-2 * u + 2, 2) / 2
+        func mix(_ a: Point, _ b: Point) -> Point { Point(x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e) }
+        let a = move[k], b = move[k + 1]
+        return Scene(home: zip(a.home, b.home).map { mix($0.point, $1.point) },
+                     away: zip(a.away, b.away).map { mix($0.point, $1.point) }, ball: mix(a.ball, b.ball))
+    }
+
+    private func canvas(_ scene: Scene) -> some View {
         Canvas { context, size in
             let w = size.width, h = size.height
             // Board point → picture point, turned: up the pitch is to the right, our left touchline at the top.
@@ -21,21 +76,21 @@ struct ScenarioPicture: View {
             context.translateBy(x: -frame.minX, y: -frame.minY)
             drawPitch(in: &context, w: w, h: h, line: max(1, w / 240) * k)
             let disc = r * k
-            for player in board.away { drawAway(at(player.point), radius: disc, in: &context) }
-            for player in board.home { drawHome(at(player.point), radius: disc, in: &context) }
-            let ball = at(board.ball)
+            for p in scene.away { drawAway(at(p), radius: disc, in: &context) }
+            for p in scene.home { drawHome(at(p), radius: disc, in: &context) }
+            let ball = at(scene.ball)
             let ballRect = CGRect(x: ball.x + disc * 0.8 - disc * 0.5, y: ball.y + disc * 0.8 - disc * 0.5, width: disc, height: disc)
             context.fill(SwiftUI.Path(ellipseIn: ballRect), with: .color(Tokens.Colour.ball.color))
             context.stroke(SwiftUI.Path(ellipseIn: ballRect), with: .color(Tokens.Colour.discOutline.color), lineWidth: disc * 0.14)
         }
-        .aspectRatio(CGFloat(kind.size.length / kind.size.width), contentMode: .fit)
-        .clipShape(RoundedRectangle(cornerRadius: Tokens.Radius.item * 2 / 3))
-        .accessibilityHidden(true)
     }
 
-    /// The part of the picture to show: the play, with room round it, at the picture's aspect.
+    /// The part of the picture to show: the play (the whole move's, when it loops), with room round it, at the
+    /// picture's aspect.
     private func playFrame(w: CGFloat, h: CGFloat, radius r: CGFloat, at: (Point) -> CGPoint) -> CGRect {
-        let points = (board.home + board.away).map { at($0.point) } + [at(board.ball)]
+        var all = (board.home + board.away).map(\.point) + [board.ball]
+        for step in move ?? [] { all += (step.home + step.away).map(\.point) + [step.ball] }
+        let points = all.map(at)
         let xs = points.map(\.x), ys = points.map(\.y)
         guard let minX = xs.min(), let maxX = xs.max(), let minY = ys.min(), let maxY = ys.max() else {
             return CGRect(x: 0, y: 0, width: w, height: h)

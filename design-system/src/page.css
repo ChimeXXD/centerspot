@@ -366,6 +366,42 @@ svg.board { display: block; border-radius: 6px; }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font: 600 12px Nunito; color: var(--muted); margin-top: 12px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 
+/* Scenarios (D-94): the sheet's tab, the tile, the live move. Pictures come from mockup/scenarios-screens.js. */
+.scn-phone { width: 405px; max-width: 100%; height: 780px; border-radius: 44px; border: 6px solid #1A1F26; background: var(--bg); overflow: hidden; display: flex; flex-direction: column; }
+.scn-behind { height: 48px; flex-shrink: 0; background: #06080B; }
+.scn-phone .sheet { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 0; border-radius: 20px 20px 0 0; }
+.scn-pinned { padding: 20px 24px 0; display: flex; flex-direction: column; gap: 16px; }
+.scn-list { flex: 1; min-height: 0; overflow: hidden; padding: 16px 24px 0; display: flex; flex-direction: column; gap: 16px; }
+.scn-list > * { flex-shrink: 0; }
+.scn-foot { padding: 12px 24px 24px; background: var(--surface); box-shadow: 0 -12px 16px var(--surface); position: relative; }
+.scn-chip { align-self: flex-start; height: 44px; padding: 0 14px 0 16px; border-radius: 999px; background: var(--surface-2); display: inline-flex; align-items: center; gap: 6px; font: 700 15px Nunito; }
+.scn-chip small { font: 500 12px Nunito; color: var(--muted); }
+.scn-help { font: 500 12px/1.3 Nunito; color: var(--muted); margin: -8px 0 0 4px; }
+.scn-group h4 { font: 700 17px/1.3 Nunito; margin: 4px 0 12px; }
+.scn-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+.scn-grid.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.scn-tile { border-radius: 16px; background: var(--surface-2); border: 2px solid transparent; padding: 8px 8px 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.scn-tile.on { border-color: var(--text); }
+.scn-tile svg, .scn-fig svg { display: block; width: 100%; height: auto; border-radius: 8px; }
+.scn-tile .tx { display: flex; flex-direction: column; gap: 2px; padding: 0 4px; }
+.scn-tile b { font: 700 15px/1.25 Nunito; }
+.scn-tile span { font: 500 12px/1.3 Nunito; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.6em; }
+.scn-fig { margin: 0; } .scn-fig figcaption { font: 500 12px/1.3 Nunito; color: var(--muted); margin-top: 8px; }
+.scn-cat tr.grp th { font: 700 15px Nunito; color: var(--ink); padding-top: 20px; }
+.scn-cat td code { font-size: 12px; background: none; padding: 0; color: var(--ink-2); }
+.scn-cat td { min-width: 96px; } .scn-cat td:first-child { min-width: 240px; }
+.scn-rule { width: 150px; }
+.t-note-cell { font: 400 17px/1.3 Kalam, cursive; }
+.scn-live-grid { grid-template-columns: minmax(0, 360px) minmax(0, 1fr); align-items: start; gap: 24px; }
+.scn-live button { cursor: pointer; }
+.scn-live button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.scn-live .scn-board { width: 100%; height: auto; }
+.scn-ctrls { display: flex; align-items: center; justify-content: center; gap: 24px; }
+.scn-ctrls .ib { width: 44px; height: 44px; display: grid; place-items: center; color: var(--text); }
+.scn-ctrls .disc { width: 48px; height: 48px; border-radius: 50%; background: var(--accent) !important; color: var(--accent-ink) !important; display: grid; place-items: center; }
+.scn-ctrls .disc svg + svg, .scn-ctrls .disc.on svg:first-child { display: none; }
+.scn-ctrls .disc.on svg + svg { display: block; }
+
 @media (max-width: 1100px) {
   .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .layout { grid-template-columns: 1fr; }
@@ -376,6 +412,7 @@ svg.board { display: block; border-radius: 6px; }
   html { scroll-padding-top: 116px; }
   main { padding: 24px 24px 100px; }
   .comp { grid-template-columns: 1fr; }
+  .scn-live-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
   .topbar { padding: 0 16px; } .topbar .ver, .topbar .ds { display: none; }
@@ -390,6 +427,13 @@ svg.board { display: block; border-radius: 6px; }
   .app { padding: 16px; }
   .lockup-h .w { font-size: 32px; }
   .specimen .big { font-size: 48px; }
+  .scn-grid.c3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .scn-cat thead, .scn-stack thead { display: none; }
+  .scn-cat tr, .scn-stack tr { display: block; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+  .scn-cat td, .scn-cat th, .scn-stack td { display: block; border: 0; padding: 2px 0; min-width: 0 !important; width: auto !important; }
+  .scn-cat td + td { display: inline; }
+  .scn-cat td + td + td::before { content: " · "; color: var(--ink-2); }
+  .scn-cat tr.grp { border-bottom: 0; padding-bottom: 0; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .mo-dot { transition-property: transform; }

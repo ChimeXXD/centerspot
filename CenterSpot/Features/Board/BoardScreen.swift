@@ -297,7 +297,11 @@ struct BoardScreen: View {
         case .formation:
             FormationPicker(editor: editor, stepIndex: current, onRemoved: { removed in
                 show(removed == 1 ? "Removed 1 player" : "Removed \(removed) players", offersUndo: true)
-            }, onScenario: { message in show(message, offersUndo: true) })
+            }, onScenario: { message in
+                // The move was replaced (D-96): start from its first step.
+                stepIndex = 0
+                show(message, offersUndo: true)
+            })
         case .note(let index):
             StepNoteSheet(editor: editor, stepIndex: index)
         case .export:

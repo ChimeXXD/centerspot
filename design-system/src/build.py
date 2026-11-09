@@ -2,7 +2,7 @@
 (Design/Tokens.swift and the views), read from this repo (mockup/, presets/). Run: python3 design-system/src/build.py"""
 import json, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-import icons, logo, components
+import icons, logo, components, scenarios
 from icons import svg as I
 from board import board_svg, KITS, token, RATIO
 
@@ -30,7 +30,7 @@ BOARD_COLOURS = [
     ("bcPitchA", "#0E1216", 1, "Pitch, stripe A"), ("bcPitchB", "#13181D", 1, "Pitch, stripe B"), ("bcLine", "#FFFFFF", .42, "Pitch lines"),
     ("zoneFill", "#C6FF3D", .13, "Zone fill (kit colour at 13%)"), ("zoneStroke", "#C6FF3D", .72, "Zone edge"),
     ("heat", "#FF5A2E", 1, "Heat"), ("heatCore", "#FFB547", 1, "Heat's hot centre"),
-    ("discOutline", "#0B0F14", 1, "Thin outline round every disc (D-67)"), ("awayInner", "#0B0F14", .85, "Their ring's dark centre"),
+    ("discOutline", "#0B0F14", 1, "Thin outline round every disc (D-67)"), ("awayInner", "#0B0F14", 1, "Their ring's dark centre, solid so nothing shows through (D-93)"),
     ("awayInk", "#FFFFFF", 1, "Their numbers"), ("ball", "#FFFFFF", 1, "Ball"),
     ("run", "#FFFFFF", 1, "Run arrow"), ("pass", "#C6FF3D", 1, "Pass arrow"), ("dribble", "#FFD84A", 1, "Dribble arrow, cones"), ("press", "#FF6B4A", 1, "Press arrow"),
 ]
@@ -202,7 +202,9 @@ def main():
            ("type", "03", "Typography", []), ("space", "04", "Space and shape", []), ("motion", "05", "Motion", []),
            ("icons", "06", "Icons", [("icons-grid", "Grid"), ("icons-set", "Interface set"), ("icons-tools", "Draw tools")]),
            ("components", "07", "Components", [("which", "Which component?")] + [(f"c-{items[0][0]}", g) for g, items in components.INDEX]),
-           ("voice", "08", "Voice and tone", []), ("a11y", "09", "Accessibility", []), ("downloads", "10", "Downloads", [])]
+           ("scenarios", "08", "Scenarios", [("c-scenario-sheet", "Sheet"), ("c-scenario-tile", "Tile"), ("scn-catalogue", "Catalogue"),
+            ("scn-motion", "Moves"), ("scn-copy", "Copy"), ("scn-live-sub", "Live example")]),
+           ("voice", "09", "Voice and tone", []), ("a11y", "10", "Accessibility", []), ("downloads", "11", "Downloads", [])]
     nav_html = "<ol>" + "".join(
         f'<li><a href="#{i}"><span class="n">{n}</span>{t}</a>' + ("<ol>" + "".join(f'<li><a href="#{a}">{b}</a></li>' for a, b in subs) + "</ol>" if subs else "") + "</li>"
         for i, n, t, subs in nav) + "</ol>"
@@ -353,6 +355,8 @@ def main():
 <div class="sub" id="which"><h3>Which component?</h3><p class="lead">Start from what the person is doing.</p>{components.which()}</div>
 {components.build()}</section>'''
 
+    scen_sec, scen_js = scenarios.section(head)
+
     pairs = [
         ("Removed number 7", "Player deleted successfully!", "Say what changed, in football words, and offer Undo. No exclamation marks."),
         ("Couldn't make the video. Try again, or export an image.", "Error: export failed (code -11800).", "Say what happened and what to do next. Never a code."),
@@ -374,7 +378,7 @@ def main():
                ("Something went wrong", "Calm, specific, a way out.", "Couldn't save. Allow Photos in Settings"),
                ("The coach's notes", "Handwritten, short, about players.", "8 finds the winger")]
     moment_rows = "".join(f'<tr><td><b>{m}</b></td><td>{t}</td><td class="muted">{e}</td></tr>' for m, t, e in moments)
-    voice_sec = f'''<section class="sec" id="voice">{head("voice", "08", "Voice and tone", "A coach who knows the game and respects your time. Plain football words, numbers when they help, never hype.")}
+    voice_sec = f'''<section class="sec" id="voice">{head("voice", "09", "Voice and tone", "A coach who knows the game and respects your time. Plain football words, numbers when they help, never hype.")}
 <div class="principles p3"><div><h3>Plain football words</h3><p>Player, run, step, pitch, the box. Never token, canvas, entity, keyframe.</p></div>
 <div><h3>Short and calm</h3><p>Sentence case. No exclamation marks. Labels and titles end without a period; sentences keep theirs.</p></div>
 <div><h3>Honest</h3><p>Real sizes before sharing, real frame counts while rendering, what was removed and how to undo it.</p></div></div>
@@ -398,7 +402,7 @@ def main():
             ("Contrast", "Text and muted pass AA on every surface; only ink sits on lime.", "See the matrix in Colour"),
             ("Keyboard", "⌘Z and ⇧⌘Z for Undo and Redo on iPad and Mac.", "nav.undo, nav.redo")]
     a11y_rows = "".join(f'<tr><td><b>{a}</b></td><td>{b}</td><td class="muted">{c}</td></tr>' for a, b, c in a11y)
-    a11y_sec = f'''<section class="sec" id="a11y">{head("a11y", "09", "Accessibility", "A coach using VoiceOver should be able to build and play a move. Labels speak football, not geometry.")}
+    a11y_sec = f'''<section class="sec" id="a11y">{head("a11y", "10", "Accessibility", "A coach using VoiceOver should be able to build and play a move. Labels speak football, not geometry.")}
 <div class="scroll-x"><table class="a11y"><thead><tr><th>Area</th><th>What the app does</th><th>Example</th></tr></thead><tbody>{a11y_rows}</tbody></table></div></section>'''
 
     dls = [("tokens.json", "JSON", "Every token: colour, kits, type, space, radius, sizes, motion, board"),
@@ -409,7 +413,7 @@ def main():
            ("logo/app-icon-1024.svg", "SVG", "App icon master, 1024"), ("logo/app-icon-1024.png", "PNG", "App icon, 1024 × 1024"),
            ("logo/app-icon-lime-1024.svg", "SVG", "Lime app icon variant")]
     dl_html = "".join(f'<a href="downloads/{p}" download><span class="ext">{e}</span><span><b>{p.split("/")[-1]}</b><span>{d}</span></span></a>' for p, e, d in dls)
-    dl_sec = f'''<section class="sec" id="downloads">{head("downloads", "10", "Downloads", "The files behind this page. Single icons are in downloads/icons/ by name.")}
+    dl_sec = f'''<section class="sec" id="downloads">{head("downloads", "11", "Downloads", "The files behind this page. Single icons are in downloads/icons/ by name.")}
 <div class="dl">{dl_html}</div>
 <footer class="foot">CenterSpot design system · v1 · 9 November 2026 · Values from <code>CenterSpot/Design/Tokens.swift</code> and the SwiftUI views (git 89a0eb9). The app is the source of truth (D-12): when they differ, the app wins and this page is updated.</footer></section>'''
 
@@ -419,7 +423,7 @@ def main():
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CenterSpot Design System</title>
-<meta name="description" content="The CenterSpot design system: logo, colour, type, space, motion, icons, every component, voice and accessibility.">
+<meta name="description" content="The CenterSpot design system: logo, colour, type, space, motion, icons, every component, scenarios, voice and accessibility.">
 <link rel="icon" href="downloads/logo/app-icon-1024.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400&family=Nunito:ital,wght@0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
@@ -431,7 +435,7 @@ def main():
 <span class="ds">Design System</span><span class="spacer"></span><span class="ver">v1 · 9 Nov 2026</span>
 <button class="theme-btn" id="theme" type="button" aria-label="Switch colour theme">Theme</button></header>
 <div class="layout"><nav class="sidenav" aria-label="Sections">{nav_html}</nav>
-<main>{overview}{logo_sec}{colour_sec}{type_sec}{space_sec}{motion_sec}{icons_sec}{comps_sec}{voice_sec}{a11y_sec}{dl_sec}</main></div>
+<main>{overview}{logo_sec}{colour_sec}{type_sec}{space_sec}{motion_sec}{icons_sec}{comps_sec}{scen_sec}{voice_sec}{a11y_sec}{dl_sec}</main></div>
 <script>
 (function () {{
   var root = document.documentElement, btn = document.getElementById('theme');
@@ -451,6 +455,7 @@ def main():
   document.querySelectorAll('.motion .card').forEach(function (c) {{ c.tabIndex = 0; c.addEventListener('click', function () {{ c.classList.toggle('play'); }}); }});
 }})();
 </script>
+{scen_js}
 </body>
 </html>
 '''
