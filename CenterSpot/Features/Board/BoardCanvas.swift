@@ -98,6 +98,7 @@ struct BoardCanvas: View {
                 // Marks under the players, as drawn: a player on a zone or line is found by touch first.
                 if showsMarks { markLayer(geometry) }
                 accessibilityLayer(centres)
+                playerTag(centres, geometry, in: rect)
                 bendElement(geometry)
             }
         }
@@ -192,6 +193,34 @@ struct BoardCanvas: View {
             }
         }
         .allowsHitTesting(false)
+    }
+
+    /// The tag over the tapped player (D-98): its name, else its position ("CDM", "LB"). Screen only, never in an
+    /// export, and only while editing; it sits above the selection ring, or under the player near the top edge.
+    @ViewBuilder private func playerTag(_ centres: [String: CGPoint], _ geometry: BoardGeometry, in view: CGRect) -> some View {
+        if movesTokens, let id = selection, let centre = centres[id], let point = state.positions[id],
+           let text = tactic.tokens.first(where: { $0.id == id })?.tag(at: point) {
+            // Sized with the discs: the caption size on a phone, up to 18 pt on an iPad's big board.
+            let size = min(max(geometry.tokenRadius * 0.55, 12), 18), pad = (size * 0.92).rounded()
+            let reach = geometry.tokenRadius * 1.45 + Tokens.Space.s1
+            Text(text)
+                .font(.custom(Tokens.Typeface.uiName, size: size, relativeTo: .caption).weight(.bold))
+                .foregroundStyle(Tokens.Colour.text.color)
+                .lineLimit(1)
+                .padding(.horizontal, pad * 0.75)
+                .padding(.vertical, pad * 0.3)
+                .background(Capsule().fill(Tokens.Colour.surface3.color))
+                .padding(.horizontal, Tokens.Space.s1)
+                // Placed by its measured size (the stack is top-leading), so Dynamic Type never pushes it onto the
+                // disc, a player on the touchline keeps it on the board, and a long name truncates at the view's width.
+                .alignmentGuide(.leading) { d in -min(max(centre.x - d.width / 2, 0), max(view.width - d.width, 0)) }
+                .alignmentGuide(.top) { d in
+                    let top = centre.y - reach - d.height
+                    return -(top >= 0 ? top : centre.y + reach)
+                }
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+        }
     }
 
     /// The "Move a player" tip's anchor (D-82): its own 44 pt view on the player, under the pitch. Hung on the token
