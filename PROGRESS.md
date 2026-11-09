@@ -2,6 +2,24 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Renamed to CenterSpot (Mon 9 Nov 2026, early, D-85)
+
+**Changed**
+- Every mention of the old name, history included (Chime's choice): folders and targets `CenterSpot`, `CenterSpotTests`, `CenterSpotUITests`; bundle ID `dev.chime.centerspot`, UTType `dev.chime.centerspot.tactic`, URL scheme `centerspot://`; the export corner mark; docs; the gate's scheme and folders (`.claude/proof.json`, `.claude/settings.json`, Chime to OK). Word-aware replace, so `fragment` stayed intact.
+- GitHub repo renamed to `ChimeXXD/centerspot` (still private); `origin` points at it.
+- The app icon is the CenterSpot mark (D-86), from the design system's 1024 px icon; the old app is uninstalled from both devices (Chime's OK).
+
+**Checked**
+- Gate: build-ios26 ✓, test ✓ (full suite, run alone; a first run collided with a second test run on the simulator and was discarded), no-library-name ✓.
+- The corner mark fits every export box: "CenterSpot" in Nunito 800 measures 172 pt in the 200 pt 1:1 box, 194 in the 240 pt 16:9 box, 172 in the 220 pt line-up box.
+- Installed on the iPhone 14 Pro and Chime's iPad; the old app's tactics copied into the new one (`devicectl copy`, sizes match); both opened the example board and stayed up.
+
+**Not verified**
+- App Store name check (Apple's search was rate-limited); the icon on the Home Screen to be seen by Chime.
+
+**Next**
+- Folder rename to `CenterSpot` (ends this session's working folder); the design system.
+
 ## Crash opening a tactic on the iPad and Mac (Sun 8 Nov 2026, night)
 
 **Changed**
@@ -96,7 +114,7 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 **Changed**
 - Design (D-78, D-79): Chime picked "show off Broadcast", "same 5 tips, Play names Broadcast", "Show tips again in the library menu"; frames in `mockup/screens-onboarding.js`, approved, tag `design-v3`.
 - Welcome (`Features/Onboarding`): three pages over the library on first launch (`WelcomeCover`, `welcomeSeen`); the pictures are the real example move from `BoardRenderer` (page 1 flat with step chips, page 2 Broadcast with the scrubber's segments, page 3 the 9:16 `ExportFrame` in Broadcast), looping, paused off screen; Reduce Motion rests each step with crossfades and the still camera; at AX sizes the pictures step aside and the words scroll. Skip → library; Start → the example move (`LibraryStore.openExample`).
-- Tips (TipKit, no package): five ordered tips (`TipGroup(.ordered)`) anchored to 3 (or the first player), step 2 (chip or iPad row), Play, Draw, Export; done by doing it (drag a player, tap a step, Play, Done with a stroke, open Export) or × (`AgmenTipStyle`); taps pass through to the screen while a tip shows (`tipBackgroundInteraction(.enabled)`), so Play plays on the first tap.
+- Tips (TipKit, no package): five ordered tips (`TipGroup(.ordered)`) anchored to 3 (or the first player), step 2 (chip or iPad row), Play, Draw, Export; done by doing it (drag a player, tap a step, Play, Done with a stroke, open Export) or × (`CenterSpotTipStyle`); taps pass through to the screen while a tip shows (`tipBackgroundInteraction(.enabled)`), so Play plays on the first tap.
 - Library: More (…) → Show tips again (`resetEligibility` on each tip, welcome from page 1).
 - Debug: `-onboarding YES` starts it over; `-skipOnboarding YES` (implied by `-resetLibrary YES`) marks it seen and hides tips for UI tests.
 
@@ -106,7 +124,7 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 
 - Verifier: 4 gaps fixed (`3961592`): tips only while editing with no sheet open, the Draw tip needs a run or arrow, page 3's Reduce Motion picture holds the still camera with crossfades, and the UI test now checks the tips return after Show tips again and hide under the player sheet. Code review: 9 found, 6 fixed (VoiceOver moves finish the drag tip, tapping the current step doesn't finish the step tip, page 2 fits 375 pt phones, the example loads once, two copies of code merged); left for "fix everything": tips on any board, the tip modifier's identity swap.
 - A tip modifier on every token broke `RendererParityTests` (0% match: `ImageRenderer` can't draw a popover host) and a Draw-mode tap; it is now attached only when a tip is due.
-- Gate 3/3 at `3961592`; full AgmenUITests passing.
+- Gate 3/3 at `3961592`; full CenterSpotUITests passing.
 
 **Not verified**
 - Chime on the phone (installed).
@@ -125,7 +143,7 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 **Checked**
 - Red: `CameraTrackTests` 10 and `BroadcastCameraTests` 9 against stubs; `BoardRendererTests+Camera` 4 of 6 against the unused option. Mutations (scratch copy): discs in board order killed by `nearerDiscsAreDrawnOverFartherOnes`; numbers painted on the grass killed by `numbersStayUpright` (after rewriting it on a white away number: the first version was blind, dark ink matched the dark pitch).
 - Parity: screen vs export through the camera first failed D-61's 64/255 cap at ring edges (84/255, 22 px): strokes under a squashing transform rasterise differently in SwiftUI. Discs are now projected filled polygons; passes at 0.9, 3.9, 5.5 s.
-- Gate 3/3 at 1ed0238. AgmenUITests 17 on iPhone 18 Pro (5 iPad-only skipped); IPadLayoutUITests + CameraUITests on the iPad Pro 13-inch (M5) simulator. Simulator timing: 10.6 ms per broadcast frame at 1080 × 1544 vs 6.4 ms flat.
+- Gate 3/3 at 1ed0238. CenterSpotUITests 17 on iPhone 18 Pro (5 iPad-only skipped); IPadLayoutUITests + CameraUITests on the iPad Pro 13-inch (M5) simulator. Simulator timing: 10.6 ms per broadcast frame at 1080 × 1544 vs 6.4 ms flat.
 - `VideoExportTests.theSettingsHaveNoReduceMotionInput` lists the new `camera` field (its comment asks for that; camera is not a Reduce Motion input).
 - Two gate runs failed in FuzzImportTests while other test runs shared the simulator; alone and in a quiet full run they pass.
 
@@ -204,7 +222,7 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 - Searched the app for other framework callbacks with inherited main-actor isolation: none.
 
 **Checked**
-- Red: `ExportFlowUITests.testExportFlow` with the new Save to Photos step: "dev.chime.agmen crashed", simulator crash report with the same stack as the phone's. Green after the fix: "Saved to Photos", app still running.
+- Red: `ExportFlowUITests.testExportFlow` with the new Save to Photos step: "dev.chime.centerspot crashed", simulator crash report with the same stack as the phone's. Green after the fix: "Saved to Photos", app still running.
 - All 4 UI tests pass; gate all 3 pass. Installed on the iPhone 14 Pro.
 - WhatsApp and Discord play the exported clip (Chime).
 
@@ -214,7 +232,7 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 ## Day 5: export (Sat 7 Nov 2026)
 
 **Changed**
-- `VideoExporter` (+ `VideoExportSettings`, `ExportClock`, `ExportFrame`, `ExportLayout`, `ExportText`): frames from `Timeline` drawn by `BoardRenderer` → AVAssetWriter, H.264, 30 fps, BT.709, 0.5 s lead-in and 1 s end still, off the main actor, progress, cancel deletes the file; no Reduce Motion input. 9:16, 1:1, 16:9 (pitch upright, title left, note right, D-63). "Agmen" corner mark on every frame (D-38).
+- `VideoExporter` (+ `VideoExportSettings`, `ExportClock`, `ExportFrame`, `ExportLayout`, `ExportText`): frames from `Timeline` drawn by `BoardRenderer` → AVAssetWriter, H.264, 30 fps, BT.709, 0.5 s lead-in and 1 s end still, off the main actor, progress, cancel deletes the file; no Reduce Motion input. 9:16, 1:1, 16:9 (pitch upright, title left, note right, D-63). "CenterSpot" corner mark on every frame (D-38).
 - `ImageExporter`: PNG of the current step (2 × the pitch's on-screen width) and a lineup card (1080×1350).
 - Export sheet to the mockup: preview with safe zones, Vertical 9:16 / Square / Wide / Image, "Up to … MB" before export (D-64), "Rendering n of N frames", Cancel, real size, share sheet, Save to Photos, error state. Spotlight a player (D-40): ring, fading trail, others dimmed, export only.
 - 26 formations (D-63). The picker's Use button is pinned under the tiles. `ExportSpike` replaced by `-exportBench`.
@@ -274,12 +292,12 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 **Next**
 - Chime tries playback and drawing on the phone; iPad borrow session for the Pencil (D4-4); then Day 5 (export).
 
-## Day 3 follow-up: Agmen's own library (Sat 7 Nov 2026)
+## Day 3 follow-up: CenterSpot's own library (Sat 7 Nov 2026)
 
 **Changed**
-- Chime saw the system document browser on the phone (raw-JSON thumbnail, "Untitled.tactic", "632 bytes", grey button) and asked for an app, not a file manager. D-56 replaces `DocumentGroup` with Agmen's library: lime New tactic, cards drawn by `BoardRenderer` (step 1, title, "11-a-side · 5 steps"), press-and-hold Rename · Duplicate · Share · Delete, Delete asks first, the example "Overlap down the left" on first launch only.
-- `TacticLibrary` (+Import): `.tactic` files in Documents (visible in Files › On My iPhone › Agmen), safe names, dedupe, rename-on-save, duplicate, delete, import through `TacticFormat` with a size cap before reading. `LibraryStore`, `TacticCard`, `LibraryScreen`, `TacticEditorHost` (own `UndoManager`, autosave 0.5 s after a change, on close and on background; no write when untouched).
-- D-57: the board title is Agmen's own menu (Rename, pitch), so Undo, Redo and Share stay visible with long titles.
+- Chime saw the system document browser on the phone (raw-JSON thumbnail, "Untitled.tactic", "632 bytes", grey button) and asked for an app, not a file manager. D-56 replaces `DocumentGroup` with CenterSpot's library: lime New tactic, cards drawn by `BoardRenderer` (step 1, title, "11-a-side · 5 steps"), press-and-hold Rename · Duplicate · Share · Delete, Delete asks first, the example "Overlap down the left" on first launch only.
+- `TacticLibrary` (+Import): `.tactic` files in Documents (visible in Files › On My iPhone › CenterSpot), safe names, dedupe, rename-on-save, duplicate, delete, import through `TacticFormat` with a size cap before reading. `LibraryStore`, `TacticCard`, `LibraryScreen`, `TacticEditorHost` (own `UndoManager`, autosave 0.5 s after a change, on close and on background; no write when untouched).
+- D-57: the board title is CenterSpot's own menu (Rename, pitch), so Undo, Redo and Share stay visible with long titles.
 - Code review (high): 9 found, 4 fixed (long emoji titles past the 255-byte name limit, ⌘Z/⇧⌘Z on the board, autosave re-reading the whole folder, unchanged rename reordering). Then fixed: an untouched New tactic is discarded on close; the launch pitch fades before the centre circle (stray arc beside the cards).
 - Verifier: 2 data-safety gaps fixed. (a) Re-opening an open tactic from Files read the file before the board's last edits were saved; the store now flushes the open board first. (b) Names differing only in case: the simulator refuses "press.tactic" next to "Press.tactic" yet reports it missing, and a case-sensitive disk would keep both and fail later renames; names are now compared without case, so such pairs are never made. The library re-reads the folder when the app returns.
 
@@ -291,7 +309,7 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 - Installed on the iPhone 14 Pro (signing still expires 13 Nov 2026, 21:30 Lagos).
 
 **Not verified**
-- On the phone: a `.tactic` from AirDrop/WhatsApp/Files reaching the app; the folder in Files › On My iPhone › Agmen; whether the phone's disk is case-sensitive (handled either way).
+- On the phone: a `.tactic` from AirDrop/WhatsApp/Files reaching the app; the folder in Files › On My iPhone › CenterSpot; whether the phone's disk is case-sensitive (handled either way).
 - Hardware-keyboard ⌘Z on iPad; VoiceOver card actions (especially Share); AX5 sizes; iPad layout; the title width cap on a 375 pt screen.
 - No test covers `TacticEditorHost`'s autosave timing directly (store-level tests cover close and flush).
 - Skipped from review: the save-failure alert can't show over an open sheet; import decodes the whole folder to collect ids.
@@ -305,7 +323,7 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 - `TacticEdits` (pure edits: move clamped, steps add/delete/reorder/duration/note, tokens add per D-55 / delete / name / number / role / side, pitch), `Timeline.restingState`, `FormationMatch` (tag follows the step on screen), `Nudge` (VoiceOver moves, 2%, clamped).
 - `Render/`: `BoardGeometry` (the only points conversion, also used by the formation diagrams), `PitchDrawing`, `TokenDrawing`, `ArrowDrawing` (run solid, pass dashed, dribble zigzag, press double chevron), `BoardRenderer` (screen through `withCGContext`, offscreen `image(...)`).
 - Board screen to the mockup: canvas, context row, steps strip (D-54), toolbar (D-55), Share in the nav bar, undo toast, empty state, `DocumentEditor` (every edit through the document's `UndoManager`). Player sheet, formation picker (D-48) with the replace confirmation, launch scene (Nunito title, Kalam tagline, chalk pitch). Placeholder view removed. Play/Draw/Export/Share show "Coming on Day N".
-- `AgmenUITests` target (own scheme, so `test` stays unit-only) walks the screens and saves the screenshots.
+- `CenterSpotUITests` target (own scheme, so `test` stays unit-only) walks the screens and saves the screenshots.
 - Code review (medium): 8 found, 6 fixed (delete from the last step skipped one back, reorder lost the current step, cancelled drag left a stale preview, toast Undo could undo a later edit, duplicated resting-position rule, arrows shortened against raw instead of drawn centres); then the toast Undo returns the board to the restored step. Skipped: formation tag cost per frame.
 - Verifier: 3 gaps fixed (undo/redo tests, nudge test, diagram points outside `Render/`); flagged the formation tag reading step 1 while the picker edits the current step; fixed.
 
@@ -330,7 +348,7 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 ## Day 1 finished, Day 2 core (Sat 7 Nov 2026)
 
 **Changed**
-- Design into code: `Agmen/Design/Tokens.swift` generated from the mockup CSS (`mockup/tokens_to_swift.py`), `RGBA` and WCAG `Contrast`, Nunito (variable) and Kalam bundled under OFL; UI-BRIEF §1–3 written. Lime and coral joined the palette as the defaults (D-53). Selection ring is white chalk so it shows on lime discs.
+- Design into code: `CenterSpot/Design/Tokens.swift` generated from the mockup CSS (`mockup/tokens_to_swift.py`), `RGBA` and WCAG `Contrast`, Nunito (variable) and Kalam bundled under OFL; UI-BRIEF §1–3 written. Lime and coral joined the palette as the defaults (D-53). Selection ring is white chalk so it shows on lime discs.
 - `Formation`, `Role`, `Presets` (bundled JSON); `Formation.apply` keeps names and numbers, roles follow the slot, extra slots get new players, the away side and ball stay.
 - `Placement`: zone words and VoiceOver labels ("Number 9, striker, edge of the box, step 4 of 5"; away players "Their number …" or "Ade, their player …").
 - Reference rounds closed: Chime chose the mockup as the baseline (D-50); custom icons and illustrations on hold (D-51); library name scrubbed from history and guarded (D-52).
@@ -355,8 +373,8 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 ## Day 1: design references, direction pick, and the core (Fri 6 Nov 2026)
 
 **Changed**
-- Design lane: 36 references by surface with a pattern summary (`docs/design/REFERENCES.md`), then 297 more across all 14 surfaces (`docs/design/REFERENCES-ROUND-2.md`, saved to an "Agmen references" collection; links in the git-ignored `reference-board/images/links.md`). Direction board with Floodlight, Chalk and Matchday Print; Chime picked **Floodlight colours with Chalk type** (D-44), added to the board as "Floodlight Chalk".
-- Core lane (agent in its own worktree, merged by hand): `Agmen/Model/` (Tactic, Pitch, Side, Token, Phase, Step, Point, Path, Arrow), `Agmen/Services/TacticFormat*` (decode with every FORMAT rule, encode), `Agmen/Engine/` (Timeline, BoardState, Easing, PathSampler), fixtures in `AgmenTests/Fixtures/` (hero, five-a-side, new full 11-v-11) with a test that keeps them equal to `examples/`.
+- Design lane: 36 references by surface with a pattern summary (`docs/design/REFERENCES.md`), then 297 more across all 14 surfaces (`docs/design/REFERENCES-ROUND-2.md`, saved to an "CenterSpot references" collection; links in the git-ignored `reference-board/images/links.md`). Direction board with Floodlight, Chalk and Matchday Print; Chime picked **Floodlight colours with Chalk type** (D-44), added to the board as "Floodlight Chalk".
+- Core lane (agent in its own worktree, merged by hand): `CenterSpot/Model/` (Tactic, Pitch, Side, Token, Phase, Step, Point, Path, Arrow), `CenterSpot/Services/TacticFormat*` (decode with every FORMAT rule, encode), `CenterSpot/Engine/` (Timeline, BoardState, Easing, PathSampler), fixtures in `CenterSpotTests/Fixtures/` (hero, five-a-side, new full 11-v-11) with a test that keeps them equal to `examples/`.
 - Code review (high, untrusted input): fixed a missing token snapping to the centre, edited runs making tokens jump (runs now re-anchored every frame), fixture drift, a malformed `app` block refusing the file, five copies of the clamp, and two copies of the 256 KB cap.
 - D-45 (format and timeline details the core lane settled), D-46 (a step's arrows show the move about to happen; hero move rewritten: dribble on step 2, pass to 3 and 9's run on step 3, the cross on step 4). Two tests that assert the hero's contents were updated to the new content; the omitted-keys check now uses a blank tactic so it keeps its coverage.
 
@@ -372,13 +390,13 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 **Next**
 - Chime reviews the round-2 references; refine Floodlight Chalk; write UI brief §1–3 and `Design/Tokens.swift`. Then presets and Placement, and the board renderer (Day 2–3).
 
-## Day 0: Agmen scaffold (Fri 6 Nov 2026)
+## Day 0: CenterSpot scaffold (Fri 6 Nov 2026)
 
 **Changed**
-- Renamed to Agmen (D-42): target `Agmen`, tests `AgmenTests`, bundle `dev.chime.agmen`, `agmen://`, UTType `dev.chime.agmen.tactic`, display name, CLAUDE.md, proof.json, settings.json (Chime approved the check-file changes), docs. Camera usage string removed (D-36).
-- `Agmen/App/AgmenApp.swift` (`DocumentGroup`), `Agmen/App/TacticDocument.swift` (placeholder holding raw bytes; blank v1 tactic for new documents; 256 KB cap on open), `Agmen/Features/Board/BoardPlaceholderView.swift`.
-- `AgmenTests/NewDocumentTests.swift`: new document is valid v1 JSON; new documents get distinct IDs; the hero fixture is bundled (5 steps, 17 tokens).
-- Code review (`/code-review --fix`): fixed the iPhone portrait lock (the `INFOPLIST_KEY_` setting was ignored) and added the 256 KB cap. Deferred: CI Xcode version (Day 6), `AgmenTests/Fixtures/` folder (Day 2), iPad multi-window scene manifest (after Day 7 with the split view), duplicate build/test check (needs Chime), pinning XcodeGen in CI.
+- Renamed to CenterSpot (D-42): target `CenterSpot`, tests `CenterSpotTests`, bundle `dev.chime.centerspot`, `centerspot://`, UTType `dev.chime.centerspot.tactic`, display name, CLAUDE.md, proof.json, settings.json (Chime approved the check-file changes), docs. Camera usage string removed (D-36).
+- `CenterSpot/App/CenterSpotApp.swift` (`DocumentGroup`), `CenterSpot/App/TacticDocument.swift` (placeholder holding raw bytes; blank v1 tactic for new documents; 256 KB cap on open), `CenterSpot/Features/Board/BoardPlaceholderView.swift`.
+- `CenterSpotTests/NewDocumentTests.swift`: new document is valid v1 JSON; new documents get distinct IDs; the hero fixture is bundled (5 steps, 17 tokens).
+- Code review (`/code-review --fix`): fixed the iPhone portrait lock (the `INFOPLIST_KEY_` setting was ignored) and added the 256 KB cap. Deferred: CI Xcode version (Day 6), `CenterSpotTests/Fixtures/` folder (Day 2), iPad multi-window scene manifest (after Day 7 with the split view), duplicate build/test check (needs Chime), pinning XcodeGen in CI.
 
 **Checked**
 - Red: mutation `schemaVersion` 1 → 2 made `newDocumentIsVersionOneTactic()` fail ("Expectation failed: object["schemaVersion"] as? Int == 1"); restored.
@@ -390,7 +408,7 @@ Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry
 - Launched on the phone with Chime's go-ahead; Chime saw the document browser. Rotation lock and the 256 KB refusal not seen on a device.
 
 **Next**
-- Done: commits `bdacf0a`, `8d40fd6` on private `ChimeXXD/agmen`; proof gate's duplicate `build` check removed (D-43). Then Day 1: design direction + core lane (D-23).
+- Done: commits `bdacf0a`, `8d40fd6` on private `ChimeXXD/centerspot`; proof gate's duplicate `build` check removed (D-43). Then Day 1: design direction + core lane (D-23).
 
 ## All open questions resolved (Fri 6 Nov 2026, later)
 

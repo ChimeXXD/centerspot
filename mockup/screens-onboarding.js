@@ -27,7 +27,7 @@ const WELCOME_BC = [
     label: "A vertical video of the move in the Broadcast camera, with its title at the top",
     art: () => `<div class="ob-clip" style="padding:12px 0;overflow:hidden">${txt("onboarding.clip.title", HERO.title, "title-band", "div", "padding:0 10px")}
       <div style="position:relative;width:223px;height:300px">${BC.tilted(223, 300, pos(3), STEPS[3].arrows, M4, OB_CLIP_CAM, "onboarding.board.3")}</div>
-      ${txt("onboarding.clip.note", STEPS[3].note, "clip-note", "div", "padding:0 10px")}${txt("onboarding.clip.mark", "Agmen", "mark", "div")}</div>` },
+      ${txt("onboarding.clip.note", STEPS[3].note, "clip-note", "div", "padding:0 10px")}${txt("onboarding.clip.mark", "CenterSpot", "mark", "div")}</div>` },
 ];
 
 const welcomeBc = page => {
@@ -57,7 +57,7 @@ const boardTipBc = (i, name, arrows) => `${status()}${navEdit()}${flatBoard(W, i
   ${meta("4-3-3", `Step ${i + 1} of ${STEPS.length} · ${STEPS[i].duration} s`)}${strip(i)}${toolbar2()}${tipBc(name)}`;
 
 const libraryMenu = () => `${status()}${libArt(393)}
-  <div class="abs" style="top:64px;left:24px;right:24px">${txt("library.title", "Agmen", "", "h1", "font:var(--t-largetitle);margin:0")}
+  <div class="abs" style="top:64px;left:24px;right:24px">${txt("library.title", "CenterSpot", "", "h1", "font:var(--t-largetitle);margin:0")}
     ${txt("library.tagline", "Draw the move, not just the shape.", "note", "p", "margin:4px 0 0;color:var(--muted)")}</div>
   ${btn("library.more", ic("more", 24), "icon-btn", "More", 'style="position:absolute;top:60px;right:12px;color:var(--text)"')}
   <div class="abs" style="top:164px;left:24px;right:24px">${btn("launch.new", `${ic("plus", 20)} New tactic`, "capsule", "", 'style="display:flex;align-items:center;justify-content:center;gap:8px"')}

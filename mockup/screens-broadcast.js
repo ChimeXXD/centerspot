@@ -63,7 +63,7 @@ const card = (n, title, steps, positions, arrows, marks) => `<button class="tile
   <span style="font:800 17px/1.3 var(--font-ui)">${title}</span><span style="font:var(--t-caption);color:var(--muted)">11-a-side · ${steps}</span></button>`;
 
 // Export frames: a 1080 x 1920 or 1920 x 1080 frame drawn at 393 pt wide.
-const mark = (size, style = "") => txt("export-frame.mark", "Agmen", "", "span", `position:absolute;font:800 ${size}px var(--font-ui);color:var(--muted);${style}`);
+const mark = (size, style = "") => txt("export-frame.mark", "CenterSpot", "", "span", `position:absolute;font:800 ${size}px var(--font-ui);color:var(--muted);${style}`);
 const vid916 = cam => `<div class="abs" style="left:24px;top:26px;right:24px">${txt("export-frame.title", HERO.title, "", "h1", "margin:0;font:800 24px/1.15 var(--font-ui)")}
     ${txt("export-frame.step", "Step 4 of 5", "", "p", "margin:4px 0 0;font:var(--t-caption);color:var(--muted)")}</div>
   ${cam === "bc" ? `<div class="abs" style="left:0;top:92px">${BC.tilted(393, 500, pos(3), STEPS[3].arrows, M4, { ...CAM, pw: 680 }, "export-frame.board")}</div>`
@@ -109,7 +109,7 @@ const BC_SCREENS = [
     <div style="display:flex;gap:16px"><div data-testid="export.preview" role="img" aria-label="Preview: ${HERO.title}, broadcast camera" style="position:relative;width:128px;height:228px;flex-shrink:0;background:var(--bg);border-radius:10px;overflow:hidden;outline:1px solid var(--surface-3)">
       <div data-testid="export.preview.title" style="position:absolute;left:8px;top:8px;font:800 9px var(--font-ui)">${HERO.title}</div>
       <div style="position:absolute;left:0;top:26px">${BC.tilted(128, 164, pos(3), STEPS[3].arrows, M4, { pw: 220, tilt: 54, focus: .34, cx: .34, persp: 370, horizon: 0 }, "export.preview.board")}</div>
-      <div data-testid="export.preview.note" style="position:absolute;left:8px;bottom:18px;font:400 10px var(--font-note)">${STEPS[3].note}</div><div data-testid="export.preview.mark" style="position:absolute;right:7px;bottom:6px;font:800 7px var(--font-ui);color:var(--muted)">Agmen</div></div>
+      <div data-testid="export.preview.note" style="position:absolute;left:8px;bottom:18px;font:400 10px var(--font-note)">${STEPS[3].note}</div><div data-testid="export.preview.mark" style="position:absolute;right:7px;bottom:6px;font:800 7px var(--font-ui);color:var(--muted)">CenterSpot</div></div>
       <div style="flex:1">${presets().replace("Story 9:16", "Vertical 9:16")}${btn("export.title-band", `Title band<i></i>`, "switch", "", 'role="switch" aria-checked="true"')}${btn("export.notes", `Step notes<i></i>`, "switch", "", 'role="switch" aria-checked="true"')}</div></div>
     <div class="row" style="margin-top:12px">${txt("export.camera-label", "Camera", "", "span", "font:var(--t-headline)")}
       <div class="seg" style="width:200px" role="radiogroup" aria-label="Camera"><button role="radio" data-testid="export.camera.flat" aria-checked="false" aria-selected="false">Flat</button><button role="radio" data-testid="export.camera.broadcast" aria-checked="true" aria-selected="true">Broadcast</button></div></div>
@@ -123,7 +123,7 @@ const BC_SCREENS = [
   ["library--broadcast", "D-65 · Library: cards drawn on the dark pitch", () => `${status()}
     <div class="abs" data-testid="library.art" style="left:0;right:0;top:0;height:200px;overflow:hidden;opacity:.5" aria-hidden="true">${staticBoard(393, 0, {}, { arrows: [] }).replace(/<g opacity="1">[\s\S]*?<\/g>/g, "").replace(/<circle opacity[^>]*>/g, "")}</div>
     <div class="abs" style="left:0;right:0;top:120px;height:80px;background:linear-gradient(rgba(11,15,20,0),var(--bg))"></div>
-    <div class="abs" style="top:64px;left:24px;right:24px">${txt("library.title", "Agmen", "", "h1", "font:var(--t-largetitle);margin:0")}
+    <div class="abs" style="top:64px;left:24px;right:24px">${txt("library.title", "CenterSpot", "", "h1", "font:var(--t-largetitle);margin:0")}
       ${txt("library.tagline", "Draw the move, not just the shape.", "note", "p", "margin:4px 0 0;color:var(--muted)")}</div>
     <div class="abs" style="top:164px;left:24px;right:24px">${btn("launch.new", `${ic("plus", 20)} New tactic`, "capsule", "", 'style="display:flex;align-items:center;justify-content:center;gap:8px"')}
       ${txt("library.recent", "Recent", "", "h2", "margin:24px 0 12px;font:var(--t-headline);color:var(--muted)")}

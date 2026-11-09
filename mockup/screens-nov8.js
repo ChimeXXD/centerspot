@@ -165,7 +165,7 @@ const NOV8 = [
     ${hint2("Drag the middle dot to change the bend.")}${shapePanel("run", "curved")}`],
 
   ["library--compact", "D-74 · Library on iPhone: small wide cards, 3 a row, pitch sideways (attacking right). Too small for numbers", () => `${status()}${libArt(393)}
-    <div class="abs" style="top:64px;left:24px;right:24px">${txt("library.title", "Agmen", "", "h1", "font:var(--t-largetitle);margin:0")}
+    <div class="abs" style="top:64px;left:24px;right:24px">${txt("library.title", "CenterSpot", "", "h1", "font:var(--t-largetitle);margin:0")}
       ${txt("library.tagline", "Draw the move, not just the shape.", "note", "p", "margin:4px 0 0;color:var(--muted)")}</div>
     <div class="abs" style="top:164px;left:24px;right:24px">${btn("launch.new", `${ic("plus", 20)} New tactic`, "capsule", "", 'style="display:flex;align-items:center;justify-content:center;gap:8px"')}
       ${txt("library.recent", "Recent", "", "h2", "margin:24px 0 12px;font:var(--t-headline);color:var(--muted)")}
@@ -197,7 +197,7 @@ const NOV8 = [
 
   ["ipad-library", "D-74 · iPad landscape library: 6 a row; cards are wide enough for upright numbers", () => `${ipadStatus()}${libArt(1376).replace("height:200px", "height:176px").replace("top:120px;height:80px", "top:96px;height:80px")}
     <div class="abs" style="top:56px;left:32px;right:32px;display:flex;align-items:flex-end;justify-content:space-between">
-      <div>${txt("library.title", "Agmen", "", "h1", "font:var(--t-largetitle);margin:0")}${txt("library.tagline", "Draw the move, not just the shape.", "note", "p", "margin:4px 0 0;color:var(--muted)")}</div>
+      <div>${txt("library.title", "CenterSpot", "", "h1", "font:var(--t-largetitle);margin:0")}${txt("library.tagline", "Draw the move, not just the shape.", "note", "p", "margin:4px 0 0;color:var(--muted)")}</div>
       ${btn("launch.new", `${ic("plus", 20)} New tactic`, "capsule", "", 'style="width:240px;display:flex;align-items:center;justify-content:center;gap:8px"')}</div>
     <div class="abs" style="top:156px;left:32px;right:32px">${txt("library.recent", "Recent", "", "h2", "margin:0 0 12px;font:var(--t-headline);color:var(--muted)")}
       <div class="lib-grid wide" style="grid-template-columns:repeat(6,1fr)">${LIB.map((t, i) => libCard(i + 1, t, PAD_CARD)).join("")}</div></div>

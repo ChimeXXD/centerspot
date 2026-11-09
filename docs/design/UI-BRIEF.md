@@ -1,10 +1,10 @@
 # UI brief
 
-How each Agmen screen looks and behaves. §1–3 written 7 Nov 2026 from the chosen direction (D-44) and the approved mockup (D-50); §4–6 hold screens, copy, states and test IDs, with `MOCKUP-GAPS.md` listing what the mockup still has to cover. Copy marked *new* can change at screen review.
+How each CenterSpot screen looks and behaves. §1–3 written 7 Nov 2026 from the chosen direction (D-44) and the approved mockup (D-50); §4–6 hold screens, copy, states and test IDs, with `MOCKUP-GAPS.md` listing what the mockup still has to cover. Copy marked *new* can change at screen review.
 
 ## 1. Direction: Floodlight Chalk (D-44, D-50)
 
-A night match on TV, explained at a chalkboard. Floodlight's palette (near-black chrome, a dark striped pitch, white chalk lines, one electric lime) with Chalk's type (rounded Nunito everywhere, handwritten Kalam for step notes). The mockup in `mockup/` is the baseline; `Agmen/Design/Tokens.swift` is the source of truth from here (D-12).
+A night match on TV, explained at a chalkboard. Floodlight's palette (near-black chrome, a dark striped pitch, white chalk lines, one electric lime) with Chalk's type (rounded Nunito everywhere, handwritten Kalam for step notes). The mockup in `mockup/` is the baseline; `CenterSpot/Design/Tokens.swift` is the source of truth from here (D-12).
 
 Rules every screen follows:
 1. **The pitch is the picture.** One nav bar, one context row, one strip, one toolbar. Nothing floats over the pitch while editing; actions for a selected player or step live in the context row under the pitch.
@@ -12,16 +12,16 @@ Rules every screen follows:
 3. **In the interface, lime marks what's live:** the current step, the playing state, the primary button. It is also the home kit and the pass arrow (D-53), so the selected player is marked with a white chalk ring instead, which shows on every kit.
 4. **Sides differ by shape** (D-15): home filled discs, away rings with a dark centre. Arrow kinds differ by line: run solid, pass dashed, dribble wavy, press double chevron.
 5. **Handwriting is for the coach's voice only:** step notes, the launch tagline, first-run hints. Everything else is Nunito.
-6. **One fixed look for exports:** the same dark board, title band in Nunito, notes in Kalam, a small "Agmen" corner mark (D-38).
+6. **One fixed look for exports:** the same dark board, title band in Nunito, notes in Kalam, a small "CenterSpot" corner mark (D-38).
 7. **No club looks** (D-13); custom icons and illustrations are on hold (D-51).
 
-## 2. Tokens (`Agmen/Design/Tokens.swift`)
+## 2. Tokens (`CenterSpot/Design/Tokens.swift`)
 
 Generated once from the mockup's CSS by `mockup/tokens_to_swift.py`; edit the Swift file from now on.
 
 - **Colour:** background `#0B0F14`, surfaces `#151B23` / `#1E2630` / `#27313D`, text `#F2F5F7`, muted `#93A0AD`, accent lime `#C6FF3D` with ink `#0B0F14`, danger `#FF6B6B`; pitch stripes `#0F241B` / `#112A1F`, chalk white at 55%; arrows run white, pass lime, dribble `#FFD84A`, press coral.
 - **Kit palette** (palette keys used by `.tactic` files): `lime` (home default), `coral` (away default), `blue`, `red`, `orange`, `yellow`, `green`, `purple`, `black`, `white`, `sky`, `maroon` (D-53). Each has a fill and a number ink that pass WCAG AA (4.5:1); `black` and `maroon` get a light outline so they reach 3:1 on the pitch. Away rings draw the fill as the ring with a white number on a dark centre. Proven by `TokenContrastTests`.
-- **Type:** Nunito (variable) and Kalam Regular, bundled under SIL OFL (`Agmen/Design/Fonts/`). Large title 34/heavy, title 22/heavy, headline 17/bold, body 15/semibold, caption 12/semibold, note Kalam 18; all scale with Dynamic Type. Token numbers use heavy Nunito sized to the board, not Dynamic Type.
+- **Type:** Nunito (variable) and Kalam Regular, bundled under SIL OFL (`CenterSpot/Design/Fonts/`). Large title 34/heavy, title 22/heavy, headline 17/bold, body 15/semibold, caption 12/semibold, note Kalam 18; all scale with Dynamic Type. Token numbers use heavy Nunito sized to the board, not Dynamic Type.
 - **Spacing** 4 · 8 · 12 · 16 · 24 · 32. **Radius** sheet 20, item 12, buttons and chips as capsules. **Touch targets** at least 44 pt (players get an invisible 44 pt hit area).
 
 ## 3. Motion
@@ -32,11 +32,11 @@ Generated once from the mockup's CSS by `mockup/tokens_to_swift.py`; edit the Sw
 
 ## 4. Screens
 
-### 4.1 Launch / library (Agmen's own screen, D-56; supersedes `DocumentGroupLaunchScene`)
-- Title art: "Agmen" in heavy Nunito and the Kalam tagline over a faint chalk pitch fragment. Then **New tactic** (the lime capsule), a "Recent" header and a two-column grid of tactic cards, newest first (one column at accessibility text sizes).
+### 4.1 Launch / library (CenterSpot's own screen, D-56; supersedes `DocumentGroupLaunchScene`)
+- Title art: "CenterSpot" in heavy Nunito and the Kalam tagline over a faint chalk pitch fragment. Then **New tactic** (the lime capsule), a "Recent" header and a two-column grid of tactic cards, newest first (one column at accessibility text sizes).
 - A card draws its step 1 at rest with `BoardRenderer` (D-07), then the title and "11-a-side · 5 steps". Tap opens the board. Press and hold: Rename (alert with a text field), Duplicate ("… copy"), Share (the `.tactic` file), Delete, which asks first: "Delete “<title>”?" / "This can't be undone." VoiceOver reads "<title>, N steps" and offers the same four actions.
 - First launch adds the example move "Overlap down the left". With no tactics: "Your tactics show up here."
-- Footer (caption, muted): "Saved on this iPhone. Find them in Files › On My iPhone › Agmen." ("iPad" on iPad). If files in the folder can't be read, a count says so.
+- Footer (caption, muted): "Saved on this iPhone. Find them in Files › On My iPhone › CenterSpot." ("iPad" on iPad). If files in the folder can't be read, a count says so.
 - New tactic opens the formation picker first. A `.tactic` opened from AirDrop, WhatsApp or Files is checked, copied into the library and opened; a bad one shows the §4.8 message.
 - Test IDs: `launch.new`, `library.title`, `library.tagline`, `library.recent`, `library.card.<n>` (1 is the newest), `library.empty`, `library.recents-hint`, `library.rename.save`, `library.delete.confirm`.
 
@@ -77,11 +77,11 @@ Generated once from the mockup's CSS by `mockup/tokens_to_swift.py`; edit the Sw
 - Link too long: "This tactic is too big for a link. Send the file instead." *(new)*
 
 ### 4.8 Import errors (plain words)
-- Newer version: "Made with a newer version of Agmen."
+- Newer version: "Made with a newer version of CenterSpot."
 - Invalid or too big: "This file isn't a tactic we can open." *(new)*
 
 ## 5. iPad (Should, O-3)
-- `NavigationSplitView`: Agmen's library screen (§4.1, D-56) in place of the system document browser; board in the centre; inspector trailing.
+- `NavigationSplitView`: CenterSpot's library screen (§4.1, D-56) in place of the system document browser; board in the centre; inspector trailing.
 - Pencil draws, finger moves (SPEC §6). Hover with Pencil shows where a run will start.
 
 ## 6. Accessibility checklist

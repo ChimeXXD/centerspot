@@ -3,7 +3,7 @@
     "allow": [
       "Bash(xcodegen generate)",
       "Bash(xcodegen generate *)",
-      "Bash(xcodebuild -scheme Agmen *)",
+      "Bash(xcodebuild -scheme CenterSpot *)",
       "Bash(xcrun simctl list *)",
       "Bash(xcrun simctl bootstatus *)",
       "Bash(xcrun simctl shutdown *)",

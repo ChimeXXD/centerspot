@@ -2,7 +2,7 @@
 // To build on your own device, copy Signing.local.xcconfig.example to
 // Signing.local.xcconfig (git-ignored) and set your team and bundle prefix there.
 
-DISPLAY_NAME = Agmen
+DISPLAY_NAME = CenterSpot
 BUNDLE_PREFIX = dev.chime
 DEVELOPMENT_TEAM =
 

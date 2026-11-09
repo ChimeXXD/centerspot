@@ -1,6 +1,6 @@
-# CLAUDE.md — Agmen
+# CLAUDE.md — CenterSpot
 
-**Agmen** (Latin: an army on the march; formerly "Tactics Board", D-42). You are building this project. Read this file first, then `docs/HANDOFF.md` (the latest session summary), `docs/PLAN.md` for the current day and `PROGRESS.md` for where the last session stopped.
+**CenterSpot** (the spot at the middle of the centre circle, where every match starts: the lime dot in the logo; renamed from "Tactics Board" and then a Latin name, D-85). You are building this project. Read this file first, then `docs/HANDOFF.md` (the latest session summary), `docs/PLAN.md` for the current day and `PROGRESS.md` for where the last session stopped.
 Every product and architecture decision so far is in `docs/DECISIONS.md`. Don't reopen one unless it blocks you. If it does, write the problem under "Open" in `docs/DECISIONS.md` and ask Chime. Chime is they/them.
 
 ## What we are building
@@ -24,8 +24,8 @@ An iPhone and iPad app that turns a formation into a **step-by-step animated mov
 ## Stack (fixed)
 
 - Swift 6 with strict concurrency, SwiftUI, **iOS and iPadOS 26.0 minimum** (D-03). iOS 27 APIs (image input to the on-device model) sit behind `#available`.
-- One universal app target, `Agmen` (iPhone and iPad). No widget extension this week.
-- **Own library, `.tactic` files** (D-56, supersedes D-09's system browser): a `WindowGroup` with Agmen's library screen; tactics are `.tactic` JSON files in the app's Documents folder (`Services/TacticLibrary`), opened into the board through `TacticDocument` with the board's own `UndoManager` and autosave. `.tactic` files from AirDrop, WhatsApp or Files are validated and copied in.
+- One universal app target, `CenterSpot` (iPhone and iPad). No widget extension this week.
+- **Own library, `.tactic` files** (D-56, supersedes D-09's system browser): a `WindowGroup` with CenterSpot's library screen; tactics are `.tactic` JSON files in the app's Documents folder (`Services/TacticLibrary`), opened into the board through `TacticDocument` with the board's own `UndoManager` and autosave. `.tactic` files from AirDrop, WhatsApp or Files are validated and copied in.
 - **One renderer** (D-07): `BoardRenderer` draws with Core Graphics into a `CGContext`. The screen calls it through `GraphicsContext.withCGContext` inside `Canvas`; export calls it on an offscreen context. Never draw the board twice in two ways.
 - PencilKit is **capture only** (D-08). Strokes become our own path model; export never renders a `PKDrawing`.
 - Video: `AVAssetWriter` + `AVAssetWriterInputPixelBufferAdaptor`, H.264, 30 fps (D-11).
@@ -38,15 +38,15 @@ An iPhone and iPad app that turns a formation into a **step-by-step animated mov
 ```
 project.yml                 XcodeGen spec
 Config/                     Base.xcconfig; Signing.local.xcconfig is git-ignored
-Agmen/                      the app target
-  App/                      AgmenApp (WindowGroup + library), URL handling
+CenterSpot/                      the app target
+  App/                      CenterSpotApp (WindowGroup + library), URL handling
   Features/                 Board, Steps, Inspector, Export, Share, Settings, Debug
   Services/                 VideoExporter, ImageExporter, LinkCodec, QRCode, PencilCapture
   Model/                    Tactic, Side, Token, Step, Arrow, Path, Pitch, Formation, Role (one type per file)
   Engine/                   Timeline (t -> BoardState), Easing, PathSampler, Placement (VoiceOver zones)
   Render/                   BoardRenderer, PitchDrawing, TokenDrawing, ArrowDrawing, Theme
   Design/                   Tokens and shared components
-AgmenTests/                 Swift Testing; Fixtures/ holds .tactic files
+CenterSpotTests/                 Swift Testing; Fixtures/ holds .tactic files
 presets/                    formations.json, roles.json: source data, bundled by project.yml (D-14)
 examples/                   sample .tactic files, also used as test fixtures
 fidelity/                   refs/ (approved baselines), shots/ (git-ignored)
@@ -58,10 +58,10 @@ PROGRESS.md                 Build log: what changed, what was checked, what's ne
 
 ```bash
 xcodegen generate
-xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' build
-xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' test
-xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=27.0' build
-xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' build   # iOS 26 path (D-32)
+xcodebuild -scheme CenterSpot -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' build
+xcodebuild -scheme CenterSpot -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' test
+xcodebuild -scheme CenterSpot -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=27.0' build
+xcodebuild -scheme CenterSpot -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.5' build   # iOS 26 path (D-32)
 xcrun simctl list devices available     # if a simulator name is gone, pick the newest and update .claude/proof.json (with Chime's OK)
 ```
 
@@ -82,7 +82,7 @@ The proof gate (`.claude/proof.json`) runs test (which builds first) and build-i
 ## Working style
 
 - Work day by day from `docs/PLAN.md`. Pass a day's gate before starting the next.
-- **Tests first** for everything in `Model/`, `Engine/` and `Services/LinkCodec` (codec round trips, interpolation, clamping, format validation). Fixtures are `.tactic` files in `AgmenTests/Fixtures/` (start from `examples/`).
+- **Tests first** for everything in `Model/`, `Engine/` and `Services/LinkCodec` (codec round trips, interpolation, clamping, format validation). Fixtures are `.tactic` files in `CenterSpotTests/Fixtures/` (start from `examples/`).
 - Commit after each green step with a conventional message (`feat:`, `fix:`, `test:`, `chore:`, `docs:`). Push to GitHub after every commit (private repo until Day 7).
 - After every push, check the CI run (`gh run list --limit 1`, `gh run watch`). CI builds with the released Xcode (26.x), not the local Xcode 27, so it catches code the older compiler can't build. A red CI is fixed before the next feature.
 - After UI work: build, take a simulator screenshot, and compare with the approved baseline before calling the step done.

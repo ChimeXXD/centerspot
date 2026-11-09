@@ -13,7 +13,7 @@ From the fresh-context check of the draft mockup (commit 80870b3) against SPEC, 
 8. VoiceOver label: number, role name from roles.json, zone, ", step n of m"; tokens adjustable (nudge).
 9. Export preview shows dashed safe zones (preview only).
 10. Image export: selected state ("Export image", pixel size = 2 × board points) and done state.
-11. Newer-version import alert: "Made with a newer version of Agmen."
+11. Newer-version import alert: "Made with a newer version of CenterSpot."
 12. Press arrows drawn as a short double chevron, never a plain line (D-15).
 13. Copy: the preset is "Vertical 9:16" (UI-BRIEF §4.6), not "Story 9:16".
 14. Test IDs: `inspector.role` and `inspector.side` as in UI-BRIEF §4.3.

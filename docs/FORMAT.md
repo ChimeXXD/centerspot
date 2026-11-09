@@ -1,6 +1,6 @@
 # The `.tactic` format, v1
 
-A `.tactic` file is UTF-8 JSON. UTType `dev.chime.agmen.tactic`, extension `.tactic`, conforms to `public.json` (D-09). It is the app's document format, the payload of a link or QR code (D-10), and a public spec that other tools may read and write.
+A `.tactic` file is UTF-8 JSON. UTType `dev.chime.centerspot.tactic`, extension `.tactic`, conforms to `public.json` (D-09). It is the app's document format, the payload of a link or QR code (D-10), and a public spec that other tools may read and write.
 
 ## Shape
 
@@ -39,7 +39,7 @@ A `.tactic` file is UTF-8 JSON. UTType `dev.chime.agmen.tactic`, extension `.tac
       ]
     }
   ],
-  "app": { "createdWith": "Agmen 0.1.0" }
+  "app": { "createdWith": "CenterSpot 0.1.0" }
 }
 ```
 
@@ -50,9 +50,9 @@ Two outcomes (D-27): **refuse** means the whole file is rejected with a plain er
 | Field | Rule | If broken |
 | --- | --- | --- |
 | Size | A file or decoded link payload over 256 KB. | Refuse, before decoding |
-| Saved size | A tactic whose repaired, saved form would be over 256 KB (repairs such as filling missing positions can grow a file). Agmen saves compact JSON when pretty-printed JSON would pass the cap (D-68). | Refuse |
+| Saved size | A tactic whose repaired, saved form would be over 256 KB (repairs such as filling missing positions can grow a file). CenterSpot saves compact JSON when pretty-printed JSON would pass the cap (D-68). | Refuse |
 | File type | Only a regular file is read; a pipe, device or folder named `.tactic` is never waited on (D-68). | Refuse |
-| `schemaVersion` | Must be `1`. | Refuse: "Made with a newer version of Agmen." when higher; the generic error otherwise |
+| `schemaVersion` | Must be `1`. | Refuse: "Made with a newer version of CenterSpot." when higher; the generic error otherwise |
 | Coordinates | `x`, `y` in 0…1 (D-05): `x` left → right, `y` own goal line (0) → opponent's goal line (1). | Out of range: repair (clamp). NaN or infinity: refuse |
 | `pitch.kind` | `full`, `sevenASide`, `fiveASide`. | Refuse |
 | `sides` | Exactly two, ids `home` and `away`. `colour` is a palette key (`UI-BRIEF.md` §2). | Wrong count or ids: refuse. Unknown or missing colour: repair (default: `lime` home, `coral` away, D-53) |
@@ -77,11 +77,11 @@ Two outcomes (D-27): **refuse** means the whole file is rejected with a plain er
 
 The timeline measures a run's length in metres on the pitch (x scaled by pitch width, y by length), so a runner keeps a steady speed round a bend. Arrows fade in over the first 0.2 s of their step's hold and fade out over the last 0.2 s of the move to the next step; the last step's arrows stay.
 
-Marks (D-65) fade the same way as their step's arrows, with one exception: a mark whose `id` is also on the next step, as the same kind (a zone in the same colour, a line joining the same players, rings on the same player, or heat), carries on without fading, and a zone's box or a heat's spot and radius ease to the next step's with the players' move. A line's corners and a player's rings follow the players wherever the timeline puts them. In Agmen, a new step copies the marks of the step it is added after, with their ids.
+Marks (D-65) fade the same way as their step's arrows, with one exception: a mark whose `id` is also on the next step, as the same kind (a zone in the same colour, a line joining the same players, rings on the same player, or heat), carries on without fading, and a zone's box or a heat's spot and radius ease to the next step's with the players' move. A line's corners and a player's rings follow the players wherever the timeline puts them. In CenterSpot, a new step copies the marks of the step it is added after, with their ids.
 
 ## Links and QR (D-10, D-25; built after Day 7, D-36)
 
-`agmen://t#v1.` + base64url (no padding) of the JSON compressed as **raw DEFLATE (RFC 1951, no zlib header or checksum)**. In Python: `zlib.decompress(base64.urlsafe_b64decode(p + "=" * (-len(p) % 4)), -15)`.
+`centerspot://t#v1.` + base64url (no padding) of the JSON compressed as **raw DEFLATE (RFC 1951, no zlib header or checksum)**. In Python: `zlib.decompress(base64.urlsafe_b64decode(p + "=" * (-len(p) % 4)), -15)`.
 
 The decoder checks, in order: the `v1.` prefix; the encoded string is at most 256 KB; base64url decodes; the stream inflates **with a streaming decoder that stops as soon as output passes 256 KB** (Compression framework `compression_stream`, or `InputFilter`), so a decompression bomb never fills memory; then the JSON is validated as above. One-shot `NSData.decompressed(using:)` is not used for links, because it inflates everything before the size can be checked. Any failure shows the generic error.
 
@@ -89,4 +89,4 @@ The same string goes into a QR code. Link length is measured, not assumed: `Link
 
 ## Versioning
 
-A breaking change bumps `schemaVersion` and adds a migration from every older version, with a fixture per version in `AgmenTests/Fixtures/`.
+A breaking change bumps `schemaVersion` and adds a migration from every older version, with a fixture per version in `CenterSpotTests/Fixtures/`.

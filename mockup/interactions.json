@@ -1378,7 +1378,7 @@
         "playing",
         "paused (page off screen)"
       ],
-      "effect": "decorative, VoiceOver reads only \"A vertical video of the move in the Broadcast camera, with its title at the top\". The 9:16 export frame drawn by ExportFrame with camera .broadcast (title band, step notes in Kalam, \"Agmen\" mark), playing and looping after a 1.5 s hold. Hidden at accessibility text sizes (D-78)",
+      "effect": "decorative, VoiceOver reads only \"A vertical video of the move in the Broadcast camera, with its title at the top\". The 9:16 export frame drawn by ExportFrame with camera .broadcast (title band, step notes in Kalam, \"CenterSpot\" mark), playing and looping after a 1.5 s hold. Hidden at accessibility text sizes (D-78)",
       "duration_ms": 6200,
       "easing": "linear (Timeline easing per step)",
       "delay_ms": 300,

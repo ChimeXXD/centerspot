@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Agmen directions</title>
+<title>CenterSpot directions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Barlow+Condensed:wght@600;700&family=Instrument+Serif&family=Inter:wght@400;500;600&family=Kalam:wght@400&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
@@ -32,9 +32,9 @@
 </head>
 <body>
 <header class="page">
-  <h1>Agmen: three directions</h1>
-  <p>The same three screens in three looks: the board with the 4-3-3, the demo move playing at step 4 (a run, a pass and a cross), and the export sheet with the 9:16 video. Layout and content are the same in each; only the look changes. Pick the one that feels like Agmen. Positions come from <code>examples/overlap-left.tactic</code>.</p>
-  <p>Fixed in every direction: home players are filled discs, away players are rings (D-15); runs are solid, passes dashed, dribbles wavy; the export carries a small "Agmen" mark (D-38); no club badges or real kits (D-13).</p>
+  <h1>CenterSpot: three directions</h1>
+  <p>The same three screens in three looks: the board with the 4-3-3, the demo move playing at step 4 (a run, a pass and a cross), and the export sheet with the 9:16 video. Layout and content are the same in each; only the look changes. Pick the one that feels like CenterSpot. Positions come from <code>examples/overlap-left.tactic</code>.</p>
+  <p>Fixed in every direction: home players are filled discs, away players are rings (D-15); runs are solid, passes dashed, dribbles wavy; the export carries a small "CenterSpot" mark (D-38); no club badges or real kits (D-13).</p>
 </header>
 <main id="board"></main>
 <footer class="page">Direction board for Day 1 (D-12, D-22). Fonts from Google Fonts stand in for the app's final type, which is chosen with the direction.</footer>
@@ -255,7 +255,7 @@ function frameExport(th) {
   s += `<svg x="${vx + 8}" y="${vy + 42}" width="${bw}" height="${bh}" overflow="visible">` +
     boardSVG(th, bw, bh, 0, 0, steps[3].positions, steps[3].arrows) + "</svg>";
   s += T(th, vx + 10, vy + vh - 12, steps[3].note.slice(0, 26) + "…", 7.5, { font: th.fNote });
-  s += T(th, vx + vw - 10, vy + vh - 12, "Agmen", 8.5, { anchor: "end", weight: 700, font: th.fTitle, fill: th.muted });
+  s += T(th, vx + vw - 10, vy + vh - 12, "CenterSpot", 8.5, { anchor: "end", weight: 700, font: th.fTitle, fill: th.muted });
   // presets as frame-shaped tiles
   const presets = [["9:16", 22, 38, true], ["1:1", 32, 32], ["16:9", 40, 23], ["Image", 30, 30]];
   presets.forEach(([label, w, h, on], i) => {

@@ -11,7 +11,7 @@
       ],
       "verify": "git log --oneline | head -1; gh repo view --json visibility",
       "passes": true,
-      "evidence": "6 Nov 2026: first commit bdacf0a; gh repo view ChimeXXD/agmen --json visibility -> PRIVATE; pushed to origin/main."
+      "evidence": "6 Nov 2026: first commit bdacf0a; gh repo view ChimeXXD/centerspot --json visibility -> PRIVATE; pushed to origin/main."
     },
     {
       "id": "D0-2",
@@ -23,9 +23,9 @@
         "app builds for iPhone and iPad simulators",
         "one Swift Testing test passes"
       ],
-      "verify": "xcodegen generate && xcodebuild -scheme Agmen -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' test",
+      "verify": "xcodegen generate && xcodebuild -scheme CenterSpot -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.0' test",
       "passes": true,
-      "evidence": "6 Nov 2026: xcodegen generate OK; xcodebuild -scheme Agmen iPhone 18 Pro OS=27.0 test -> 'Test run with 3 tests in 1 suite passed', ** TEST SUCCEEDED **; iPad Pro 13-inch (M5) OS=26.5 build -> ** BUILD SUCCEEDED **; mutation (schemaVersion 1->2) turned newDocumentIsVersionOneTactic red, restored."
+      "evidence": "6 Nov 2026: xcodegen generate OK; xcodebuild -scheme CenterSpot iPhone 18 Pro OS=27.0 test -> 'Test run with 3 tests in 1 suite passed', ** TEST SUCCEEDED **; iPad Pro 13-inch (M5) OS=26.5 build -> ** BUILD SUCCEEDED **; mutation (schemaVersion 1->2) turned newDocumentIsVersionOneTactic red, restored."
     },
     {
       "id": "D0-3",
@@ -37,13 +37,13 @@
       ],
       "verify": "xcrun devicectl device info apps",
       "passes": true,
-      "evidence": "6 Nov 2026: signed with the free Personal Team; xcrun devicectl device install app -> dev.chime.agmen; devicectl device process launch -> 'Launched application'; Chime confirmed the document browser (Create Document, Recents) on the iPhone 14 Pro. Profile expires 2026-11-13T20:30:57Z."
+      "evidence": "6 Nov 2026: signed with the free Personal Team; xcrun devicectl device install app -> dev.chime.centerspot; devicectl device process launch -> 'Launched application'; Chime confirmed the document browser (Create Document, Recents) on the iPhone 14 Pro. Profile expires 2026-11-13T20:30:57Z."
     },
     {
       "id": "D0-4",
       "day": 0,
       "priority": "after-day-7",
-      "title": "agmen:// opens the app (after Day 7, D-36)",
+      "title": "centerspot:// opens the app (after Day 7, D-36)",
       "criteria": [
         "a link tapped in Messages or Notes opens the app",
         "whether WhatsApp makes the link tappable is recorded (O-6)",
@@ -89,7 +89,7 @@
       ],
       "verify": "xcodebuild ... test (TokenContrastTests)",
       "passes": true,
-      "evidence": "7 Nov 2026: UI-BRIEF §1-3 written; Agmen/Design/Tokens.swift generated from mockup CSS; TokenContrastTests 7/7 pass on iPhone 18 Pro iOS 27.0 (kit numbers >= 4.5:1, rings and outlines >= 3:1 on both pitch stripes, UI text >= 4.5:1, fonts registered); mutation (black outline removed) -> 3 issues red, regenerated."
+      "evidence": "7 Nov 2026: UI-BRIEF §1-3 written; CenterSpot/Design/Tokens.swift generated from mockup CSS; TokenContrastTests 7/7 pass on iPhone 18 Pro iOS 27.0 (kit numbers >= 4.5:1, rings and outlines >= 3:1 on both pitch stripes, UI text >= 4.5:1, fonts registered); mutation (black outline removed) -> 3 issues red, regenerated."
     },
     {
       "id": "D2-1",
@@ -103,7 +103,7 @@
       ],
       "verify": "FormatRoundTripTests",
       "passes": true,
-      "evidence": "6 Nov 2026: xcodebuild -scheme Agmen iPhone 18 Pro OS=27.0 test -> 84 tests pass (code review agent run after fixes); iPad Pro 13-inch (M5) OS=26.5 build succeeds. FormatRoundTripTests: 3 fixtures + empty board round-trip; fixtureMatchesItsExample keeps fixtures equal to examples/."
+      "evidence": "6 Nov 2026: xcodebuild -scheme CenterSpot iPhone 18 Pro OS=27.0 test -> 84 tests pass (code review agent run after fixes); iPad Pro 13-inch (M5) OS=26.5 build succeeds. FormatRoundTripTests: 3 fixtures + empty board round-trip; fixtureMatchesItsExample keeps fixtures equal to examples/."
     },
     {
       "id": "D2-2",
@@ -118,7 +118,7 @@
       ],
       "verify": "ImportValidationTests",
       "passes": true,
-      "evidence": "6 Nov 2026: xcodebuild -scheme Agmen iPhone 18 Pro OS=27.0 test -> 84 tests pass (code review agent run after fixes); iPad Pro 13-inch (M5) OS=26.5 build succeeds. ImportValidationTests (59 incl. repairs): one case per FORMAT rules row; mutation (anchoring removed) -> 2 red; mutation (coordinate clamp removed) -> outOfRangeCoordinatesAreClamped red with 3 issues; both restored."
+      "evidence": "6 Nov 2026: xcodebuild -scheme CenterSpot iPhone 18 Pro OS=27.0 test -> 84 tests pass (code review agent run after fixes); iPad Pro 13-inch (M5) OS=26.5 build succeeds. ImportValidationTests (59 incl. repairs): one case per FORMAT rules row; mutation (anchoring removed) -> 2 red; mutation (coordinate clamp removed) -> outOfRangeCoordinatesAreClamped red with 3 issues; both restored."
     },
     {
       "id": "D2-3",
@@ -135,7 +135,7 @@
       ],
       "verify": "TimelineTests",
       "passes": true,
-      "evidence": "6 Nov 2026: xcodebuild -scheme Agmen iPhone 18 Pro OS=27.0 test -> 84 tests pass (code review agent run after fixes); iPad Pro 13-inch (M5) OS=26.5 build succeeds. TimelineTests (15): t=0, end, easing within 0.001, arc-length runs, same input same output; mutation (linear easing) -> 5 issues red; restored."
+      "evidence": "6 Nov 2026: xcodebuild -scheme CenterSpot iPhone 18 Pro OS=27.0 test -> 84 tests pass (code review agent run after fixes); iPad Pro 13-inch (M5) OS=26.5 build succeeds. TimelineTests (15): t=0, end, easing within 0.001, arc-length runs, same input same output; mutation (linear easing) -> 5 issues red; restored."
     },
     {
       "id": "D2-4",
@@ -174,7 +174,7 @@
       ],
       "verify": "manual, timed on the phone; numbers in PROGRESS.md",
       "passes": true,
-      "evidence": "7 Nov 2026, Chime's iPhone 14 Pro (iOS 27.0.1), Debug build, -exportSpike (Agmen/Features/Debug/ExportSpike.swift): 240 frames 1080x1920 H.264 4 Mbps -> 2.25 s, 2.50 MB; 450 frames (15 s) 4 Mbps -> 2.50 s, 5.51 MB; 450 frames 3 Mbps -> 2.52 s, 4.62 MB. Simple frames (pitch, 23 discs with numbers), no arrows yet."
+      "evidence": "7 Nov 2026, Chime's iPhone 14 Pro (iOS 27.0.1), Debug build, -exportSpike (CenterSpot/Features/Debug/ExportSpike.swift): 240 frames 1080x1920 H.264 4 Mbps -> 2.25 s, 2.50 MB; 450 frames (15 s) 4 Mbps -> 2.50 s, 5.51 MB; 450 frames 3 Mbps -> 2.52 s, 4.62 MB. Simple frames (pitch, 23 discs with numbers), no arrows yet."
     },
     {
       "id": "D3-1",
@@ -412,7 +412,7 @@
       ],
       "verify": "renderer projection tests; export tests; timed export on the iPhone 14 Pro",
       "passes": false,
-      "evidence": "8 Nov 2026, partial: gate 3/3 at 1ed0238 (CameraTrackTests 10, BroadcastCameraTests 10 incl. the mockup's CSS camera as oracle, BoardRendererTests+Camera 6, ExportFrameTests+Camera 7, RendererParityTests.theBroadcastCameraMatches within D-60/D-61); AgmenUITests 17 on iPhone 18 Pro incl. CameraUITests (switch, remembered across relaunch, editing flat); IPadLayoutUITests + CameraUITests on the iPad Pro 13-inch simulator; 2 mutations killed. Timed on the iPhone 14 Pro (Debug, -exportBench): broadcast hero 9:16 2.37 s 2.56 MB, ten steps 9:16 4.67 s 5.83 MB of 8.37 MB budget, every clip inside budget. Open: Chime's feel on the device; Xcode 26.6 (CI paused, D-77)."
+      "evidence": "8 Nov 2026, partial: gate 3/3 at 1ed0238 (CameraTrackTests 10, BroadcastCameraTests 10 incl. the mockup's CSS camera as oracle, BoardRendererTests+Camera 6, ExportFrameTests+Camera 7, RendererParityTests.theBroadcastCameraMatches within D-60/D-61); CenterSpotUITests 17 on iPhone 18 Pro incl. CameraUITests (switch, remembered across relaunch, editing flat); IPadLayoutUITests + CameraUITests on the iPad Pro 13-inch simulator; 2 mutations killed. Timed on the iPhone 14 Pro (Debug, -exportBench): broadcast hero 9:16 2.37 s 2.56 MB, ten steps 9:16 4.67 s 5.83 MB of 8.37 MB budget, every clip inside budget. Open: Chime's feel on the device; Xcode 26.6 (CI paused, D-77)."
     },
     {
       "id": "IP-1",

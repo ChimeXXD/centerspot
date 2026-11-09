@@ -1,4 +1,4 @@
-# Agmen
+# CenterSpot
 
 **Draw the move, not just the shape.** An iPhone and iPad app that turns a formation into a step-by-step animated move and exports it as a vertical video, an image or an open `.tactic` file.
 
@@ -14,7 +14,7 @@ Requires Xcode 27 and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 ```bash
 cp Config/Signing.local.xcconfig.example Config/Signing.local.xcconfig   # set your Team ID
 xcodegen generate
-open Agmen.xcodeproj
+open CenterSpot.xcodeproj
 ```
 
 ## Licence

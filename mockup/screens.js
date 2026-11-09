@@ -55,7 +55,7 @@ const miniFormation = f => {
 
 const SCREENS = [
   ["library", "Library: New tactic first, then recents", () => `${status()}
-    <div class="abs" style="top:64px;left:24px;right:24px">${txt("library.title", "Agmen", "", "h1", "font:var(--t-largetitle);margin:0")}
+    <div class="abs" style="top:64px;left:24px;right:24px">${txt("library.title", "CenterSpot", "", "h1", "font:var(--t-largetitle);margin:0")}
       ${txt("library.tagline", "Draw the move, not just the shape.", "note", "p", "margin:4px 0 0;color:var(--muted)")}</div>
     <div class="abs" style="top:160px;left:24px;right:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
       ${btn("launch.new", `${ic("plus", 30)}<span>New tactic</span>`, "tile", "New tactic", 'style="height:290px;border:2px dashed var(--muted);background:none;font:800 16px var(--font-ui)"')}
@@ -126,7 +126,7 @@ const SCREENS = [
 
   ["export--rendering", "Export: rendering, with an honest count", () => exportSheet(`
     ${txt("export.progress", "Rendering 126 of 240 frames", "", "p", "margin:24px 0 4px;font:var(--t-headline)")}
-    ${txt("export.progress-help", "About 3 seconds left. Keep Agmen open until it's done.", "muted", "p", "margin:0;font:var(--t-caption)")}
+    ${txt("export.progress-help", "About 3 seconds left. Keep CenterSpot open until it's done.", "muted", "p", "margin:0;font:var(--t-caption)")}
     <div data-testid="export.progress-bar" role="progressbar" aria-valuenow="53" style="height:8px;border-radius:4px;margin-top:16px;background:linear-gradient(90deg,var(--accent) 53%,var(--surface-3) 0)"></div>`,
     btn("export.cancel", "Cancel", "capsule quiet"), 0.53)],
 
@@ -141,7 +141,7 @@ const SCREENS = [
   ["share", "Share: the video, or the editable file", () => `${editor(0, "4-3-3", { hits: false })}${sheet(470, "Share", `
     ${btn("share.video", `${ic("video", 26)}<span style="flex:1;margin-left:12px;text-align:left"><b style="display:block;font:var(--t-headline)">Video</b><small class="muted" style="font:var(--t-caption)">9:16 · about 4 MB · for WhatsApp, Discord, TikTok</small></span>`, "option", "", 'style="min-height:72px;justify-content:flex-start"')}
     ${btn("share.image", `${ic("photo", 26)}<span style="flex:1;margin-left:12px;text-align:left"><b style="display:block;font:var(--t-headline)">Image of step 1</b><small class="muted" style="font:var(--t-caption)">PNG for a lineup post</small></span>`, "option", "", 'style="min-height:72px;justify-content:flex-start"')}
-    ${btn("share.file", `${ic("file", 26)}<span style="flex:1;margin-left:12px;text-align:left"><b style="display:block;font:var(--t-headline)">Tactic file</b><small class="muted" style="font:var(--t-caption)">${HERO.title}.tactic · ${Math.round(HERO_BYTES / 1024)} KB · opens in Agmen to edit</small></span>`, "option", "", 'style="min-height:72px;justify-content:flex-start"')}`, "share.close")}`],
+    ${btn("share.file", `${ic("file", 26)}<span style="flex:1;margin-left:12px;text-align:left"><b style="display:block;font:var(--t-headline)">Tactic file</b><small class="muted" style="font:var(--t-caption)">${HERO.title}.tactic · ${Math.round(HERO_BYTES / 1024)} KB · opens in CenterSpot to edit</small></span>`, "option", "", 'style="min-height:72px;justify-content:flex-start"')}`, "share.close")}`],
 
   ["import-error", "Opening a file that isn't a tactic", () => `${status()}${nav("Untitled tactic", false)}${Board.html(W, {}, [], {})}<div class="scrim"></div>
     <div class="alert">${txt("import.error.title", "Can't open this file", "", "h3")}${txt("import.error.message", "This file isn't a tactic we can open.", "muted", "p", "margin:0 0 16px")}${btn("import.error.ok", "OK", "capsule quiet")}</div>`],
@@ -161,7 +161,7 @@ const WELCOME = [
       <div class="ob-scrub">${STEPS.map((_, i) => `<i style="background:linear-gradient(90deg,var(--accent) ${i < 2 ? 100 : i === 2 ? 45 : 0}%,var(--surface-2) 0)"></i>`).join("")}</div>` },
   { title: "Share it as a 9:16 clip.", body: "One tap makes a vertical video for the team chat, with your title on top.",
     label: "A vertical video of the move, with its title at the top", art: () => `<div class="ob-clip"><div class="title-band">${HERO.title}</div>
-      ${still(203, lerpPos(pos(0), pos(1), 0.8), STEPS[0].arrows)}<div class="clip-note">${STEPS[0].note}</div><div class="mark">Agmen</div></div>` },
+      ${still(203, lerpPos(pos(0), pos(1), 0.8), STEPS[0].arrows)}<div class="clip-note">${STEPS[0].note}</div><div class="mark">CenterSpot</div></div>` },
 ];
 const dots = (page, extra = "") => `<div class="dots" data-testid="onboarding.dots" role="slider" tabindex="0" aria-label="Page ${page} of 3" aria-valuenow="${page}" aria-valuemin="1" aria-valuemax="3" ${extra}>${[1, 2, 3].map(i => `<i class="${i === page ? "on" : ""}"></i>`).join("")}</div>`;
 const cta = page => page < 3 ? btn("onboarding.next", "Next", "capsule ob-cta") : btn("onboarding.start", "Start", "capsule ob-cta");
@@ -221,7 +221,7 @@ function exportSheet(controls, footer, progress) {
   return `${editor(0, "4-3-3", { hits: false })}${sheet(null, "Export", `
     <div style="display:flex;gap:16px"><div data-testid="export.preview" style="position:relative;width:${vw}px;height:${vh}px;flex-shrink:0;background:var(--bg);border-radius:10px;padding:10px 6px">
       <div style="font:800 9px var(--font-ui);margin:0 2px 4px">${HERO.title}</div>${Board.html(116, pos(3), STEPS[3].arrows, { hits: false, testid: "x" }).replace('data-testid="x"', "").replace('class="board"', 'class="board" style="position:static"')}
-      <div style="font:400 9px var(--font-note);margin:4px 2px 0">${STEPS[3].note}</div><div style="position:absolute;right:8px;bottom:${progress ? 18 : 8}px;font:800 8px var(--font-ui);color:var(--muted)">Agmen</div>${veil}</div>
+      <div style="font:400 9px var(--font-note);margin:4px 2px 0">${STEPS[3].note}</div><div style="position:absolute;right:8px;bottom:${progress ? 18 : 8}px;font:800 8px var(--font-ui);color:var(--muted)">CenterSpot</div>${veil}</div>
       <div style="flex:1">${controls}</div></div><div style="margin-top:18px">${footer}</div>`, "export.close")}`;
 }
 

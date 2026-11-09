@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Agmen reference board</title>
+<title>CenterSpot reference board</title>
 <!-- Chime's pick board (D-47). Images and manifest live in images/ (git-ignored: other apps' screenshots). -->
 <style>
   :root { --bg: #0B0F14; --surface: #151B23; --surface-2: #1E2630; --surface-3: #27313D; --text: #F2F5F7; --muted: #93A0AD;
@@ -80,7 +80,7 @@
 <body>
 <div class="layout">
   <aside>
-    <h1>Agmen references</h1>
+    <h1>CenterSpot references</h1>
     <div class="totals" id="totals"></div>
     <div class="nav" id="nav"></div>
     <div class="label">SHOW</div>
@@ -129,7 +129,7 @@
 <script src="images/manifest.js"></script>
 <script src="images/tactics/manifest.js"></script>
 <script>
-const KEY = "agmen-board-v2";
+const KEY = "centerspot-board-v2";
 // Real tactics-board references first, one section per app (D-49); the earlier general apps sit collapsed at the end.
 const EARLIER = "Earlier references (general apps)";
 const GROUPS = ["Tactics apps (App Store)", "Tactics apps (web)", "Tactics boards (reference library)", "Design concepts", EARLIER];
@@ -142,7 +142,7 @@ let showEarlier = !newRefs.length;
 let state = {};
 try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
 try { // carry over picks from the first board as likes
-  const old = JSON.parse(localStorage.getItem("agmen-picks-v1") || "[]");
+  const old = JSON.parse(localStorage.getItem("centerspot-picks-v1") || "[]");
   old.forEach(id => { if (!state[id]) state[id] = { verdict: "like", regions: [], note: "" }; });
 } catch {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
@@ -294,11 +294,11 @@ function toast(t) { const el = document.getElementById("toast"); el.textContent 
 document.getElementById("download").onclick = () => {
   const sections = Object.fromEntries(Object.entries(state._sections).filter(([, v]) => v.trim()));
   const blob = new Blob([JSON.stringify({ saved: new Date().toISOString(), sectionOpinions: sections, picks: picks() }, null, 2)], { type: "application/json" });
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "agmen-picks.json"; a.click();
-  toast("Saved agmen-picks.json to Downloads. Tell Claude it's there.");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "centerspot-picks.json"; a.click();
+  toast("Saved centerspot-picks.json to Downloads. Tell Claude it's there.");
 };
 document.getElementById("copy").onclick = async () => {
-  const p = picks(), text = `My Agmen picks (${p.length}):\n` + surfaces.map(s => {
+  const p = picks(), text = `My CenterSpot picks (${p.length}):\n` + surfaces.map(s => {
     const xs = p.filter(x => x.section === s), op = (state._sections[s] || "").trim(); if (!xs.length && !op) return "";
     return `${s}:\n` + (op ? `  Overall: ${op}\n` : "") + xs.map(x => `  #${x.n} ${x.app}: ${x.verdict}${x.regions.length ? ` (${x.regions.map((g, i) => `${g.kind} ${i + 1}: x ${Math.round(g.x * 100)}–${Math.round((g.x + g.w) * 100)}%, y ${Math.round(g.y * 100)}–${Math.round((g.y + g.h) * 100)}%${g.note ? ` "${g.note}"` : ""}`).join("; ")})` : ""}${x.thoughts ? `\n      thoughts: ${x.thoughts}` : ""}`).join("\n");
   }).filter(Boolean).join("\n");

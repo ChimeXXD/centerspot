@@ -28,7 +28,7 @@ People who explain football tactics (FM and EA FC players, grassroots coaches, f
 4. **Draw a run:** Draw (iPhone toggle; Pencil on iPad) → stroke starting on a player → that player follows the stroke when the move plays.
 5. **Open a bad file:** open an oversized, newer-version or broken `.tactic` → a plain error message, no crash.
 
-## 2. Model (`Agmen/Model/`)
+## 2. Model (`CenterSpot/Model/`)
 
 | Type | Holds | Notes |
 | --- | --- | --- |
@@ -65,7 +65,7 @@ Details, copy and test IDs are in `design/UI-BRIEF.md`.
 
 | Screen | iPhone | iPad (Should, O-3) |
 | --- | --- | --- |
-| Launch / library | Agmen's own home screen (D-56, supersedes the system document browser): title art, lime "New tactic", then a grid of tactic cards, newest first, each drawing step 1; press and hold for Rename, Duplicate, Share, Delete | Same |
+| Launch / library | CenterSpot's own home screen (D-56, supersedes the system document browser): title art, lime "New tactic", then a grid of tactic cards, newest first, each drawing step 1; press and hold for Rename, Duplicate, Share, Delete | Same |
 | Board | Full-screen vertical pitch; toolbar (formation, pitch, draw, play, export, share); steps strip at the bottom | Centre column of a split view; inspector on the right |
 | Inspector | Sheet: name, number, role, side, delete | Trailing column |
 | Formation picker | Sheet grid of mini pitches | Popover |
@@ -140,7 +140,7 @@ Fixtures: **the hero fixture** is `examples/overlap-left.tactic`, 5 steps (D-29)
 - A hostile link (wrong prefix, bad base64, corrupt stream, a payload that inflates past 256 KB) is refused with the generic error, and the bomb case stops inflating at 256 KB. verify: `LinkCodecTests`
 - A link round-trips every fixture; its payload decodes with the Python line in FORMAT (padding restored, `wbits=-15`); each fixture's link length is recorded; a link over 2,000 characters offers the file instead. verify: `LinkCodecTests`; the Python line run on one fixture link
 - Opening a valid link or QR creates a new untitled document holding exactly that tactic, saved like any new document; an invalid one shows the generic error. verify: `LinkOpenUITests` opens a fixture link with the app running; manual once from the Camera app
-- `agmen://` opens the app from Messages and from a QR code in the Camera app; whether WhatsApp makes it tappable is recorded. verify: manual after Day 7 (Messages, WhatsApp, QR), results in PROGRESS.md
+- `centerspot://` opens the app from Messages and from a QR code in the Camera app; whether WhatsApp makes it tappable is recorded. verify: manual after Day 7 (Messages, WhatsApp, QR), results in PROGRESS.md
 
 ## 10. Risks and assumptions
 

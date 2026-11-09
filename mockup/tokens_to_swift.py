@@ -1,4 +1,4 @@
-# Generates Agmen/Design/Tokens.swift from the :root tokens in mockup/app.html (D-44), plus the kit palette (D-53),
+# Generates CenterSpot/Design/Tokens.swift from the :root tokens in mockup/app.html (D-44), plus the kit palette (D-53),
 # so the app starts from the approved mockup without retyping values. After this, the Swift file is the source of truth (D-12).
 import pathlib, re
 
@@ -62,5 +62,5 @@ out += ["    }", "", "    enum Radius {", f"        static let sheet: CGFloat = 
         f"        static let select: Double = {ms('d-select')}", f"        static let step: Double = {ms('d-step')}",
         f"        static let sheet: Double = {ms('d-sheet')}", f"        static let toast: Double = {ms('d-toast')}",
         f"        static func ease(_ duration: Double) -> Animation {{ .timingCurve({', '.join(ease)}, duration: duration) }}", "    }", "}", ""]
-(here / "../Agmen/Design/Tokens.swift").write_text("\n".join(out))
+(here / "../CenterSpot/Design/Tokens.swift").write_text("\n".join(out))
 print("Tokens.swift written:", len(out), "lines")

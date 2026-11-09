@@ -1,4 +1,4 @@
-# Build and test Agmen on GitHub's macOS runners.
+# Build and test CenterSpot on GitHub's macOS runners.
 # While the repo is private this runs only on pushes to main and by hand, to stay inside the free minutes
 # (macOS minutes count 10x). On Day 7, when the repo goes public, add `pull_request:` (D-01).
 name: CI
@@ -28,7 +28,7 @@ jobs:
       - name: Build and test
         run: |
           set -o pipefail
-          xcodebuild -scheme Agmen \
+          xcodebuild -scheme CenterSpot \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
             CODE_SIGNING_ALLOWED=NO \
             test 2>&1 | tee xcodebuild.log | grep -E "✘|error:|Test run with|\*\* TEST" || true

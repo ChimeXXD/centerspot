@@ -1,4 +1,4 @@
-# Agmen: the one-week build
+# CenterSpot: the one-week build
 
 Written 6 Nov 2026. Decisions are in `DECISIONS.md` (D-01 to D-27). The PRD is `PRD.md`; this plan replaces its phases for the week.
 
@@ -45,9 +45,9 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 ## Day by day
 
 ### Day 0: Setup
-- [x] Rename to Agmen before the first commit (D-42). Done 6 Nov: display name, target and scheme, bundle ID `dev.chime.agmen`, `agmen://`, UTType, CLAUDE.md, proof.json, docs; camera usage string dropped (D-36)
-- [x] `git init`, private repo `ChimeXXD/agmen` (O-2), first commit of these docs. 6 Nov: `bdacf0a`, visibility PRIVATE
-- [x] `project.yml` builds an empty universal app; `AgmenTests` runs one test. 6 Nov: 3 Swift Testing tests pass on iPhone 18 Pro (iOS 27.0); iPad Pro 13-inch (M5) iOS 26.5 builds; mutation run went red
+- [x] Rename to CenterSpot before the first commit (D-42). Done 6 Nov: display name, target and scheme, bundle ID `dev.chime.centerspot`, `centerspot://`, UTType, CLAUDE.md, proof.json, docs; camera usage string dropped (D-36)
+- [x] `git init`, private repo `ChimeXXD/centerspot` (O-2), first commit of these docs. 6 Nov: `bdacf0a`, visibility PRIVATE
+- [x] `project.yml` builds an empty universal app; `CenterSpotTests` runs one test. 6 Nov: 3 Swift Testing tests pass on iPhone 18 Pro (iOS 27.0); iPad Pro 13-inch (M5) iOS 26.5 builds; mutation run went red
 - [x] Signing with the free Personal Team; app launches on Chime's iPhone. 6 Nov: installed and launched with devicectl; Chime saw the document browser (Create Document, Recents)
 - [x] CI (`.github/workflows/ci.yml`) runs on push to `main` only while private. 6 Nov: run 42289439771 succeeded
 - [x] Proof gate (`.claude/proof.json`) runs test and build-ios26 (D-32, D-43)
