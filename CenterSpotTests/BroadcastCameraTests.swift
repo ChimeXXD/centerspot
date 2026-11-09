@@ -99,6 +99,33 @@ struct BroadcastCameraTests {
         #expect(abs(line.y - view.maxY) < 1e-6)
     }
 
+    /// D-91: following play up to the far goal, the far goal line stops at the view's top edge, with no empty dark
+    /// above it (Chime's iPhone and iPad showed a quarter of the view empty).
+    @Test(arguments: [CGSize(width: 393, height: 516), CGSize(width: 1024, height: 1180), CGSize(width: 900, height: 700),
+                      CGSize(width: 402, height: 650), CGSize(width: 402, height: 700), CGSize(width: 1080, height: 1544)])
+    func theFarGoalLineNeverLeavesEmptyDarkAbove(size: CGSize) {
+        let view = CGRect(origin: CGPoint(x: 10, y: 20), size: size)
+        for kind in Pitch.Kind.allCases {
+            for y in stride(from: 0.0, through: 1.0, by: 0.1) {
+                expectNoSky(BroadcastCamera(view: view, kind: kind, target: Point(x: 0.5, y: y)), view: view, "\(kind) target \(y)")
+            }
+        }
+    }
+
+    /// D-91 in a tall view: the pitch is drawn bigger rather than leave dark above it, and still fills the width.
+    @Test func aTallViewDrawsThePitchBiggerRatherThanShowSky() {
+        let view = CGRect(x: 0, y: 0, width: 402, height: 700)
+        let camera = BroadcastCamera(view: view, kind: .full, target: Point(x: 0.5, y: 0.3))
+        #expect(camera.plane.pitchRect.width > 1.1 * view.width, "\(camera.plane.pitchRect.width)")
+    }
+
+    private func expectNoSky(_ camera: BroadcastCamera, view: CGRect, _ label: String) {
+        do {
+            let far = camera.project(camera.plane.point(Point(x: 0.5, y: 1)))
+            #expect(far.y <= view.minY + BroadcastCamera.skyMargin * view.height + 0.5, "\(label): far line at \(far.y)")
+        }
+    }
+
     /// From anywhere on the pitch, every corner of every kind projects in front of the eye.
     @Test func theEyeIsAlwaysInFrontOfThePitch() {
         for kind in Pitch.Kind.allCases {

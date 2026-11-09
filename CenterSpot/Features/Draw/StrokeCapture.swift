@@ -2,9 +2,17 @@ import SwiftUI
 import UIKit
 import UIKit.UIGestureRecognizerSubclass
 
-/// Which touches draw on the board (SPEC §6): Apple Pencil always; a finger only in iPhone draw mode.
+/// Which touches draw on the board (SPEC §6, D-90): only in draw mode; the Pencil on iPad, finger and Pencil on iPhone.
 enum StrokeInput: Sendable, Equatable {
     case none, pencil, fingerAndPencil
+
+    /// Outside draw mode nothing draws, so a Pencil taps and drags players like a finger (D-90).
+    static func board(_ mode: BoardMode, pencilDraws: Bool) -> StrokeInput {
+        switch mode {
+        case .editing, .playing: .none
+        case .drawing: pencilDraws ? .pencil : .fingerAndPencil
+        }
+    }
 }
 
 /// Captures one drawn stroke from the touch that lands on the board (D-08: capture only; the stroke becomes our own

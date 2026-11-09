@@ -2,7 +2,7 @@ import SwiftUI
 import TipKit
 
 /// One row of the iPad's steps list (D-75): number, time and handwritten note, lit when current. Tap goes to the step;
-/// press, hold and drag reorders. Made from plain values with a `nonisolated` init, so `StepRows` can build it on
+/// press, hold and drag reorders (not while playing, D-92). Made from plain values with a `nonisolated` init, so `StepRows` can build it on
 /// SwiftUI's render thread (iPadOS 26 hardware does); its body still runs on the main actor.
 struct StepRow: View {
     let index: Int
@@ -11,32 +11,29 @@ struct StepRow: View {
     let ids: [String]
     let isCurrent: Bool
     let showsStepActions: Bool
+    /// False while playing: no drag to reorder, and a tap plays from the step (D-92).
+    let editable: Bool
     /// The step tip when this row carries it (D-58).
     let tip: (any Tip)?
     let onSelect: @MainActor (Int) -> Void
     let onMove: @MainActor (_ from: Int, _ to: Int) -> Void
 
-    nonisolated init(index: Int, step: Step, ids: [String], isCurrent: Bool, showsStepActions: Bool, tip: (any Tip)?,
-                     onSelect: @escaping @MainActor (Int) -> Void, onMove: @escaping @MainActor (Int, Int) -> Void) {
+    nonisolated init(index: Int, step: Step, ids: [String], isCurrent: Bool, showsStepActions: Bool, editable: Bool,
+                     tip: (any Tip)?, onSelect: @escaping @MainActor (Int) -> Void,
+                     onMove: @escaping @MainActor (Int, Int) -> Void) {
         self.index = index
         self.step = step
         self.ids = ids
         self.isCurrent = isCurrent
         self.showsStepActions = showsStepActions
+        self.editable = editable
         self.tip = tip
         self.onSelect = onSelect
         self.onMove = onMove
     }
 
     var body: some View {
-        Button { onSelect(index) } label: { face(on: isCurrent) }
-            .buttonStyle(.plain)
-            .draggable(step.id) { face(on: true).frame(width: 320) }
-            .dropDestination(for: String.self) { dropped, _ in
-                guard let id = dropped.first, let from = ids.firstIndex(of: id) else { return false }
-                onMove(from, index)
-                return true
-            }
+        reorderable(Button { onSelect(index) } label: { face(on: isCurrent) }.buttonStyle(.plain))
             .accessibilityLabel(StepsList.label(index: index, count: ids.count, step: step))
             .accessibilityHint(hint)
             .accessibilityAddTraits(isCurrent ? .isSelected : [])
@@ -45,7 +42,22 @@ struct StepRow: View {
             .id(step.id)
     }
 
+    @ViewBuilder private func reorderable(_ row: some View) -> some View {
+        if editable {
+            row
+                .draggable(step.id) { face(on: true).frame(width: 320) }
+                .dropDestination(for: String.self) { dropped, _ in
+                    guard let id = dropped.first, let from = ids.firstIndex(of: id) else { return false }
+                    onMove(from, index)
+                    return true
+                }
+        } else {
+            row
+        }
+    }
+
     private var hint: String {
+        guard editable else { return "Double-tap to play from this step" }
         guard isCurrent else { return "Double-tap to go to this step" }
         return showsStepActions ? "Double-tap for step actions" : ""
     }
@@ -88,16 +100,19 @@ struct StepRows: View {
     let steps: [Step]
     let current: Int
     let showsStepActions: Bool
+    let editable: Bool
     let tip: (any Tip)?
     let tipIndex: Int
     let onSelect: @MainActor (Int) -> Void
     let onMove: @MainActor (_ from: Int, _ to: Int) -> Void
 
-    nonisolated init(steps: [Step], current: Int, showsStepActions: Bool, tip: (any Tip)?, tipIndex: Int,
-                     onSelect: @escaping @MainActor (Int) -> Void, onMove: @escaping @MainActor (Int, Int) -> Void) {
+    nonisolated init(steps: [Step], current: Int, showsStepActions: Bool, editable: Bool, tip: (any Tip)?,
+                     tipIndex: Int, onSelect: @escaping @MainActor (Int) -> Void,
+                     onMove: @escaping @MainActor (Int, Int) -> Void) {
         self.steps = steps
         self.current = current
         self.showsStepActions = showsStepActions
+        self.editable = editable
         self.tip = tip
         self.tipIndex = tipIndex
         self.onSelect = onSelect
@@ -105,12 +120,12 @@ struct StepRows: View {
     }
 
     var body: some View {
-        let ids = steps.map(\.id), current = current, showsStepActions = showsStepActions
+        let ids = steps.map(\.id), current = current, showsStepActions = showsStepActions, editable = editable
         let tip = tip, tipIndex = tipIndex, onSelect = onSelect, onMove = onMove
         VStack(spacing: Tokens.Space.s2) {
             ForEach(Array(steps.enumerated()), id: \.element.id) { @Sendable index, step in
                 StepRow(index: index, step: step, ids: ids, isCurrent: index == current, showsStepActions: showsStepActions,
-                        tip: index == tipIndex ? tip : nil, onSelect: onSelect, onMove: onMove)
+                        editable: editable, tip: index == tipIndex ? tip : nil, onSelect: onSelect, onMove: onMove)
             }
         }
     }

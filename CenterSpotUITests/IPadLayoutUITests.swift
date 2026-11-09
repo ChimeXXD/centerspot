@@ -140,6 +140,17 @@ final class IPadLayoutUITests: XCTestCase {
         toggle.tap()
         element(app, "playback.scrubber").coordinate(withNormalizedOffset: CGVector(dx: 0.62, dy: 0.5)).tap()
         XCTAssertTrue(element(app, "playback.note").label.hasPrefix("Step 4 of 5"), element(app, "playback.note").label)
+        if name == "landscape" {
+            // D-92: the column lists every step while playing, the playing one lit; a tap plays from that step, and
+            // there is no + (steps aren't edited mid-play).
+            XCTAssertTrue(element(app, "steps.row.4").isSelected, "the playing step is lit")
+            XCTAssertFalse(element(app, "steps.add").exists)
+            element(app, "steps.row.2").tap()
+            XCTAssertTrue(element(app, "playback.note").label.hasPrefix("Step 2 of 5"), element(app, "playback.note").label)
+            XCTAssertTrue(element(app, "steps.row.2").isSelected)
+            XCTAssertFalse(element(app, "steps.row.4").isSelected)
+            element(app, "steps.row.4").tap()
+        }
         sleep(1)
         save("ipad-playback-\(name)")
         element(app, "playback.done").tap()

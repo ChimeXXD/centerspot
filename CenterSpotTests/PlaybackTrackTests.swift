@@ -31,6 +31,13 @@ struct PlaybackTrackTests {
         }
     }
 
+    /// D-92: tapping a step in the iPad's playing list jumps to its start, and the list lights that same step.
+    @Test func aStepsStartIsThatStepOnTheList() {
+        for (index, start) in PlaybackTrack.starts(of: phase).enumerated() {
+            #expect(Timeline.state(at: start, in: hero).stepIndex == index, "step \(index + 1)")
+        }
+    }
+
     @Test func segmentsFillAsTheirStepPlays() {
         expectClose(PlaybackTrack.fill(segment: 0, at: 0, in: phase), 0)
         expectClose(PlaybackTrack.fill(segment: 0, at: 0.75, in: phase), 0.5)

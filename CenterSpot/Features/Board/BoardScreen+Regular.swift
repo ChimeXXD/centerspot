@@ -79,7 +79,9 @@ extension BoardScreen {
     private var column: some View {
         VStack(alignment: .leading, spacing: Tokens.Space.s5) {
             columnNavRow
-            if mode != .playing, !tactic.tokens.isEmpty {
+            if mode == .playing {
+                playingSteps.layoutPriority(1)
+            } else if !tactic.tokens.isEmpty {
                 StepsList(steps: steps, current: current, showsStepActions: mode != .drawing, showsTip: tipsOn,
                           onSelect: selectStepFromList,
                           onAdd: addStepFromList, onMove: moveStepFromList)
@@ -95,6 +97,15 @@ extension BoardScreen {
                 playbackBar.padding(.horizontal, -Tokens.Space.s5)
             }
             Spacer(minLength: 0)
+        }
+    }
+
+    /// While playing (D-92): every step, the playing one lit as the move runs; a tap plays from that step.
+    private var playingSteps: some View {
+        TimelineView(.animation(minimumInterval: 0.1, paused: !clock.isPlaying)) { _ in
+            StepsList(steps: steps, current: Timeline.state(at: clock.t(at: Self.now), in: tactic).stepIndex,
+                      showsStepActions: false, editable: false, showsTip: false,
+                      onSelect: playFromStep, onAdd: {}, onMove: { _, _ in })
         }
     }
 

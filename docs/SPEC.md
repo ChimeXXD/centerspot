@@ -25,7 +25,7 @@ People who explain football tactics (FM and EA FC players, grassroots coaches, f
 1. **Show a move:** New tactic → pick a formation → drag players in step 1 → **+** adds step 2 (a copy) → drag again, up to 3–8 steps → Play → Export → Vertical 9:16 → size shown → share sheet. Target: under 2 minutes for a first move.
 2. **Share a tactic:** Share → `.tactic` file (AirDrop, Files, WhatsApp document), → the other person opens it in the app and sees the exact board. Links and QR come after Day 7 (D-36).
 3. **Post a lineup:** pick a step → Export → Image → PNG of that step (lineup card is a Should).
-4. **Draw a run:** Draw (iPhone toggle; Pencil on iPad) → stroke starting on a player → that player follows the stroke when the move plays.
+4. **Draw a run:** Draw (the toolbar's Draw; on iPad the Pencil then draws, D-90) → stroke starting on a player → that player follows the stroke when the move plays.
 5. **Open a bad file:** open an oversized, newer-version or broken `.tactic` → a plain error message, no crash.
 
 ## 2. Model (`CenterSpot/Model/`)
@@ -79,7 +79,7 @@ Details, copy and test IDs are in `design/UI-BRIEF.md`.
 - **Drag** a token to move it in the current step. One finger; long-press then drag to multi-select (Should). Clamped to the pitch; no snap by default.
 - **Tap** a token to select; tap the pitch to deselect; double-tap a token to open the inspector.
 - **New step** duplicates the current step and selects it. Steps can be reordered by drag, deleted (with undo) and given a duration.
-- **Draw mode**: on iPad the Pencil always draws and the finger always moves tokens; on iPhone a toolbar toggle switches the finger to drawing. The picked line type decides what a stroke from a player does (D-59): Run moves the player, Pass moves the ball, Dribble moves both, Press moves the player; a stroke from empty grass is an arrow of the picked type and moves nothing.
+- **Draw mode**: on iPad the Pencil draws only after Draw is picked (outside it the Pencil taps and drags like a finger, D-90) and the finger always moves tokens; on iPhone a toolbar toggle switches the finger to drawing. The picked line type decides what a stroke from a player does (D-59): Run moves the player, Pass moves the ball, Dribble moves both, Press moves the player; a stroke from empty grass is an arrow of the picked type and moves nothing.
 - **Undo/redo** through the document's `UndoManager` for every edit.
 
 ## 7. Export (D-11)

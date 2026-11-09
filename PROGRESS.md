@@ -2,6 +2,25 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Four fixes from Chime's devices (Mon 9 Nov 2026, D-90 to D-93)
+
+**Changed**
+- D-90 Pencil: draws only in draw mode; outside it the Pencil taps and drags like a finger (`StrokeInput.board`).
+- D-91 Broadcast: tall lens 35°, at most 1.1 view widths, so both touchlines show; the camera never looks so far up that dark shows above the far goal, and a taller view draws the pitch bigger instead. It is now mostly a steady wide shot (moves a little with the ball). Play and the 9:16 video change together.
+- D-92 iPad landscape Play lists the steps (playing one lit, tap plays from it, no + or reorder).
+- D-93 Clean stacking: each token drawn whole back to front; a number shows whole or not at all; selected and dragged players on top; selection rings under every body; away ring centre solid.
+- Code review (medium, --fix): 8 findings, 4 fixed (disc reach per kind, tap order follows draw order, no wasted overlap checks on cards), dragged-player-on-top added after; fresh-context verifier: 4 gaps, all fixed (tall-view sky, flat-disc test far up the pitch, ring over a neighbour's number, D-91 wording).
+
+**Checked**
+- Unit: 469 tests passed (iPhone 18 Pro, iOS 27.0), including new `StrokeInputTests`, `theFarGoalLineNeverLeavesEmptyDarkAbove` (6 view sizes × 3 pitch kinds), `aTallViewDrawsThePitchBiggerRatherThanShowSky`, `aDiscOnTopCoversTheOneUnderneathNumberAndAll`, `aNumberShowsWholeOrNotAtAll`, `theSelectedPlayerIsDrawnOnTop`, `aDraggedPlayerStaysOnTop`, `aStepsStartIsThatStepOnTheList`.
+- UI: Camera, Broadcast, BoardScreenshot, DrawShape, ControlLabel on iPhone 18 Pro; IPadLayout (new Play-list checks) and Camera on iPad Pro 13-inch. Play captured on both, portrait and landscape: no dark above the far goal, touchlines in view.
+
+**Not verified**
+- The Pencil on a real iPad (the simulator has none). Reduce Motion's still view with the new lens (the follow shot nearly always covers the move). The lit row advancing during live play (the UI test checks it paused).
+
+**Next**
+- Install on the iPhone and iPad; scenarios (D-94) build.
+
 ## Library v2: your moves first (Mon 9 Nov 2026, D-89)
 
 **Changed**

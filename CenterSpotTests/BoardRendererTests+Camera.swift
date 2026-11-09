@@ -23,8 +23,9 @@ extension BoardRendererTests {
         try render(tactic, state: state, options: .init(broadcast: target))
     }
 
-    /// On the left wing the camera stops panning with the touchline in the bottom corner; farther up, the touchline
-    /// leans in toward the middle, as a line going away does.
+    /// On the left wing the touchline is drawn where the camera puts it, and farther up it leans in toward the middle,
+    /// as a line going away does. (Measured on the near goal line's row: since D-91 the near end can be in view, so
+    /// the bottom rows may be past the goal line.)
     @Test func theBroadcastPitchNarrowsAwayFromTheCamera() throws {
         let (tactic, state, _) = Self.cameraScene()
         let wing = Point(x: 0, y: 0.6)
@@ -37,22 +38,33 @@ extension BoardRendererTests {
             }
         }
         let farLine = camera.project(camera.plane.point(Point(x: 0, y: 0.97)))
-        let far = try #require(leftEdge(atY: farLine.y)), near = try #require(leftEdge(atY: Self.size.height - 4))
+        let nearRow = max(camera.focus, 0) + 0.03
+        let nearLine = camera.project(camera.plane.point(Point(x: 0, y: nearRow)))
+        let far = try #require(leftEdge(atY: farLine.y)), near = try #require(leftEdge(atY: nearLine.y))
         #expect(abs(far - farLine.x) < 4, "far touchline at \(far), camera says \(farLine.x)")
-        #expect(near < 4, "the near touchline is in the bottom corner: \(near)")
+        #expect(abs(near - max(nearLine.x, 0)) < 4, "near touchline at \(near), camera says \(nearLine.x)")
         #expect(far > near + 30, "far \(far), near \(near)")
     }
 
+    /// A disc lies flat on the grass: as wide as ever but shorter, by as much as the camera squashes the grass
+    /// there. Measured far up the pitch, where the squash is strong enough to tell a flat disc from a round one.
     @Test func aDiscLiesFlatWhereTheCameraPutsIt() throws {
-        let (tactic, state, camera) = Self.cameraScene()
-        let frame = try Self.broadcast(tactic, state)
-        let p = camera.plane.point(Point(x: 0.5, y: 0.6)), c = camera.project(p)
+        var (tactic, state, _) = Self.cameraScene()
+        let spot = Point(x: 0.5, y: 0.93)
+        state.positions["h9"] = spot
+        let camera = BroadcastCamera(view: CGRect(origin: .zero, size: Self.size), kind: .full, target: spot)
+        let frame = try Self.broadcast(tactic, state, at: spot)
+        let p = camera.plane.point(spot), c = camera.project(p)
         let r = camera.plane.tokenRadius * camera.depthScale(at: p)
         let fill = Tokens.kit(.blue).fill
         #expect(Self.close(frame.colour(at: CGPoint(x: c.x + 0.8 * r, y: c.y)), fill, within: 6), "right of the number")
         #expect(Self.close(frame.colour(at: CGPoint(x: c.x - 0.8 * r, y: c.y)), fill, within: 6), "left of the number")
-        // Flat on the grass: as wide as ever, but shorter, so 0.85 r below the centre is past its edge.
-        #expect(!Self.close(frame.colour(at: CGPoint(x: c.x, y: c.y + 0.85 * r)), fill, within: 30))
+        let t = camera.local(at: p), tall = t.d / t.a
+        #expect(tall < 0.9, "the camera squashes the grass here: \(tall)")
+        // Halfway between the flat disc's edge and where a round one's would be: grass, not disc.
+        let between = (tall + 1) / 2 * r
+        #expect(!Self.close(frame.colour(at: CGPoint(x: c.x, y: c.y + between)), fill, within: 30), "flat, not round")
+        #expect(!Self.close(frame.colour(at: CGPoint(x: c.x, y: c.y - between)), fill, within: 30), "flat, not round")
     }
 
     @Test func nearerDiscsAreDrawnOverFartherOnes() throws {

@@ -76,6 +76,14 @@ extension BoardScreen {
         }
     }
 
+    /// A step row tapped while playing (iPad landscape, D-92): from the start of that step, playing or paused as it was.
+    func playFromStep(_ index: Int) {
+        guard let phase = tactic.phases.first else { return }
+        let starts = PlaybackTrack.starts(of: phase)
+        guard starts.indices.contains(index) else { return }
+        jump(starts[index])
+    }
+
     /// Previous and next land on a resting step and keep playing or paused as they were.
     private func jump(_ t: Double) {
         clock.scrub(to: t, at: Self.now)

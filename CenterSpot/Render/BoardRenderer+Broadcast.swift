@@ -34,15 +34,21 @@ extension BoardRenderer {
                               in: ctx, camera: camera)
         }
 
-        let tokens = farToNear(tactic.tokens, centres: centres).compactMap { token in
-            centres[token.id].map { (token, $0, kit(for: token, in: tactic), style(of: token, options)) }
+        // Far to near, each token whole (D-93): a nearer player covers a farther one, and a number shows whole or not
+        // at all (measured where the camera draws them).
+        let discs = farToNear(tactic.tokens, centres: centres).compactMap { token in
+            centres[token.id].map { Disc(token, at: $0, radius: g.tokenRadius, kit: kit(for: token, in: tactic)) }
         }
-        for (token, c, kit, style) in tokens {
+        let covered = coveredNumbers(discs.map {
+            Disc(token: $0.token, centre: camera.project($0.centre), radius: $0.radius * camera.depthScale(at: $0.centre),
+                 kit: $0.kit, reach: $0.reach)
+        })
+        for disc in discs {
+            let token = disc.token, c = disc.centre, kit = disc.kit, style = style(of: token, options)
             var flat = style
             flat.grass = camera
             TokenDrawing.drawBody(token, at: c, kit: kit, radius: g.tokenRadius, style: flat, in: ctx)
-        }
-        for (token, c, kit, style) in tokens {
+            guard !covered.contains(token.id) else { continue }
             TokenDrawing.drawNumber(token, at: camera.project(c), kit: kit, radius: g.tokenRadius * camera.depthScale(at: c),
                                     style: style, in: ctx)
         }

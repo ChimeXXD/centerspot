@@ -17,9 +17,11 @@ struct BroadcastCamera: Sendable, Equatable {
         /// How far up the pitch (0…1 of its length) the target sits above the view's bottom edge.
         var lead: Double
 
-        /// Tall views (playback, the 9:16 frame): `CAM = { pw: 660, tilt: 54, persp: 1100 }` in a 393 × 516 view, the
-        /// target about 37% of the way down.
-        static let standard = Lens(tiltDegrees: 54, widthPerViewWidth: 660 / 393, widthPerViewHeight: 660 / 516,
+        /// Tall views (playback, the 9:16 frame): touchline to touchline across the middle of the view, the camera
+        /// steeper than the mockup's `CAM = { pw: 660, tilt: 54, persp: 1100 }` so the pitch still runs past the view
+        /// and the camera follows play (D-91, Chime picked "B" from renders on the iPhone and iPad). The plane is at
+        /// most 1.1 view widths, and narrower in a squarer view (0.84 view heights).
+        static let standard = Lens(tiltDegrees: 35, widthPerViewWidth: 1.1, widthPerViewHeight: 0.84,
                                    eye: 1100 / 660, lead: 0.44)
         /// Wide views (16:9): `{ pw: 320, tilt: 58, persp: 700 }` in a 393 × 221 view.
         static let wide = Lens(tiltDegrees: 58, widthPerViewWidth: 320 / 393, widthPerViewHeight: 320 / 221,
@@ -66,15 +68,43 @@ struct BroadcastCamera: Sendable, Equatable {
     }
 
     /// The camera looking at `target` (a point on the pitch, `CameraTrack`): the target on the view's centre line,
-    /// `lens.lead` above the bottom edge, without panning past a touchline at the bottom corners.
+    /// `lens.lead` above the bottom edge, without panning past a touchline at the bottom corners, or so far up the
+    /// pitch that the far goal line comes down into the view with empty dark above it (D-91).
     init(view: CGRect, kind: Pitch.Kind, target: Point) {
         let lens = Lens.fitting(view.size)
-        let width = max(min(lens.widthPerViewWidth * view.width, lens.widthPerViewHeight * view.height), 1)
-        let half = Double(view.width / (2 * width))
-        let x = half >= 0.5 ? 0.5 : target.x.clamped(to: half...(1 - half))
-        let focus = (target.y - lens.lead).clamped(to: Self.lowestFocus...(1 - lens.lead))
-        self.init(view: view, kind: kind, planeWidth: width, tiltDegrees: lens.tiltDegrees, eye: lens.eye * width,
-                  focus: focus, centreX: x, lens: lens)
+        var width = max(min(lens.widthPerViewWidth * view.width, lens.widthPerViewHeight * view.height), 1)
+        func camera(width: CGFloat, focus: Double) -> BroadcastCamera {
+            let half = Double(view.width / (2 * width))
+            let x = half >= 0.5 ? 0.5 : target.x.clamped(to: half...(1 - half))
+            return BroadcastCamera(view: view, kind: kind, planeWidth: width, tiltDegrees: lens.tiltDegrees,
+                                   eye: lens.eye * width, focus: focus, centreX: x, lens: lens)
+        }
+        // A view taller than the lens was made for shows the whole pitch with dark above it even from the lowest
+        // camera: draw the pitch bigger, 3% at a time, until the far goal line reaches the top (D-91).
+        for _ in 0..<40 where !Self.skyFree(camera(width: width, focus: Self.lowestFocus)) { width *= 1.03 }
+        let highest = Self.highestFocus(below: 1 - lens.lead) { camera(width: width, focus: $0) }
+        self = camera(width: width, focus: (target.y - lens.lead).clamped(to: Self.lowestFocus...max(highest, Self.lowestFocus)))
+    }
+
+    /// How far below the view's top edge the far goal line may sit, as a share of the view's height.
+    static let skyMargin: CGFloat = 0.03
+
+    /// The highest bottom edge (at most `limit`) that keeps the far goal line within `skyMargin` of the view's top:
+    /// the far line comes down the view as the camera looks farther up the pitch, so bisect.
+    private static func highestFocus(below limit: Double, _ make: (Double) -> BroadcastCamera) -> Double {
+        guard !skyFree(make(limit)) else { return limit }
+        var low = lowestFocus, high = limit
+        for _ in 0..<24 {
+            let mid = (low + high) / 2
+            if skyFree(make(mid)) { low = mid } else { high = mid }
+        }
+        return low
+    }
+
+    /// Whether the far goal line is within `skyMargin` of the view's top.
+    private static func skyFree(_ camera: BroadcastCamera) -> Bool {
+        let far = camera.project(camera.plane.point(Point(x: 0.5, y: 1)))
+        return far.y <= camera.view.minY + skyMargin * camera.view.height
     }
 
     /// How far round the moving area (0…1 of the pitch) the still view keeps in sight: a disc and its glow.

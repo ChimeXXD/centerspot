@@ -103,11 +103,11 @@ struct BoardGeometry: Sendable, Equatable {
     static let carryNone = CGFloat(Possession.noCarryRadii)
 
     /// The token nearest `location` within `hitRadius`, or nil. Ties go to the token drawn on top (later in `tokens`,
-    /// the ball last).
-    func hitToken(at location: CGPoint, positions: [String: Point], tokens: [Token]) -> String? {
+    /// the `selected` one over the other players (D-93), the ball last).
+    func hitToken(at location: CGPoint, positions: [String: Point], tokens: [Token], selected: String? = nil) -> String? {
         let centres = drawnCentres(positions: positions, tokens: tokens)
         var best: (id: String, distance: CGFloat)?
-        for token in BoardRenderer.drawingOrder(tokens) {
+        for token in BoardRenderer.drawingOrder(tokens, selected: selected) {
             guard let c = centres[token.id] else { continue }
             let d = hypot(c.x - location.x, c.y - location.y)
             if d <= Self.hitRadius, d <= (best?.distance ?? .infinity) { best = (token.id, d) }

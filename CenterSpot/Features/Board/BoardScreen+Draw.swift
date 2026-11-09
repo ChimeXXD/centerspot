@@ -2,19 +2,13 @@ import SwiftUI
 import UIKit
 
 /// Drawing on the board (D4-2, D-59): each finished stroke becomes one undoable `StrokeEdits` edit. On iPhone the
-/// toolbar's Draw switches the finger to drawing; on iPad the Pencil always draws and the finger always moves tokens
-/// (SPEC §6).
+/// toolbar's Draw switches the finger to drawing; on iPad Draw switches the Pencil to drawing and the finger keeps
+/// moving tokens (SPEC §6, D-90). Outside draw mode the Pencil is a finger: it taps and drags players.
 extension BoardScreen {
     /// iPad: the Pencil draws, so the finger keeps moving tokens even in draw mode.
     static var pencilDraws: Bool { UIDevice.current.userInterfaceIdiom == .pad }
 
-    var strokeInput: StrokeInput {
-        switch mode {
-        case .editing: .pencil
-        case .playing: .none
-        case .drawing: Self.pencilDraws ? .pencil : .fingerAndPencil
-        }
-    }
+    var strokeInput: StrokeInput { StrokeInput.board(mode, pencilDraws: Self.pencilDraws) }
 
     /// Opens draw mode, with `kind` picked ("Draw run" picks Run) or the last tool used.
     func startDrawing(_ kind: Arrow.Kind? = nil) {

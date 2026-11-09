@@ -115,8 +115,11 @@ struct BoardCanvas: View {
     }
 
     private var options: BoardRenderer.Options {
-        .init(selection: strokeStart ?? selection, dimsUnselected: dimsUnselected, showsLift: true,
-              selectedMark: selectedMark, pendingLine: pendingLine, broadcast: broadcast, broadcastSpan: broadcastSpan)
+        var options = BoardRenderer.Options(
+            selection: strokeStart ?? selection, dimsUnselected: dimsUnselected, showsLift: true,
+            selectedMark: selectedMark, pendingLine: pendingLine, broadcast: broadcast, broadcastSpan: broadcastSpan)
+        options.onTop = dragging?.id
+        return options
     }
 
     private func capture(_ phase: StrokeCapture.Phase, _ location: CGPoint, _ geometry: BoardGeometry) {
@@ -147,7 +150,7 @@ struct BoardCanvas: View {
     private var stepCount: Int { tactic.phases.first?.steps.count ?? 1 }
 
     func hit(_ location: CGPoint, _ geometry: BoardGeometry) -> String? {
-        geometry.hitToken(at: location, positions: state.positions, tokens: tactic.tokens)
+        geometry.hitToken(at: location, positions: state.positions, tokens: tactic.tokens, selected: selection)
     }
 
     /// Moves the token under the finger, keeping the grab offset so the disc doesn't jump to the fingertip.
@@ -183,7 +186,7 @@ struct BoardCanvas: View {
     /// see has none, so VoiceOver never lands off the board or over the controls (review, 8 Nov).
     private func accessibilityLayer(_ centres: [String: CGPoint]) -> some View {
         let roles = Presets.shared.roles
-        return ForEach(BoardRenderer.drawingOrder(tactic.tokens)) { token in
+        return ForEach(BoardRenderer.drawingOrder(tactic.tokens, selected: selection)) { token in
             if let centre = centres[token.id], let point = state.positions[token.id] {
                 tokenElement(token, at: centre, point: point, roles: roles)
             }

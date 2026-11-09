@@ -30,7 +30,8 @@ enum Tokens {
         static let glowFillOpacity = 0.18
         /// D-67: the thin dark outline round every disc, so it holds on heat, zones and the dark pitch.
         static let discOutline = RGBA(0x0B0F14)
-        static let awayInner = RGBA(0x0B0F14, alpha: 0.85)
+        /// Solid, so a player stacked under an away ring doesn't show through it (D-93).
+        static let awayInner = RGBA(0x0B0F14, alpha: 1)
         static let awayInk = RGBA(0xFFFFFF)
         static let ball = RGBA(0xFFFFFF)
         static let run = RGBA(0xFFFFFF)

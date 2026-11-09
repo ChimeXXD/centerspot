@@ -4,8 +4,8 @@ import Foundation
 
 /// Players, the ball and cones (SPEC §4, D-15): home filled discs with kit-ink numbers, away rings with a dark
 /// centre and a white number, the ball a small white disc with a dark outline, the selection a white chalk ring.
-/// D-67: every disc has a thin dark outline, and the board draws every body before any number (`drawBody`, then
-/// `drawNumber`), so a disc that overlaps a neighbour never hides their number.
+/// D-67: every disc has a thin dark outline. D-93 (supersedes D-67's numbers-on-top): the board draws each token
+/// whole, body then number, back to front, so a disc on top of a neighbour covers it cleanly, number included.
 enum TokenDrawing {
     /// Shirt numbers: heavy Nunito (D-44), sized to the disc rather than Dynamic Type.
     static let numberWeight: CGFloat = 800
@@ -27,6 +27,8 @@ enum TokenDrawing {
         /// it, so it lies flat. Projected paths are flattened into lines first, so the screen and the export fill the
         /// same polygons and rasterise them alike (D-60, D-61).
         var grass: BroadcastCamera?
+        /// The selection ring was drawn already, under every body (`drawSelection`, D-93), so the body leaves it out.
+        var ringDrawn = false
     }
 
     /// The whole token, body then number: for one token on its own (the lineup card's list).
@@ -35,18 +37,38 @@ enum TokenDrawing {
         drawNumber(token, at: c, kit: kit, radius: r, style: style, in: ctx)
     }
 
-    /// Everything but the number: the selection ring, the disc or ring with its outlines, the ball, a cone.
+    /// Just the selected token's ring (with its lift on a player), for the board to draw under every body first, so
+    /// the ring never crosses a neighbour's number (D-93).
+    static func drawSelection(_ token: Token, at c: CGPoint, radius r: CGFloat, style: Style, in ctx: CGContext) {
+        guard style.selected else { return }
+        faded(style.opacity, in: ctx) {
+            switch token.kind {
+            case .ball: selectionRing(at: c, radius: r * 0.42 + r * 0.6, width: r * 0.14, grass: style.grass, in: ctx)
+            case .cone, .marker: selectionRing(at: c, radius: r * 1.1, width: r * 0.14, grass: style.grass, in: ctx)
+            case .player:
+                if style.lift {
+                    ctx.setShadow(offset: CGSize(width: 0, height: r * 0.25), blur: r * 0.6, color: RGBA(0x000000, alpha: 0.5).cgColor)
+                }
+                selectionRing(at: c, radius: r * 1.45, width: r * 0.14, grass: style.grass, in: ctx)
+                ctx.setShadow(offset: .zero, blur: 0, color: nil)
+            }
+        }
+    }
+
+    /// Everything but the number: the selection ring (unless drawn already), the disc or ring with its outlines, the
+    /// ball, a cone.
     static func drawBody(_ token: Token, at c: CGPoint, kit: Tokens.Kit?, radius r: CGFloat, style: Style, in ctx: CGContext) {
+        if style.selected, !style.ringDrawn {
+            drawSelection(token, at: c, radius: r, style: style, in: ctx)
+        }
         faded(style.opacity, in: ctx) {
             switch token.kind {
             case .ball:
                 let g = style.grass
-                if style.selected { selectionRing(at: c, radius: r * 0.42 + r * 0.6, width: r * 0.14, grass: g, in: ctx) }
                 disc(at: c, radius: r * 0.42, fill: Tokens.Colour.ball.cgColor, grass: g, in: ctx)
                 ring(at: c, radius: r * 0.42, width: max(r * 0.14, style.minimumOutline), colour: Tokens.Colour.bg.cgColor,
                      grass: g, in: ctx)
             case .cone, .marker:
-                if style.selected { selectionRing(at: c, radius: r * 1.1, width: r * 0.14, grass: style.grass, in: ctx) }
                 let h = r * 0.95
                 let cone = CGMutablePath()
                 cone.move(to: CGPoint(x: c.x, y: c.y - h * 0.75))
@@ -74,6 +96,19 @@ enum TokenDrawing {
         }
     }
 
+    /// How far a token's body reaches from its centre, in disc radii, its dark outline included (not the selection
+    /// ring): what `BoardRenderer.coveredNumbers` measures a disc on top by. Matches `drawBody`.
+    static func reach(of token: Token, kit: Tokens.Kit?) -> CGFloat {
+        switch token.kind {
+        case .ball: return 0.42 + 0.07
+        case .cone, .marker: return 0.8  // the triangle's corners (0.74 r) and half its outline
+        case .player:
+            let kit = kit ?? Tokens.kit(token.side == .away ? .coral : .lime)
+            let edge: CGFloat = token.side != .away ? 1 : kit.outline == nil ? 1.02 : 1.1
+            return edge + outlineWidth
+        }
+    }
+
     /// A player's number, in their kit's ink (home) or white (away). Nothing for other tokens or a player without one.
     static func drawNumber(_ token: Token, at c: CGPoint, kit: Tokens.Kit?, radius r: CGFloat, style: Style, in ctx: CGContext) {
         guard token.kind == .player, let number = token.number else { return }
@@ -84,13 +119,6 @@ enum TokenDrawing {
     private static func player(_ token: Token, at c: CGPoint, kit: Tokens.Kit?, radius r: CGFloat, style: Style, in ctx: CGContext) {
         let kit = kit ?? Tokens.kit(token.side == .away ? .coral : .lime)
         let g = style.grass
-        if style.selected {
-            if style.lift {
-                ctx.setShadow(offset: CGSize(width: 0, height: r * 0.25), blur: r * 0.6, color: RGBA(0x000000, alpha: 0.5).cgColor)
-            }
-            selectionRing(at: c, radius: r * 1.45, width: r * 0.14, grass: g, in: ctx)
-            ctx.setShadow(offset: .zero, blur: 0, color: nil)
-        }
         // The outermost edge so far, for D-67's dark outline just beyond it.
         var edge: CGFloat
         if token.side == .away {

@@ -20,8 +20,9 @@ extension BoardRendererTests {
         return count
     }
 
-    /// D-67 rule 1 (the 9/5 overlap in the example): a disc drawn after a neighbour never covers their number.
-    @Test func everyNumberIsDrawnAfterEveryDisc() throws {
+    /// D-93 (supersedes D-67 rule 1, which looked glitched on Chime's phone): players stack. A disc drawn after a
+    /// neighbour covers it whole, number included, and its dark outline cuts across the disc underneath.
+    @Test func aDiscOnTopCoversTheOneUnderneathNumberAndAll() throws {
         let hero = try Fixtures.tactic("overlap-left")
         var state = Timeline.restingState(step: 0, in: hero)
         let geometry = BoardGeometry(kind: .full, fitting: CGRect(origin: .zero, size: Self.size))
@@ -31,11 +32,59 @@ extension BoardRendererTests {
         let frame = try Self.render(hero, state: state)
         let c = geometry.point(nine), r = geometry.tokenRadius
         let band = CGRect(x: c.x + 0.02 * r, y: c.y - 0.34 * r, width: 0.3 * r, height: 0.64 * r)
-        #expect(Self.darkPixels(in: frame, band) > 20, "9's number shows over 7's disc")
-        // The same band with no number there is all lime (the check isn't seeing something else).
-        var unnumbered = hero
-        if let i = unnumbered.tokens.firstIndex(where: { $0.id == "h9" }) { unnumbered.tokens[i].number = nil }
-        #expect(Self.darkPixels(in: try Self.render(unnumbered, state: state), band) == 0)
+        // The band is under 7's disc, past its outline: lime, with none of 9's number.
+        let covered = CGRect(x: c.x + 0.15 * r, y: band.minY, width: 0.17 * r, height: band.height)
+        #expect(Self.darkPixels(in: frame, covered) == 0, "7's disc covers 9's number")
+        // Where the band is clear of 7 (no 7), 9's number is there, so the check above isn't blind.
+        var alone = state
+        alone.positions["h7"] = Point(x: 0.95, y: 0.05)
+        #expect(Self.darkPixels(in: try Self.render(hero, state: alone), covered) > 10, "9's number is in the band")
+        // 7's dark outline runs across 9's disc, above and below the number, so they read as two discs.
+        let dy = 0.55 * r, half = (r * r - dy * dy).squareRoot()  // 7's half-width 0.55 r below its centre
+        let edge = c.x + 0.9 * r - half - TokenDrawing.outlineWidth * r / 2
+        let outline = frame.colour(at: CGPoint(x: edge, y: c.y + dy))
+        #expect(Self.close(outline, Tokens.Colour.discOutline, within: 40), "7's outline over 9: \(outline)")
+    }
+
+    /// D-93: a number shows whole or not at all. Mostly under a later disc, a player keeps their disc but not their
+    /// number; just touching, both numbers show; the ball never hides its carrier's number.
+    @Test func aNumberShowsWholeOrNotAtAll() {
+        func disc(_ id: String, _ kind: Token.Kind = .player, x: CGFloat) -> BoardRenderer.Disc {
+            var token = Token(id: id, kind: kind)
+            if kind == .player { token.side = .home; token.number = 9 }
+            return BoardRenderer.Disc(token: token, centre: CGPoint(x: x, y: 100), radius: 10)
+        }
+        #expect(BoardRenderer.coveredNumbers([disc("under", x: 100), disc("over", x: 109)]) == ["under"])
+        #expect(BoardRenderer.coveredNumbers([disc("under", x: 100), disc("over", x: 119)]).isEmpty, "touching edges")
+        #expect(BoardRenderer.coveredNumbers([disc("carrier", x: 100), disc("ball", .ball, x: 106)]).isEmpty)
+    }
+
+    /// D-93: the selected player is drawn on top of the others (tap a stacked player to bring them forward); the ball
+    /// stays last.
+    @Test func theSelectedPlayerIsDrawnOnTop() {
+        let tokens = [Token(id: "a", kind: .player), Token(id: "ball", kind: .ball), Token(id: "b", kind: .player)]
+        #expect(BoardRenderer.drawingOrder(tokens).map(\.id) == ["a", "b", "ball"])
+        #expect(BoardRenderer.drawingOrder(tokens, selected: "a").map(\.id) == ["b", "a", "ball"])
+    }
+
+    /// D-93: a player being dragged is drawn on top, ring or not, so dragging across another keeps their number.
+    @Test func aDraggedPlayerStaysOnTop() throws {
+        var hero = try Fixtures.tactic("overlap-left")
+        // 9 without a number, so any ink in the box is 3's.
+        if let i = hero.tokens.firstIndex(where: { $0.id == "h9" }) { hero.tokens[i].number = nil }
+        var state = Timeline.restingState(step: 0, in: hero)
+        let nine = try #require(state.positions["h9"])
+        // 3 comes before 9 in board order: left alone it goes under 9 and loses its number; dragged, it stays on top.
+        state.positions["h3"] = Point(x: nine.x + 0.3 * BoardGeometry.tokenRadiusRatio, y: nine.y)
+        var options = BoardRenderer.Options()
+        options.onTop = "h3"
+        let geometry = BoardGeometry(kind: .full, fitting: CGRect(origin: .zero, size: Self.size))
+        let c = geometry.point(try #require(state.positions["h3"])), r = geometry.tokenRadius
+        let number = CGRect(x: c.x - 0.3 * r, y: c.y - 0.3 * r, width: 0.6 * r, height: 0.6 * r)
+        let dragged = try Self.render(hero, state: state, options: options)
+        let plain = try Self.render(hero, state: state)
+        #expect(Self.darkPixels(in: plain, number) == 0, "under 9, 3's number is hidden")
+        #expect(Self.darkPixels(in: dragged, number) > 10, "dragged, 3 is on top with its number")
     }
 
     /// D-67 rule 2: a thin dark outline holds every disc on heat (home disc and away ring alike).
