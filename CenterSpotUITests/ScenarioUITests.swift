@@ -34,6 +34,9 @@ final class ScenarioUITests: XCTestCase {
         reveal(counter, in: app)
         counter.tap()
         XCTAssertTrue(counter.isSelected)
+        // D-99: the starting position only, the switch's default. Set before the shots: the app remembers the last
+        // run's choice, and an "on" switch would loop the tile in them.
+        includeMove(false, in: app)
         XCTAssertEqual(A.element(app, "formation.apply").label, "Use 3v2 counter")
         sleep(1)
         A.save("formation--scenarios-picked", in: self)
@@ -55,6 +58,8 @@ final class ScenarioUITests: XCTestCase {
         let toast = A.element(app, "toast.message")
         XCTAssertTrue(toast.waitForExistence(timeout: A.timeout))
         XCTAssertEqual(toast.label, "3v2 counter set up")
+        XCTAssertTrue(A.element(app, "steps.chip.1").exists || A.element(app, "steps.row.1").exists)
+        XCTAssertFalse(A.element(app, "steps.chip.2").exists || A.element(app, "steps.row.2").exists, "one step, no move")
         A.save(pad ? "ipad-board--scenario-applied" : "board--scenario-applied", in: self)
         A.element(app, "toast.undo").tap()
         XCTAssertTrue(A.element(app, "board.token.h9").waitForExistence(timeout: A.timeout), "Undo brings the move back")
@@ -66,6 +71,7 @@ final class ScenarioUITests: XCTestCase {
         scenarios.tap()
         reveal(counter, in: app)
         counter.tap()
+        includeMove(true, in: app)
         A.element(app, "formation.apply").tap()
         XCTAssertTrue(setUp.waitForExistence(timeout: A.timeout))
         setUp.tap()
@@ -75,10 +81,19 @@ final class ScenarioUITests: XCTestCase {
             XCTAssertTrue(A.element(app, "board.token.\(id)").waitForExistence(timeout: A.timeout), id)
         }
         for id in ["h9", "h3", "a2", "a7"] { XCTAssertFalse(A.element(app, "board.token.\(id)").exists, id) }
-        // D-96: the whole move, not just a position: the 3v2 counter's five steps replace the example's.
+        // D-96: with the move switched on, the whole move: the 3v2 counter's five steps replace the example's.
         // Steps show as chips (iPhone, iPad portrait) or rows (iPad landscape).
         XCTAssertTrue(A.element(app, "steps.chip.5").waitForExistence(timeout: A.timeout) || A.element(app, "steps.row.5").exists)
         XCTAssertFalse(A.element(app, "steps.chip.6").exists || A.element(app, "steps.row.6").exists)
+    }
+
+    /// Sets the "Include the move" switch (D-99), which the app remembers between runs.
+    @MainActor
+    private func includeMove(_ on: Bool, in app: XCUIApplication) {
+        let toggle = A.element(app, "scenario.include-move")
+        XCTAssertTrue(toggle.waitForExistence(timeout: A.timeout))
+        if (toggle.value as? String == "1") != on { toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap() }
+        XCTAssertEqual(toggle.value as? String, on ? "1" : "0")
     }
 
     /// Scrolls the sheet until `element` is wholly above the Use button (a tile under it would take the button's tap).

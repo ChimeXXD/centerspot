@@ -96,6 +96,29 @@ struct ScenarioApplyTests {
         #expect(tactic.phases[0].steps.last?.note == "Goal")
     }
 
+    /// D-99: without the move, "Use" sets up the starting position only: one step, both sides and the ball where the
+    /// scenario puts them, no arrows, no note; the example's five steps are gone.
+    @Test func withoutTheMoveItIsOneStepAtTheStartingPosition() throws {
+        let hero = try Fixtures.tactic("overlap-left")
+        let scenario = Self.scenario("3v2-counter")
+        let board = try #require(scenario.build(with: Self.shape, attacking: true))
+        let tactic = scenario.apply(to: hero, formation: Self.shape, attacking: true, withMove: false, stepIndex: 0)
+        let steps = tactic.phases[0].steps
+        #expect(steps.count == 1)
+        let step = try #require(steps.first)
+        #expect(step.arrows.isEmpty && step.runs.isEmpty && (step.note ?? "").isEmpty)
+        for (player, side) in board.home.map({ ($0, Side.ID.home) }) + board.away.map({ ($0, Side.ID.away) }) {
+            let token = try #require(tactic.tokens.first { $0.side == side && $0.number == player.number })
+            #expect(step.positions[token.id] == player.point, "\(side) \(player.number)")
+        }
+        let ball = try #require(tactic.tokens.first { $0.kind == .ball })
+        #expect(step.positions[ball.id] == board.ball)
+        // The same set-up the move starts from.
+        let moved = scenario.apply(to: hero, formation: Self.shape, attacking: true, withMove: true, stepIndex: 0)
+        #expect(moved.tokens == tactic.tokens)
+        #expect(moved.phases[0].steps.count > 1)
+    }
+
     @Test func onTheExampleNamesStayAndOthersLeaveFromEveryStep() throws {
         var hero = try Fixtures.tactic("overlap-left")
         let nine = try #require(hero.tokens.firstIndex { $0.side == .home && $0.number == 9 })

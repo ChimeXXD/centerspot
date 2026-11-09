@@ -13,16 +13,16 @@ extension Scenario {
 }
 
 extension Scenario {
-    /// "Use <scenario>" (D-94, D-96): the scenario's whole move replaces the move on the board, as one edit. The pitch
-    /// takes the shape's size; both sides take their places as `Formation.place` does (names stay by shirt number;
-    /// others leave, with their arrows) and the ball is added if there is none; then the steps are the move's: where
-    /// everyone stands, its arrows and its notes. Cones and markers stay where they stood on `stepIndex`. Unchanged
-    /// when the opponent's shape or the move is missing.
-    func apply(to tactic: Tactic, formation: Formation, attacking: Bool, stepIndex: Int, phaseIndex: Int = 0) -> Tactic {
-        // Both built before anything changes: without a move (no script bundled), the board stays as it was.
+    /// "Use <scenario>" (D-94, D-96, D-99): the scenario replaces the move on the board, as one edit. The pitch takes
+    /// the shape's size; both sides take their places as `Formation.place` does (names stay by shirt number; others
+    /// leave, with their arrows) and the ball is added if there is none. With `withMove` false (the sheet's switch is
+    /// off by default, D-99) that's all: one step, the starting position, to build on. With it the steps are the
+    /// move's: where everyone stands, its arrows and its notes. Cones and markers stay where they stood on `stepIndex`.
+    /// Unchanged when the opponent's shape is missing, or the move is when it's asked for.
+    func apply(to tactic: Tactic, formation: Formation, attacking: Bool, withMove: Bool = true, stepIndex: Int,
+               phaseIndex: Int = 0) -> Tactic {
         guard tactic.phases.indices.contains(phaseIndex), tactic.phases[phaseIndex].steps.indices.contains(stepIndex),
-              let board = build(with: formation, attacking: attacking),
-              let move = ScenarioMotion.build(self, formation: formation, attacking: attacking) else { return tactic }
+              let board = build(with: formation, attacking: attacking) else { return tactic }
         var result = tactic
         // One clean step, everything where it stood on the step shown; the move's steps replace it below.
         let standing = Timeline.restingState(step: stepIndex, in: tactic, phaseIndex: phaseIndex).positions
@@ -50,12 +50,17 @@ extension Scenario {
         }
         if let ballID { result.phases[phaseIndex].steps[0].positions[ballID] = board.ball }
 
+        guard withMove else { return result }
+
         // The notes name the board's players by their own shirt numbers.
         var shirts: [Side.ID: [Int: Int]] = [:]
         for (side, places) in tokenFor {
             for (number, id) in places { shirts[side, default: [:]][number] = result.tokens.first { $0.id == id }?.number ?? number }
         }
-        let named = ScenarioMotion.build(self, formation: formation, attacking: attacking, shirts: shirts) ?? move
+        // Without a move (no script bundled), the board stays as it was.
+        guard let named = ScenarioMotion.build(self, formation: formation, attacking: attacking, shirts: shirts) else {
+            return tactic
+        }
         let fixed = result.phases[phaseIndex].steps[0].positions
         var taken = Set(result.phases.enumerated().filter { $0.offset != phaseIndex }.flatMap(\.element.steps).map(\.id))
         result.phases[phaseIndex].steps = named.enumerated().map { k, step in

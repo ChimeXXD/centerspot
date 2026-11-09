@@ -22,6 +22,8 @@ struct FormationPicker: View {
     @State private var scenarioID: String?
     @State private var attacking = true
     @State private var confirmingScenario = false
+    /// D-99: "Use" sets up the starting position only, unless this is on; remembered between sheets.
+    @AppStorage("scenarioIncludesMove") private var includesMove = false
     /// The scenario list's width: three tiles a row from 480 pt (an iPad's sheet), else two (mockup `scenarios-ipad`).
     @State private var listWidth: CGFloat = 0
 
@@ -215,7 +217,10 @@ struct FormationPicker: View {
             VStack(alignment: .leading, spacing: 6) {
                 if let board = item.build(with: formation, attacking: attacking) {
                     ScenarioPicture(board: board, kind: formation.pitch, framesThePlay: !isTeam,
-                                    move: ScenarioMotion.build(item, formation: formation, attacking: attacking), plays: on)
+                                    // Every tile gets its move, to frame the whole play: a tile doesn't jump when it
+                                    // starts playing (D-96). It plays only when picked with the move on (D-99).
+                                    move: ScenarioMotion.build(item, formation: formation, attacking: attacking),
+                                    plays: on && includesMove)
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.name)
@@ -256,23 +261,45 @@ struct FormationPicker: View {
                 if let formation {
                     Button("Use \(formation.name)") { hasPlayers ? (confirming = true) : apply(formation) }
                         .buttonStyle(PrimaryCapsuleStyle())
+                        .accessibilityIdentifier("formation.apply")
                 }
             case .scenarios:
                 if let scenario {
-                    Button("Use \(scenario.name)") { hasMove ? (confirmingScenario = true) : applyScenario() }
-                        .buttonStyle(PrimaryCapsuleStyle())
+                    VStack(spacing: Tokens.Space.s3) {
+                        moveSwitch
+                        Button("Use \(scenario.name)") { hasMove ? (confirmingScenario = true) : applyScenario() }
+                            .buttonStyle(PrimaryCapsuleStyle())
+                            .accessibilityIdentifier("formation.apply")
+                    }
                 } else {
                     Button("Pick a scenario") {}
                         .buttonStyle(QuietCapsuleStyle(foreground: Tokens.Colour.muted.color))
                         .disabled(true)
+                        .accessibilityIdentifier("formation.apply")
                 }
             }
         }
-        .accessibilityIdentifier("formation.apply")
         .padding(.horizontal, Tokens.Space.s5)
         .padding(.top, Tokens.Space.s3)
         .padding(.bottom, Tokens.Space.s2)
         .background(Tokens.Colour.surface.color)
+    }
+
+    /// D-99: whether "Use" brings the scenario's ready-made steps or only its starting position.
+    private var moveSwitch: some View {
+        Toggle(isOn: $includesMove) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Include the move")
+                    .font(Tokens.Typeface.headline)
+                    .foregroundStyle(Tokens.Colour.text.color)
+                Text(includesMove ? "3 to 5 ready-made steps" : "Starting position only")
+                    .font(Tokens.Typeface.caption)
+                    .foregroundStyle(Tokens.Colour.muted.color)
+            }
+        }
+        .toggleStyle(.switch)
+        .tint(Tokens.Colour.muted.color)
+        .accessibilityIdentifier("scenario.include-move")
     }
 
     /// Something to replace (D-96: the scenario's move replaces it): players, more than one step, or anything drawn or
@@ -306,7 +333,8 @@ struct FormationPicker: View {
         guard let scenario, let formation else { return }
         let before = editor.tactic
         let applied = editor.apply("Set up \(scenario.name.lowercased())") {
-            $0 = scenario.apply(to: $0, formation: formation, attacking: attacking, stepIndex: stepIndex)
+            $0 = scenario.apply(to: $0, formation: formation, attacking: attacking, withMove: includesMove,
+                                stepIndex: stepIndex)
         }
         dismiss()
         // An edit that changed nothing registered no undo: a toast's Undo would undo the edit before it.
