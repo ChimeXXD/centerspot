@@ -2,6 +2,23 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Scenarios on the Formation sheet (Mon 9 Nov 2026, D-94)
+
+**Changed**
+- Mockup `mockup/scenarios.html` + `scenarios-ipad.html` (tag `design-scenarios-v1`), approved by Chime. `mockup/scenarios.js` holds the rules; `mockup/gen_scenario_fixtures.js` writes `CenterSpotTests/Fixtures/scenarios.json` (364 cases: nine shapes across the three sizes, every scenario, both sides). One rule changed after approval: the nearest player is "the first where level" within 1e-9, so mirror-image players tie the same way in JavaScript and Swift (one fixture case changed); and the role groups now name all 22 roles in presets/roles.json (the code review's find; no fixture change, no preset uses the new ones).
+- App: `Scenario` (the catalogue: 24 on 11-a-side, 18 on 7, 13 on 5), `ScenarioBuilder` (the rules, ported line for line), `Scenario.apply` (both sides placed by shirt number through `Formation.place`, which `Formation.apply` now shares; the ball added if missing; the step's arrows and runs cleared), `ScenarioPicture` (the tile drawing), and the Formation sheet's Shapes / Scenarios tabs with the Attacking / Defending switch, "Pick a scenario" until one is picked, the confirm on a board with players, and the "<name> set up" toast with Undo. Tiles are three a row when the list is at least 480 pt wide (the iPad's sheet).
+
+**Checked**
+- Code review (medium, --fix): 9 findings, 4 fixed (a toast after an edit that changed nothing, the side placed first near the token cap, 7 missing roles, the ball made by `TacticEdits.addToken`); a guard added for a shape with no outfield players. Fresh-context verifier: PASS; it compiled the port into a harness and compared all 1,112 shape × scenario × side cases with `scenarios.js`: 0 differences. Its two minor gaps fixed: tiles in a row are one height; a board too full for every player says how many didn't fit.
+- Unit: `ScenarioTests` (the catalogue per size; all 364 cases equal the mockup's players, roles and positions within 0.0015), `ScenarioApplyTests` (blank board, the example with a named 9, a 7-a-side shape, every scenario × every shape × both sides encodes and decodes as a `.tactic`).
+- UI: `ScenarioUITests` on iPhone 18 Pro and iPad Pro 13-inch: Scenarios tab, "Pick a scenario" off, pick 3v2 counter, Defending, confirm, toast, Undo brings the move back, set up again: 10, 7, 11 v 5, 4 and keeper 1 with the ball; 9, 3, 2 and 7 gone. Screens compared with the mockup frames side by side.
+
+**Not verified**
+- On the devices. The chip under the pitch says how many players there are, not the scenario's name (the mockup's frame 7 shows "3v2 counter"; the file format has no place for it).
+
+**Next**
+- Install; Chime to try scenarios on the iPhone and iPad.
+
 ## Four fixes from Chime's devices (Mon 9 Nov 2026, D-90 to D-93)
 
 **Changed**

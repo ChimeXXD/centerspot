@@ -1,6 +1,15 @@
 # Handoff: read this first when you pick the project back up
 
-## Latest: renamed to CenterSpot, app icon, design system (Mon 9 Nov 2026, early Lagos). Next: Chime on the devices, the iPad check, then Day 7.
+## Latest: four device fixes and scenarios on the Formation sheet (Mon 9 Nov 2026, afternoon Lagos). Next: Chime tries scenarios and the fixes on the devices.
+
+### Where it stands
+- **Fixes (D-90 to D-93), commit `08af64b`, installed on both devices:** the Pencil only draws in draw mode; Broadcast shows touchline to touchline (mostly a steady wide shot now; no dark above the far goal); iPad landscape Play lists the steps; players stack cleanly (a number shows whole or not at all, selected and dragged players on top).
+- **Scenarios (D-94):** the Formation sheet's Scenarios tab, 24 / 18 / 13 situations by size, Attacking / Defending. The rules live in `mockup/scenarios.js`; the Swift port (`ScenarioBuilder`) must match `CenterSpotTests/Fixtures/scenarios.json` (regenerate with `node mockup/gen_scenario_fixtures.js` after changing a rule, and say so).
+- **Design check:** Playwright 1.64.1 matches the cached Chromium (1248). Install it in a scratch folder and run `check-design.mjs` from there; the iPad frame is its own page (`scenarios-ipad.html`, `--viewport 1376x1032`).
+- **Open for Chime:** the example's 9 is hidden behind 5 at step 4 now that covered numbers hide (offer to nudge 9 in `examples/overlap-left.tactic`); the board's chip shows "6 players", not the scenario's name; the Pencil on the real iPad.
+- **Chime's rules this session:** check every change on both the iPhone and the iPad; when Chime has explained a feature, don't push a reference board, design from the explanation plus football knowledge.
+
+## Before: renamed to CenterSpot, app icon, design system (Mon 9 Nov 2026, early Lagos). Next: Chime on the devices, the iPad check, then Day 7.
 
 ### Where it stands
 - **App: CenterSpot** (D-85): bundle ID `dev.chime.centerspot`, UTType `dev.chime.centerspot.tactic`, links `centerspot://`, repo `ChimeXXD/centerspot` (private), folder `CenterSpot`. Every old-name mention was replaced, history included (Chime's choice). Last commit `c2d2f69`.

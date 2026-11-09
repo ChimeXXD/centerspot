@@ -39,35 +39,45 @@ struct Formation: Codable, Sendable, Hashable, Identifiable {
               tactic.phases[phaseIndex].steps.indices.contains(stepIndex) else { return tactic }
         var result = tactic
         result.pitch.kind = pitch
+        Self.place(slots.map { ($0.number, $0.roleID, $0.point) }, side: .home, in: &result, stepIndex: stepIndex,
+                   phaseIndex: phaseIndex)
+        return result
+    }
 
-        let home = result.tokens.indices.filter { result.tokens[$0].kind == .player && result.tokens[$0].side == .home }
-        var free = slots
-        var placed: [(token: Int, slot: Slot)] = []
-        for i in home {
+    /// One side's players onto `places` (number, role, point) at one step, as `apply` does for the home side: matched
+    /// by shirt number first, then in board order; names stay, roles follow the place; places left over get new
+    /// players (placed in every step), players left over are removed with their arrows. Scenarios use it for both
+    /// sides (D-94).
+    static func place(_ places: [(number: Int, roleID: String, point: Point)], side: Side.ID, in result: inout Tactic,
+                      stepIndex: Int, phaseIndex: Int = 0) {
+        let team = result.tokens.indices.filter { result.tokens[$0].kind == .player && result.tokens[$0].side == side }
+        var free = places
+        var placed: [(token: Int, place: (number: Int, roleID: String, point: Point))] = []
+        for i in team {
             if let number = result.tokens[i].number, let k = free.firstIndex(where: { $0.number == number }) {
                 placed.append((i, free.remove(at: k)))
             }
         }
-        for i in home where !placed.contains(where: { $0.token == i }) {
+        for i in team where !placed.contains(where: { $0.token == i }) {
             guard !free.isEmpty else { break }
             placed.append((i, free.removeFirst()))
         }
-        for (i, slot) in placed {
-            result.tokens[i].roleID = slot.roleID
-            result.phases[phaseIndex].steps[stepIndex].positions[result.tokens[i].id] = slot.point
+        for (i, place) in placed {
+            result.tokens[i].roleID = place.roleID
+            result.phases[phaseIndex].steps[stepIndex].positions[result.tokens[i].id] = place.point
         }
-        let leftover = home.filter { i in !placed.contains { $0.token == i } }.map { result.tokens[$0].id }
-        if !leftover.isEmpty { Self.removeArrows(from: Set(leftover), in: &result) }
+        let leftover = team.filter { i in !placed.contains { $0.token == i } }.map { result.tokens[$0].id }
+        if !leftover.isEmpty { removeArrows(from: Set(leftover), in: &result) }
         for id in leftover { TacticEdits.deleteToken(id, in: &result) }
 
-        for slot in free where result.tokens.count < TacticFormat.maxTokens {
-            let id = Self.unusedID(base: "h\(slot.number)", in: result.tokens)
-            result.tokens.append(Token(id: id, kind: .player, side: .home, number: slot.number, roleID: slot.roleID))
+        let prefix = side == .home ? "h" : "a"
+        for place in free where result.tokens.count < TacticFormat.maxTokens {
+            let id = unusedID(base: "\(prefix)\(place.number)", in: result.tokens)
+            result.tokens.append(Token(id: id, kind: .player, side: side, number: place.number, roleID: place.roleID))
             for p in result.phases.indices {
-                for s in result.phases[p].steps.indices { result.phases[p].steps[s].positions[id] = slot.point }
+                for s in result.phases[p].steps.indices { result.phases[p].steps[s].positions[id] = place.point }
             }
         }
-        return result
     }
 
     /// How many home players a switch to `formation` removes (D-83): those beyond its slots.
@@ -78,7 +88,7 @@ struct Formation: Codable, Sendable, Hashable, Identifiable {
 
     /// Drops the arrows drawn from `ids` (D-83): those starting where one of them stands on that step and no other
     /// player does (`Placement` names an arrow's owner the same way).
-    private static func removeArrows(from ids: Set<String>, in tactic: inout Tactic) {
+    static func removeArrows(from ids: Set<String>, in tactic: inout Tactic) {
         let players = tactic.tokens.filter { $0.kind == .player }.map(\.id)
         for p in tactic.phases.indices {
             // Where each player stands on the step: its own position, else the last one before (as `Timeline` rests).
@@ -93,7 +103,7 @@ struct Formation: Codable, Sendable, Hashable, Identifiable {
         }
     }
 
-    private static func unusedID(base: String, in tokens: [Token]) -> String {
+    static func unusedID(base: String, in tokens: [Token]) -> String {
         let taken = Set(tokens.map(\.id))
         if !taken.contains(base) { return base }
         return (2...).lazy.map { "\(base)-\($0)" }.first { !taken.contains($0) }!

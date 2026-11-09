@@ -10,15 +10,15 @@ const mirror = p => ({ x: round(1 - p.x), y: round(1 - p.y) });
 
 // Every role in presets/roles.json falls in one of nine groups; phases and set pieces speak in groups.
 const GROUP = {
-  "goalkeeper": "GK",
-  "centre-back": "CB",
-  "full-back": "FB", "wing-back": "FB",
+  "goalkeeper": "GK", "sweeper-keeper": "GK",
+  "centre-back": "CB", "ball-playing-centre-back": "CB",
+  "full-back": "FB", "inverted-full-back": "FB", "wing-back": "FB",
   "holding-midfielder": "DM", "deep-playmaker": "DM",
   "central-midfielder": "CM", "box-to-box": "CM",
   "wide-midfielder": "WM",
-  "attacking-midfielder": "AM", "advanced-playmaker": "AM",
+  "attacking-midfielder": "AM", "advanced-playmaker": "AM", "free-role": "AM",
   "winger": "W", "inside-forward": "W",
-  "striker": "ST", "shadow-striker": "ST",
+  "striker": "ST", "shadow-striker": "ST", "target-forward": "ST", "false-nine": "ST", "pressing-forward": "ST",
 };
 
 // The opponent's shape for each pitch size: the most common one there.
@@ -178,7 +178,8 @@ function fill(slots, spots) {
 }
 
 const dist = (a, b) => Math.hypot((a.x - b.x) * 0.65, a.y - b.y);  // a pitch is about 0.65 as wide as long
-const nearest = (list, p) => list.reduce((best, s, i) => (dist(s, p) < dist(list[best], p) ? i : best), 0);
+// The nearest (the first where level: within 1e-9, so mirror-image players tie the same way in every language).
+const nearest = (list, p) => list.reduce((best, s, i) => (dist(s, p) < dist(list[best], p) - 1e-9 ? i : best), 0);
 
 // Who plays each spot of a small-sided game: for each spot, the nearest player (where they stand in `phase`) of the
 // first listed group that has one left (`prefs[i]`, e.g. "W,WM"), else the nearest player left. Keepers excluded.
