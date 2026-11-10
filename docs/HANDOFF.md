@@ -11,10 +11,38 @@
 - **Portfolio housekeeping:** the GitHub/X/PSN data refresh is in `git stash` on the portfolio repo (`stash@{0}`); builds rewrite those files and `docs/HANDOFF.md` there says to commit them separately or leave them out.
 
 ### Next
-1. Chime: the case study's copy in their own words; VoiceOver on the iPad; reinstall before 16 Nov.
-2. After the week (if it continues): link and QR sharing (D-36), the iPad's three-column view.
+1. Chime: the case study's copy in their own words; VoiceOver on the iPad; the AX5 screenshots; reinstall before 16 Nov.
+2. **The v0.1.0 release is not published.** Claude Code's permission check blocked `gh release create` (a public surface). Notes and the four 9:16 exports were staged in the session scratchpad (gone after the session); to redo: export the clips again (the hero flat and Broadcast, Counter-attack attacking, Build-up v press defending, titled "Win it back high", through `VideoExporter`), then Chime runs `gh release create v0.1.0 --target main --prerelease …` or allows it.
+3. After the week (if it continues): link and QR sharing (D-36), the iPad's three-column view.
 
-## Latest: four device fixes and scenarios on the Formation sheet (Mon 9 Nov 2026, afternoon Lagos). Next: Chime tries scenarios and the fixes on the devices.
+### This session, in order (9–10 Nov 2026)
+The conversation behind the section above, so the next session doesn't have to re-derive it.
+
+1. **Device checklist.** Claude sent a 16-item checklist (iPhone and iPad: playback and Reduce Motion, players, steps, runs and Straight/Curved, Broadcast and its export, marks, Files and AirDrop, library, tips, VoiceOver, iPad layout, Pencil, scenarios, then the player tag). Chime: "the system is working fine", then confirmed all 16 passed. 12 features were ticked with that evidence (1742a6e).
+2. **Player tag (D-98).** Chime: tap a player and show its name, else its position ("number six… CDM… don't remove the role"). Picked: the tapped player only, standard positions (holding mid and deep playmaker → CDM, full-backs LB/RB from where they stand, shadow striker and false nine → CF…), screen only. Code review fixed the tag's placement for large text and the touchlines (abacb5a).
+3. **"I can't see the changes."** A commit doesn't reach the devices. Claude now builds for `generic/platform=iOS` and installs with `xcrun devicectl device install app` on both (iPhone 14 Pro `00008120-001044862EC0201E`, iPad `00008132-001E11443ED9801C`) after every app change.
+4. **README and repo case study drafts** (922bc57), then the portfolio case study. Claude read Meridian's page (`content/work/meridian.mdx`) as the model. Picked: films = app exports plus device clips; decisions = Broadcast, scenarios, Pencil and iPad, one renderer and the file; Claude drafts, Chime edits.
+5. **"Don't copy Meridian's map."** Chime: "My workflow shouldn't be identical for every project." Picked "Life of a move": The gap, Draw it, Play it, Start from a scenario, Post it, Send it, How it was checked; key numbers as one line under the intro (a new optional `meta.facts`). Later Chime dropped the Next section and asked for the GitHub link beside the design system's.
+6. **Scenarios start empty (D-99).** Chime: a scenario forced its ready-made steps on you; "the default state should be empty", with a toggle for the motion. Built: Include the move above Use, off and remembered; off sets up the starting position, and the tile shows it still (f946aaa). Code review: the move was built twice (fixed), a comment was wrong (fixed); Claude reverted the reviewer's "no move on unpicked tiles", which would have made tiles jump.
+7. **Chime's recordings.** Five files in `videos/` (two iPhone, two iPad, one camera film of the Pencil). Chime wanted them shorter without losing anything: idle stretches over 1.4 s were cut to about 1 s, then 1.5x, sound off. The WhatsApp one had the share sheet (contacts' faces), the WhatsApp "Send to" list and the Face ID unlock cut out (14.55–27.0 s). The first idle detection cut real taps on the iPad (a small tag change looked still), so it was rerun more sensitively and every frame checked. Edited copies are named "01 iPhone - draw runs, then play in Broadcast" … "05 iPad camera - drawing with the Apple Pencil". `videos/` is git-ignored. Chime approved all five, and they're on the case study.
+8. **Published.** Chime approved; the portfolio branch `centerspot-case-study` was fast-forwarded onto `main`, which deploys to Cloudflare Pages (bd5df8c).
+9. **Figma cover.** On the file "Portfolio Elements" (`mageMpQwkjfpW2jBY66fNl`), page CenterSpot: Meridian's card, hover and list frames copied with CenterSpot's screens, plus three cover options. Chime chose the design system's first colourway (#F2F5F7 lockup on #0B0F14, lime spot) and asked that nothing be Meridian's near-black; every slot, tile and border was recoloured to ink, surface and hairline.
+10. **Repo public (D-100).** A scan found no secrets; the only personal mention is "Chime's brother's iPad" (unnamed, left as is). Pushed, made public, given a description, topics and the case study as homepage. CI's fixed simulator didn't exist on the runner, so it now picks or makes one, and runs on pull requests: green.
+11. **README.** Chime: "look at Clepso and Meridian… I can't see any of the CenterSpot logo… the screens." Rewritten after Meridian's (mark, badges, link row, hero GIF of the app's export, a section per feature with screens, mermaid diagram, numbers, design system shot, get started, quality gates, map, docs, privacy, status) with Clepso's Known limitations.
+12. **Design system 404, fixed.** The Vercel project is linked to the repo; pushes deployed the repo root. Root Directory is now `design-system` (set through the Vercel API with the CLI's login), so pushes redeploy it correctly.
+13. **Home page.** Chime: Meridian, Clepso, CenterSpot, then See more; full order Meridian, Clepso, CenterSpot, Perps Trading, Bulan, 101 before one, GlamByPrime, Gui Inu, Aptos Monkeys. Added a `centerspot` tone, the Figma logo and icon (text outlined), hover and list previews; the site's tests now expect that order. Previewed locally, then pushed on Chime's yes (bd9a5a5).
+14. **Wrap-up.** Features, plan, decisions, build log, and this file; the design system shows the switch (f5f500b).
+
+### Chime's preferences learned this session
+- Install every app change on both devices; say it's installed and to relaunch.
+- Show a local preview (`PORT=4319 node scripts/serve-out.mjs` in the portfolio, after `npx next build`) and wait for a yes before pushing anything live.
+- Each project's case study gets its own structure; don't reuse another's map.
+- Use the design system's colours (first colourway: chalk on ink), never a near-black from another project.
+- Shorten recordings without losing taps; cut private screens (contacts, chats, unlocks) rather than show them.
+- Commits run the proof gate's full tests: don't run simulator tests in the background at the same time (they collide), and keep memory free (Chime closes Brave, Figma, Dia when asked).
+- In the portfolio, `npx next build` (or `npm run build`) rewrites `content/*.json` and a PSN image: restore them before committing.
+
+## Before: four device fixes and scenarios on the Formation sheet (Mon 9 Nov 2026, afternoon Lagos). Next: Chime tries scenarios and the fixes on the devices.
 
 ### Where it stands
 - **Fixes (D-90 to D-93), commit `08af64b`, installed on both devices:** the Pencil only draws in draw mode; Broadcast shows touchline to touchline (mostly a steady wide shot now; no dark above the far goal); iPad landscape Play lists the steps; players stack cleanly (a number shows whole or not at all, selected and dragged players on top).
