@@ -198,7 +198,7 @@ app's own tokens (`CenterSpot/Design/Tokens.swift`) by `design-system/src/build.
 
 ## Get started
 
-**You need** a Mac with Xcode 27 or later, [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`),
+**You need** a Mac with Xcode 26 or later (CI builds with 26.6), [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`),
 and, to run it on a device, a free Apple ID. There are no third-party packages.
 
 ```bash
