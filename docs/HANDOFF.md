@@ -1,5 +1,19 @@
 # Handoff: read this first when you pick the project back up
 
+## Latest: Day 7 done: public repo, README, case study live, CenterSpot on chimexd.work (Tue 10 Nov 2026, Lagos)
+
+### Where it stands
+- **Repo public** (D-100): https://github.com/ChimeXXD/centerspot, CI green (Xcode 26.6, iPhone 17 Pro simulator), README after Meridian's and Clepso's with screens and GIFs (`docs/readme/`). 31 of 35 features pass; open: links and QR (D0-4, D6-2, after the week), VoiceOver on the iPad (D6-4), and D6-3 waits on Chime's look at the AX5 shots.
+- **Case study live:** https://chimexd.work/work/centerspot (portfolio repo `content/work/centerspot.mdx`, its own "Life of a move" map; copy still drafted, Chime to put Role and "How it was checked" in their own words). CenterSpot is third on the home page after Meridian and Clepso; Perpetual Trading moved to /work. Cover, icon and previews from the CenterSpot page in the Figma file "Portfolio Elements" (option A, the design system's first colourway).
+- **Design system:** https://centerspot-design-system.vercel.app redeploys on every push (Root Directory `design-system`). It now shows D-99's Include the move switch.
+- **App since the last handoff:** D-98 player tag (name, else CDM/LB/ST…), D-99 scenarios set up the starting position unless Include the move is on. Installed on both devices on 9 Nov; signing runs out about **16 Nov**: reinstall before then.
+- **Media:** Chime's recordings live in `videos/` (git-ignored; originals show private chats). Edited copies "01 … 05" sit beside them; the case study uses 720-wide encodes.
+- **Portfolio housekeeping:** the GitHub/X/PSN data refresh is in `git stash` on the portfolio repo (`stash@{0}`); builds rewrite those files and `docs/HANDOFF.md` there says to commit them separately or leave them out.
+
+### Next
+1. Chime: the case study's copy in their own words; VoiceOver on the iPad; reinstall before 16 Nov.
+2. After the week (if it continues): link and QR sharing (D-36), the iPad's three-column view.
+
 ## Latest: four device fixes and scenarios on the Formation sheet (Mon 9 Nov 2026, afternoon Lagos). Next: Chime tries scenarios and the fixes on the devices.
 
 ### Where it stands

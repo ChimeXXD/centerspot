@@ -59,7 +59,8 @@ def sheet(d, chosen):
             f'{segs(["Shapes", "Scenarios"], "Scenarios")}</div>'
             f'<div class="scn-list"><span class="scn-chip">{shape}<small>{SIZE_LONG["full"]}</small>{chev}</span>'
             f'{segs(["Attacking", "Defending"], "Attacking")}<p class="scn-help">{E(d["help"]["attacking"])}</p>{groups}</div>'
-            f'<div class="scn-foot"><button class="cap-primary">Use {E(name)}</button></div></div></div>')
+            f'<div class="scn-foot"><div class="toggle-row scn-move"><span>Include the move<small>Starting position only</small></span>'
+            f'<span class="toggle off"></span></div><button class="cap-primary">Use {E(name)}</button></div></div></div>')
 
 
 def catalogue_table(d):
@@ -145,7 +146,7 @@ def section(head):
 
     sheet_comp = comp("scenario-sheet", "Scenarios", "Scenarios sheet",
         "The Formation sheet's second tab. Your shape on a chip (tap it to change shape), who has the ball, then the scenarios that "
-        f"fit your shape's size in three groups. Use replaces the move on the board with the scenario's whole move. Here: {d['shape']}, "
+        f"fit your shape's size in three groups. Use sets up the scenario's starting position; with Include the move on, it brings the scenario's whole move (D-99). Here: {d['shape']}, "
         f"{E(ex_name)} picked.",
         f'<div class="scn-wrap" style="{colours()}">{sheet(d, ex)}</div>',
         [("Tabs", "Capsule segments: Shapes · Scenarios"),
@@ -153,11 +154,12 @@ def section(head):
          ("Side", "Capsule segments Attacking · Defending; help line caption 12 muted, 8 pt under it, 4 pt in"),
          ("Groups", f"Headline 17, 12 pt above the tiles. {teams} team shapes, {small} small-sided, {sets} set pieces on 11-a-side; "
                     f"{n['sevenASide']} on 7-a-side, {n['fiveASide']} on 5-a-side"),
+         ("Include the move", "Switch pinned above Use, off by default and remembered: off, Use sets up the starting position only (one step); on, the 3 to 5 ready-made steps (D-99). Headline 17 with a caption 12 muted line that says which"),
          ("Button", "Pinned under the list: quiet “Pick a scenario”, muted and disabled, until a tile is picked; then primary “Use &lt;name&gt;”"),
          ("Spacing", "24 pt sides, 16 pt between parts"),
          ("VoiceOver", "Chip: “Your shape, 4-3-3, 11-a-side. Change it”; group titles are headers"),
          ("IDs", ids("formation.tab.scenarios", "scenario.shape", "scenario.side.attacking", "scenario.side.defending",
-                     "scenario.side.help", "scenario.group.team-shape", "formation.apply")),
+                     "scenario.side.help", "scenario.group.team-shape", "scenario.include-move", "formation.apply")),
          ("Source", src("Features/Formation/FormationPicker.swift", "Model/Scenario.swift", "Engine/ScenarioBuilder.swift", "Engine/ScenarioMotion.swift") +
           "<br><code>mockup/scenarios.js</code>, <code>scenario-motion.js</code> (the spec)")])
 
@@ -176,7 +178,7 @@ def section(head):
         "so what you pick is what you get.",
         tile_demo,
         [("Tile", "surface2, radius 16; 8 pt sides and top, 12 pt bottom; 2 pt text border when picked (no fill change)"),
-         ("Picked", "The picture loops the scenario's move: each step held, then eased to the next, a 1 s pause on the last. Reduce Motion keeps the set-up still"),
+         ("Picked", "With Include the move on, the picture loops the scenario's move: each step held, then eased to the next, a 1 s pause on the last. Off, and under Reduce Motion, it shows the set-up still (D-99)"),
          ("Words", "Name card title 15 bold; line caption 12 muted, two lines kept for it; 2 pt apart, 4 pt in, 6 pt under the picture"),
          ("Picture", "The pitch turned, our attack to the right, in the size's proportions (105 × 68, 60 × 40, 40 × 25 m); corners 8; hidden from VoiceOver"),
          ("Framing", "Team shapes: the whole pitch. Small-sided and set pieces: framed on the players and the ball across the whole move "
@@ -209,6 +211,7 @@ def section(head):
     toast = f'{ex_name} set up'
     copy_rows = [
         ("Side help", E(d["help"]["attacking"]) + "<br>" + E(d["help"]["defending"]), "Under Attacking · Defending"),
+        ("Switch", "Include the move<br>Starting position only · 3 to 5 ready-made steps", "Above Use, off by default, remembered (D-99)"),
         ("Button", f"Pick a scenario → Use {E(ex_name)}", "Disabled until a tile is picked"),
         ("Confirm", f"Set up {E(ex_name)}?<br>This replaces the move on the board. You can undo.", "When there's anything to replace: players, more than one step, or arrows, runs, marks or a note on the one step. Cancel · Set up (D-96)"),
         ("Toast", f"{E(toast)} · Undo", "4 s. When a full board can't take everyone: “… set up. 2 players didn't fit”"),

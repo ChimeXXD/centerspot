@@ -109,8 +109,8 @@ Dates are a suggestion; start Day 0 whenever Chime does, and shift the rest.
 - [ ] Then the onboarding (D-58) in the new look
 
 ### Day 7: Portfolio and open source
-- [ ] README: clip, what it does, architecture diagram, format link, how to build, honest numbers
-- [ ] Demo video made **in the app** (9:16), plus screen recordings of building it
-- [ ] Case study draft in `docs/CASE-STUDY.md` for chimexd.work
-- [ ] Make the repo public; CI on every push
-- [ ] Borrow session on the brother's iPad (D-26): film the Pencil part of the demo
+- [x] README: clip, what it does, architecture diagram, format link, how to build, honest numbers (10 Nov: e253d55, after Meridian's and Clepso's)
+- [x] Demo video made **in the app** (9:16), plus screen recordings of building it (9–10 Nov: four exports by VideoExporter; Chime's five recordings, trimmed and sped up 1.5x)
+- [x] Case study draft in `docs/CASE-STUDY.md` for chimexd.work (live at chimexd.work/work/centerspot, 10 Nov; its own structure, "Life of a move")
+- [x] Make the repo public; CI on every push (10 Nov: public; CI green on push and pull request, D-100)
+- [x] Borrow session on the brother's iPad (D-26): film the Pencil part of the demo (9 Nov: Chime's camera film)

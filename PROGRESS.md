@@ -2,6 +2,25 @@
 
 Build log for the one-week plan (`docs/PLAN.md`). Newest entry first. Each entry: **Changed**, **Checked** (with real numbers), **Not verified**, **Next**.
 
+## Day 7: public repo, README, case study live, scenarios switch (Mon 9 – Tue 10 Nov 2026, D-99, D-100)
+
+**Changed**
+- D-99: Scenarios set up the starting position; an Include the move switch above Use (off, remembered) brings the 3–5 ready-made steps (f946aaa). The design system shows the switch.
+- Repo public with description, topics and the case study link; README rewritten after Meridian's and Clepso's (mark, GIFs of the app's export and Chime's recording, seven screens, numbers, design system); CI picks the runner's iPhone simulator and runs on pull requests (D-100).
+- Vercel `centerspot-design-system`: Root Directory `design-system`, so pushes redeploy it (a push had deployed the repo root and served a 404 for about 10 minutes).
+- Portfolio (separate repo): the case study page with its own map ("Life of a move"), four app exports and Chime's five recordings (trimmed, 1.5x, the WhatsApp one with contacts cut out), a Films block for tall video, a facts line; CenterSpot third on home after Meridian and Clepso, on a `centerspot` tone; cover, icon and previews from Figma.
+
+**Checked**
+- `ScenarioApplyTests` (new `withoutTheMoveItIsOneStepAtTheStartingPosition`), `ScenarioUITests` both ways on iPhone 18 Pro and iPad Pro 13-inch; gate at f946aaa; installed on both devices.
+- CI run 42724015852 green (Xcode 26.6). README images 200 on GitHub. Design system 200 after the fix and after the next push's own deploy.
+- Portfolio: lint, typecheck, build; Playwright 109 of 109 for home, projects and case studies after the tests took the new order; live checks: /work/centerspot 200, the home page links it third.
+
+**Not verified**
+- VoiceOver on the iPad; the AX5 screenshots (Chime). Release-build export timings.
+
+**Next**
+- Chime's own words in the case study; reinstall before 16 Nov.
+
 ## Player tag; Day 7 README and case study drafts (Mon 9 Nov 2026, night, D-98)
 
 **Changed**

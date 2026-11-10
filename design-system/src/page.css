@@ -374,6 +374,8 @@ svg.board { display: block; border-radius: 6px; }
 .scn-list { flex: 1; min-height: 0; overflow: hidden; padding: 16px 24px 0; display: flex; flex-direction: column; gap: 16px; }
 .scn-list > * { flex-shrink: 0; }
 .scn-foot { padding: 12px 24px 24px; background: var(--surface); box-shadow: 0 -12px 16px var(--surface); position: relative; }
+.scn-move { height: auto; margin-bottom: 12px; color: var(--text); }
+.scn-move small { display: block; font: 500 12px Nunito; color: var(--muted); margin-top: 2px; }
 .scn-chip { align-self: flex-start; height: 44px; padding: 0 14px 0 16px; border-radius: 999px; background: var(--surface-2); display: inline-flex; align-items: center; gap: 6px; font: 700 15px Nunito; }
 .scn-chip small { font: 500 12px Nunito; color: var(--muted); }
 .scn-help { font: 500 12px/1.3 Nunito; color: var(--muted); margin: -8px 0 0 4px; }

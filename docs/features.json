@@ -353,7 +353,7 @@
       ],
       "verify": "FuzzImportTests; ControlLabelUITests; AX5 screenshots reviewed by Chime; gh run list --limit 1",
       "passes": false,
-      "evidence": "7 Nov 2026, partial: FuzzImportTests 6,437 seeded cases + 59 hand-written + 6 odd files through TacticFormat.decode and TacticLibrary.importFile, 3 s limit each: no crash, no hang, limits hold, re-encode round trips; 4 importer bugs found and fixed (D-68), mutations M1–M8 killed or explained. ControlLabelUITests + performAccessibilityAudit: every control labelled. DynamicTypeUITests: 17 AX5 shots, 5 screens fixed. Gate 3/3, 298/298 tests, 7/7 UI tests; CI on main green (run 42407695087). Open: Chime reviews the AX5 shots in fidelity/shots/day6/."
+      "evidence": "7 Nov 2026, partial: FuzzImportTests 6,437 seeded cases + 59 hand-written + 6 odd files through TacticFormat.decode and TacticLibrary.importFile, 3 s limit each: no crash, no hang, limits hold, re-encode round trips; 4 importer bugs found and fixed (D-68), mutations M1–M8 killed or explained. ControlLabelUITests + performAccessibilityAudit: every control labelled. DynamicTypeUITests: 17 AX5 shots, 5 screens fixed. Gate 3/3, 298/298 tests, 7/7 UI tests; CI on main green (run 42407695087). Open: Chime reviews the AX5 shots in fidelity/shots/day6/. 10 Nov 2026: CI green on the public repo (run 42724015852, Xcode 26.6, iPhone 17 Pro simulator, after 7a40aca let CI pick the runner's simulator). Still open: Chime reviews the AX5 shots."
     },
     {
       "id": "D6-4",
@@ -466,8 +466,8 @@
         "README has the clip and real numbers"
       ],
       "verify": "gh repo view --json visibility",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "10 Nov 2026: gh repo view ChimeXXD/centerspot --json visibility -> PUBLIC (description, topics, homepage https://chimexd.work/work/centerspot). README rewritten after Meridian's and Clepso's: the mark (light and dark), the app's own 9:16 export as a GIF, Chime's iPhone recording, seven screens, the export bench table, the design system (e253d55, ec2679f; every image 200 on raw.githubusercontent.com). In-app demo: four 9:16 exports made by VideoExporter (the hero flat and Broadcast, Counter-attack attacking, Build-up v press defending), on the case study. Case study live at chimexd.work/work/centerspot (portfolio bd5df8c), on the home page third (bd9a5a5)."
     },
     {
       "id": "D7-2",
@@ -478,8 +478,8 @@
         "Pencil clip recorded at real speed"
       ],
       "verify": "manual; the clip file exists",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "9 Nov 2026: Chime filmed the Pencil drawing on the iPad Pro 13-inch (M4) with the phone, 30.7 s at real speed (videos/IMG_0146.MOV, kept out of git); a 1.5x edit is on the case study (pencil-hand)."
     }
   ]
 }
